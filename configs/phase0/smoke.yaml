@@ -1,0 +1,5 @@
+# Minimal config used only to exercise the config-loading utility in
+# Phase 0's environment smoke test. Not tied to any ML experiment.
+phase: 0
+description: "Phase 0 environment smoke test config"
+seed: 42

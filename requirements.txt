@@ -1,0 +1,22 @@
+# Core dependencies for the plaintext ML / data / config / benchmarking
+# pipelines. Installable and runnable natively on Windows, Linux, and macOS.
+#
+# Concrete-ML and its dependencies are pinned separately in
+# requirements-fhe.txt because Concrete-ML has no Windows wheels and must
+# run under WSL2 or Linux/macOS (see docs/environment.md for the confirmed
+# platform-compatibility finding from Phase 0).
+#
+# Versions below are exactly what `pip install` resolved on 2026-09-10
+# against Python 3.12.0 (Windows) -- see docs/environment.md.
+#
+# matplotlib added in Phase 1, justified by docs/prd.md FR10 (Pareto-frontier
+# plots are a hard requirement in Phase 8 regardless); Phase 1 uses it for a
+# handful of decision-relevant EDA plots.
+
+numpy==2.5.3
+pandas==3.0.5
+scikit-learn==1.9.0
+xgboost==3.4.1
+PyYAML==6.0.3
+pytest==9.1.1
+matplotlib==3.11.1

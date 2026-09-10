@@ -2,8 +2,10 @@
 __pycache__/
 *.py[cod]
 .venv/
+.venv-wsl/
 venv/
 env/
+.pytest_cache/
 
 # Secrets
 .env
@@ -11,12 +13,20 @@ env/
 !.env.example
 
 # Data
-data/
-datasets/
+# Anchored to repo root (leading /) -- an unanchored "data/" also matches
+# src/data/ (the actual pipeline module), which would silently untrack it.
+/data/
+/datasets/
 *.csv
 *.parquet
 *.zip
 *.7z
+
+# Generated experiment/EDA result tables are committed deliberately: they are
+# small aggregates and every reported number must trace to one (CLAUDE.md §9).
+# This negation is required because the blanket *.csv above would otherwise
+# swallow them silently. Raw data under data/ stays ignored regardless.
+!results/**/*.csv
 
 # ML artifacts
 models/
@@ -37,3 +47,9 @@ outputs/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Concrete-ML compile diagnostics dump
+.artifacts/
+
+# Claude Code local session state
+.claude/
