@@ -1,0 +1,418 @@
+# Implementation Plan — Phased Roadmap
+
+Central research question (must stay consistent across all phases):
+
+> How do feature count, quantization bit-width, and ML model complexity
+> affect the predictive performance and computational cost of
+> privacy-preserving fraud detection under FHE?
+
+---
+
+## Phase 0 — Environment & Repository
+
+**Objective**: reproducible environment and repository skeleton.
+
+**Tasks**: initialize repo with structure from `architecture.md` §20;
+pin Python version; pin Concrete-ML, Concrete-Python, XGBoost,
+scikit-learn, pandas versions; set up config-loading utility; set up
+structured logging; set up test runner.
+
+**Technical details**: record exact library versions in a
+`requirements.lock` or equivalent; document the actual CPU/RAM available
+for FHE benchmarking (this constrains later phases).
+
+**Deliverables**: initialized repo, pinned environment, empty pipeline
+module skeletons, CI-less local test runner working on a trivial test.
+
+**Tests**: environment smoke test (imports succeed, versions match lock
+file).
+
+**Exit criteria**: `pytest` runs (even with zero real tests yet);
+documented hardware spec committed to repo.
+
+**Risks/blockers**: Concrete-ML installation issues on the target OS/
+hardware (known to have platform-specific constraints).
+
+**Fallback strategy**: if local hardware cannot install/run Concrete-ML
+at all, document the specific failure and evaluate a cloud VM with
+adequate specs — do not substitute a different, easier FHE library
+without documenting why Concrete-ML specifically failed.
+
+---
+
+## Phase 1 — Dataset & EDA
+
+**Objective**: understand IEEE-CIS's structure, missingness, and
+imbalance before writing any pipeline code.
+
+**Tasks**: load transaction + identity tables; document schema, missing-
+value rates per column group, class imbalance ratio, `TransactionDT`
+range/semantics; identify high-cardinality/anonymized (`V`-column) groups.
+
+**Technical details**: confirm `TransactionDT` is a delta, not an
+absolute timestamp, and confirm implications for split design.
+
+**Deliverables**: EDA notebook/report with missingness table, imbalance
+ratio, cardinality summary.
+
+**Tests**: none (exploratory), but findings must be committed as a
+markdown/notebook artifact.
+
+**Exit criteria**: documented understanding of missingness, imbalance,
+and time semantics sufficient to design the split and preprocessing in
+Phase 2.
+
+**Risks/blockers**: dataset size making full EDA slow on limited
+hardware.
+
+**Fallback strategy**: sample-based EDA on a stratified subset, clearly
+labeled as such, while full pipeline still runs on complete data later.
+
+---
+
+## Phase 2 — Leakage-Safe ML Pipeline
+
+**Objective**: build the time-based split and leakage-audited
+preprocessing pipeline — the foundation everything else depends on.
+
+**Tasks**: implement expanding-window time-based split by
+`TransactionDT`; implement missing-data handling; implement categorical
+encoding (e.g., frequency encoding using only past-observed data per the
+split); implement and run the leakage audit for every engineered feature.
+
+**Technical details**: split indices must be saved as a versioned
+artifact, not regenerated ad hoc by later phases.
+
+**Deliverables**: `src/data` module, saved split artifact, leakage audit
+report.
+
+**Tests**: unit tests asserting no test-set or future-window information
+leaks into training-set feature computation.
+
+**Exit criteria**: leakage audit passes for every engineered feature;
+split artifact is deterministic and reproducible from config.
+
+**Risks/blockers**: subtle leakage in categorical frequency encoding if
+not carefully scoped to past-only data.
+
+**Fallback strategy**: if a particular feature construction cannot be
+made leakage-safe within available time, drop that specific feature and
+document why, rather than shipping a leaky pipeline.
+
+---
+
+## Phase 3 — Baseline Models
+
+**Objective**: train and evaluate Logistic Regression and XGBoost on the
+full feature set (plaintext) as the ML baseline.
+
+**Tasks**: train LR and XGBoost with class-imbalance handling; evaluate
+with PR-AUC, ROC-AUC, precision, recall, F1, F2; produce confusion
+matrices and threshold analysis.
+
+**Technical details**: use the fixed split artifact from Phase 2; log
+all hyperparameters via config.
+
+**Deliverables**: trained baseline models, evaluation report.
+
+**Tests**: metric-computation unit tests; seed-stability check (metrics
+stable within a documented variance band across seeds).
+
+**Exit criteria**: both baselines trained, evaluated, and results
+committed with config files.
+
+**Risks/blockers**: class imbalance handling insufficient, producing
+misleadingly high accuracy but poor PR-AUC.
+
+**Fallback strategy**: iterate on imbalance handling (resampling, class
+weights, focal-loss-style objectives for XGBoost) until PR-AUC is
+genuinely reasonable — do not accept a baseline with poor PR-AUC and
+move on regardless.
+
+---
+
+## Phase 4 — Feature Engineering & Selection
+
+**Objective**: produce a real, ranked feature-importance list and define
+the feature-count tiers used throughout the FHE experiments.
+
+**Tasks**: compute feature importances from the Phase 3 XGBoost model
+(or permutation importance); define at least 3 feature-count tiers
+(e.g., top-20/top-50/top-100); re-evaluate LR/XGBoost on each tier to
+quantify the plaintext accuracy cost of feature reduction before FHE is
+even introduced.
+
+**Technical details**: tiers are versioned artifacts referenced by
+config in all later FHE phases.
+
+**Deliverables**: feature importance ranking, tier definitions,
+plaintext accuracy-vs-feature-count curve (a precursor to the eventual
+FHE Pareto frontier).
+
+**Tests**: tier membership determinism test.
+
+**Exit criteria**: tiers defined, plaintext PR-AUC recorded per tier.
+
+**Risks/blockers**: feature reduction degrading accuracy more than
+expected, especially given how much signal is concentrated in the
+anonymized `V` columns.
+
+**Fallback strategy**: adjust tier sizes based on where the plaintext
+accuracy-vs-feature-count curve actually bends, rather than sticking
+rigidly to arbitrary round numbers.
+
+---
+
+## Phase 5 — FHE Proof of Concept
+
+**Objective**: get one model (start with Logistic Regression, the
+simplest) compiling and running correctly under Concrete-ML end-to-end
+before building the full grid.
+
+**Tasks**: quantize and compile LR on the smallest feature tier; run
+encrypted inference on a small held-out sample; validate against
+plaintext output.
+
+**Technical details**: this phase exists specifically to surface
+Concrete-ML environment/version issues early, on the simplest possible
+case.
+
+**Deliverables**: one working encrypted LR inference path with a
+correctness report.
+
+**Tests**: encrypted-vs-plaintext agreement test.
+
+**Exit criteria**: at least one full encrypt→infer→decrypt round trip
+completes correctly.
+
+**Risks/blockers**: compilation failures, environment issues, or
+unexpectedly long compile/inference times even for the simplest case.
+
+**Fallback strategy**: if the smallest possible configuration cannot run
+in reasonable time on available hardware, document the exact resource
+usage observed and consider cloud compute before considering any
+reduction of the research question itself.
+
+---
+
+## Phase 6 — FHE Fraud Inference (XGBoost)
+
+**Objective**: extend the working FHE path to XGBoost across the defined
+feature tiers.
+
+**Tasks**: quantize/compile XGBoost per feature tier at an initial
+bit-width; validate correctness per configuration; record compile time.
+
+**Technical details**: use Concrete-ML's XGBClassifier with `n_bits`
+controlling input precision and a calibration-set-driven bit-width
+computation, per `architecture.md` §5.
+
+**Deliverables**: working encrypted XGBoost inference across all feature
+tiers at one initial bit-width setting.
+
+**Tests**: correctness validation per (tier) configuration.
+
+**Exit criteria**: all feature tiers compile and validate correctly for
+XGBoost at the initial bit-width.
+
+**Risks/blockers**: larger trees/feature tiers hitting compile-time or
+memory limits.
+
+**Fallback strategy**: if a specific tier fails to compile/run in
+feasible time, document the specific limitation (tree depth, number of
+trees, feature count) rather than silently shrinking scope elsewhere.
+
+---
+
+## Phase 7 — Benchmark Infrastructure
+
+**Objective**: build the config-driven benchmark harness before running
+the full experimental grid.
+
+**Tasks**: implement repeated-trial latency/memory/ciphertext-size
+measurement; implement results storage keyed by config hash; implement
+smoke-test mode (small grid, few trials).
+
+**Technical details**: separate compilation-time measurement from
+per-request inference-latency measurement, per `architecture.md` §16.
+
+**Deliverables**: working benchmark runner, passing smoke test.
+
+**Tests**: smoke test on a minimal 2-3-configuration grid.
+
+**Exit criteria**: smoke test passes with sane, reproducible output.
+
+**Risks/blockers**: measurement noise from other system load affecting
+latency figures.
+
+**Fallback strategy**: run benchmarks on a quiesced machine/VM and
+document conditions; increase trial count if variance is high rather
+than reporting noisy single-trial numbers.
+
+---
+
+## Phase 8 — Core Research Experiments
+
+**Objective**: execute the full feature-count × bit-width × model-type
+(LR, XGBoost) benchmark grid — the heart of the project's research
+contribution.
+
+**Tasks**: run the full grid per `prd.md` §12 (minimum 3 tiers × 2
+bit-widths × models, ≥5 trials each); generate accuracy-vs-latency
+Pareto-frontier plots; sanity-check against cited prior-art latency
+numbers.
+
+**Technical details**: every run tied to a config file; results stored
+with full provenance (config hash, git commit, timestamp).
+
+**Deliverables**: complete benchmark results (CSV/JSON), Pareto-frontier
+plots, comparison table against prior-art numbers.
+
+**Tests**: results-schema validation; spot-check that reported means
+match raw per-trial data.
+
+**Exit criteria**: full grid executed for LR and XGBoost; Pareto
+frontiers generated; prior-art comparison written up (agreement or
+honest divergence explanation).
+
+**Risks/blockers**: total grid runtime exceeding available time/compute
+budget.
+
+**Fallback strategy**: reduce grid density (fewer bit-width steps) with
+a documented rationale before reducing trial count (variance reporting
+is higher priority than grid density).
+
+---
+
+## Phase 9 — Quantized MLP Extension
+
+**Objective**: extend the same benchmark grid to the quantized MLP model
+type.
+
+**Tasks**: train/quantize (e.g., via Brevitas) a small MLP; compile via
+Concrete-ML; validate correctness; run the same feature-tier × bit-width
+grid as Phases 6–8, respecting the accumulator bit-width ceiling
+constraint from `architecture.md` §5.
+
+**Technical details**: log TLU count and compile time per configuration,
+per `instructions.md` FHE rules.
+
+**Deliverables**: MLP results integrated into the same Pareto-frontier
+plots as LR/XGBoost, enabling a genuine tree-vs-neural-net comparison
+under FHE.
+
+**Tests**: correctness validation per MLP configuration.
+
+**Exit criteria**: MLP results present across at least the feature tiers
+and bit-widths that are actually feasible under the accumulator
+constraint; infeasible combinations explicitly logged as such.
+
+**Risks/blockers**: accumulator bit-width ceiling blocking larger
+feature-count/bit-width combinations for the MLP specifically (this is
+expected — see `prd.md` §9 and the technical assessment).
+
+**Fallback strategy**: characterize and report the accumulator
+constraint's practical effect (i.e., "MLP could not run beyond tier X at
+bit-width Y due to accumulator overflow") as a first-class finding rather
+than treating it as a project failure.
+
+---
+
+## Phase 10 — Client/Server Implementation
+
+**Objective**: build the real encrypt→send→infer→return→decrypt demo.
+
+**Tasks**: implement client (key gen, quantize, encrypt, decrypt) and
+server (FastAPI endpoint serving encrypted inference) per
+`architecture.md` §6–7; run at least one full round trip per model type.
+
+**Deliverables**: working client/server demo, integration test passing.
+
+**Tests**: full round-trip integration test per model type.
+
+**Exit criteria**: at least one successful end-to-end encrypted request
+per model type, matching the correctness-validated compiled model from
+earlier phases.
+
+**Risks/blockers**: serialization/transport overhead for ciphertext not
+accounted for in earlier local benchmarks.
+
+**Fallback strategy**: measure and report network/serialization overhead
+separately from raw FHE compute latency, rather than conflating them.
+
+---
+
+## Phase 11 — API / Docker (optional polish)
+
+**Objective**: package the client/server demo for easier review.
+
+**Tasks**: containerize the server (and optionally client) via Docker,
+only after Phases 0–10 are complete.
+
+**Deliverables**: Dockerfile(s), run instructions.
+
+**Tests**: container starts and passes the same integration test as
+Phase 10.
+
+**Exit criteria**: containerized demo runs identically to the
+non-containerized version.
+
+**Risks/blockers**: Concrete-ML's native-code dependencies complicating
+containerization.
+
+**Fallback strategy**: if containerization proves disproportionately
+time-consuming, document the attempt and ship the non-containerized demo
+with clear run instructions instead — this phase is explicitly
+nice-to-have, not required.
+
+---
+
+## Phase 12 — Research Analysis & Report
+
+**Objective**: synthesize all results into the final technical report.
+
+**Tasks**: write Related Work (citing prior art per `prd.md` §11),
+Methodology, Results (Pareto frontiers, tables), Threat Model (from
+`architecture.md` §10), Limitations, Conclusion.
+
+**Deliverables**: `report.md` (or PDF).
+
+**Tests**: every number in the report cross-checked against a specific
+results file/config.
+
+**Exit criteria**: report complete with all required sections; no
+unsupported claims present.
+
+**Risks/blockers**: temptation to overstate novelty or security
+guarantees.
+
+**Fallback strategy**: none needed — this is a discipline requirement,
+not a technical risk; re-read `instructions.md` prohibited-shortcuts
+section before finalizing.
+
+---
+
+## Phase 13 — GitHub / Resume / Paper Preparation
+
+**Objective**: finalize the repository and supporting materials for
+portfolio/application use.
+
+**Tasks**: clean repository structure, write a strong top-level README
+summarizing the research question, methodology, and headline results
+(with honest scoping language, not overclaimed novelty); prepare a short
+resume bullet/summary; optionally prepare a preprint-style writeup of the
+Pareto-frontier methodology.
+
+**Deliverables**: polished public repository, README, optional preprint
+draft.
+
+**Tests**: none (documentation phase); manual review against
+`instructions.md` prohibited-shortcuts and scope-control rules.
+
+**Exit criteria**: repository is self-explanatory to an external
+reviewer without requiring this internal documentation set.
+
+**Risks/blockers**: none beyond time management.
+
+**Fallback strategy**: if time runs short, prioritize a clear README and
+complete Phase 8/9 results over Phase 11 (Docker) or preprint polish.

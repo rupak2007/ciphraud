@@ -1,0 +1,39 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Data
+data/
+datasets/
+*.csv
+*.parquet
+*.zip
+*.7z
+
+# ML artifacts
+models/
+checkpoints/
+*.pt
+*.pth
+*.onnx
+*.safetensors
+
+# Generated/build files
+build/
+dist/
+outputs/
+*.log
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
