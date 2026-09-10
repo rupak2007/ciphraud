@@ -68,6 +68,34 @@ hardware.
 **Fallback strategy**: sample-based EDA on a stratified subset, clearly
 labeled as such, while full pipeline still runs on complete data later.
 
+**Implementation deviations (recorded per CLAUDE.md Sec.2)**:
+1. **Chunked-exact aggregation used instead of the stratified-sample
+   fallback above**, as the default/primary strategy rather than a
+   fallback. Sampling cannot establish exact positive counts in tail time
+   buckets (which set split boundaries), exact all-null/constant columns,
+   or exact null-mask identity between V columns -- chunked aggregation
+   gives exact statistics in bounded memory instead. The sampling
+   fallback remains available if chunked aggregation proves infeasible.
+2. **`src/data/load.py` and `src/data/schema.py` were built in Phase 1**,
+   ahead of where this document lists "src/data module" (Phase 2).
+   Phase 2 adds `split.py` and `leakage.py` on top of this foundation.
+   Consistent with `architecture.md` Sec.15's component charter.
+3. **Deliverable is scripts + a generated Markdown report**
+   (`src/data/eda.py`, run as `python -m src.data.eda`, writing
+   `results/phase1_eda/` and `docs/eda.md`), not a notebook. Chosen for
+   determinism, testability, and git-diffability (CLAUDE.md Sec.15);
+   this document's "notebook/report" wording permits either.
+4. **A small test suite exists** (`tests/test_schema.py`,
+   `tests/test_load.py`, `tests/test_eda.py`,
+   `tests/test_eda_integration.py`, `tests/test_eda_real_data.py`)
+   where this section specifies none, because the validator and
+   aggregation logic is real logic that CLAUDE.md Sec.11/Sec.19 require
+   tested. All but the last run on synthetic data; the real-data test is
+   skipif-gated on `data/raw/` being populated.
+5. **`matplotlib` added to `requirements.txt`**, justified by
+   `docs/prd.md` FR10 (Pareto-frontier plots are a hard Phase 8
+   requirement regardless); Phase 1 uses it for four EDA plots.
+
 ---
 
 ## Phase 2 — Leakage-Safe ML Pipeline

@@ -1,0 +1,27 @@
+# Phase 1 EDA config. Loaded via src.config.load_config -- see docs/plan.md
+# Phase 1 and docs/data_acquisition.md for how data/raw/ gets populated.
+phase: 1
+seed: 42
+
+data:
+  raw_dir: data/raw
+  transaction_file: train_transaction.csv
+  identity_file: train_identity.csv
+  # Filled in after the first successful download (see docs/data_acquisition.md),
+  # then verified on every subsequent run. Empty means "not yet verified" --
+  # the loader must not silently skip verification, it must say so.
+  expected_sha256:
+    train_transaction.csv: ""
+    train_identity.csv: ""
+
+load:
+  chunksize: 50000
+  downcast_floats: true
+  categorical_as_category: true
+
+eda:
+  time_bucket_seconds: 86400
+  candidate_split_quantiles: [0.6, 0.7, 0.8]
+
+output:
+  dir: results/phase1_eda
