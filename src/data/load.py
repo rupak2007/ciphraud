@@ -109,3 +109,61 @@ def compute_file_digest(path: Path, chunk_bytes: int = 1 << 20) -> str:
         for block in iter(lambda: f.read(chunk_bytes), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+class DataAcquisitionError(Exception):
+    """Raised when the raw dataset files are missing or fail integrity checks."""
+
+
+def resolve_raw_paths(config: dict[str, Any], project_root: Path) -> tuple[Path, Path]:
+    """Resolve and verify existence of the two raw IEEE-CIS CSVs from a config's `data:` block.
+
+    Shared by every pipeline stage that reads the raw files (Phase 1's
+    `src/data/eda.py`, Phase 2's `src/data/pipeline.py`) so the
+    file-not-found error message and the missing-file check itself never
+    drift between them.
+    """
+    raw_dir = project_root / config["data"]["raw_dir"]
+    transaction_path = raw_dir / config["data"]["transaction_file"]
+    identity_path = raw_dir / config["data"]["identity_file"]
+    missing = [p for p in (transaction_path, identity_path) if not p.exists()]
+    if missing:
+        names = ", ".join(str(p) for p in missing)
+        raise DataAcquisitionError(
+            f"Raw data file(s) not found: {names}. "
+            "See docs/data_acquisition.md for the manual download procedure."
+        )
+    return transaction_path, identity_path
+
+
+def verify_or_report_digest(
+    path: Path, expected: str, file_key: str, logger: Any, config_hint: str
+) -> str:
+    """Verify a raw file's SHA256 against `expected`, or log-and-record if not yet recorded.
+
+    `config_hint` names the config path/key to record the digest into
+    (shown in the log line) so a first-run user knows exactly what to
+    paste where -- see docs/data_acquisition.md.
+    """
+    digest = compute_file_digest(path)
+    if not expected:
+        logger.info(
+            "No expected SHA256 recorded yet for %s; computed %s. Record this in %s so future runs verify against it.",
+            file_key,
+            digest,
+            config_hint,
+            extra={"extra_fields": {"file": file_key, "sha256": digest, "verified": False}},
+        )
+    elif digest != expected:
+        raise DataAcquisitionError(
+            f"{file_key}: SHA256 mismatch. Expected {expected}, got {digest}. "
+            "The download may be truncated or corrupted -- re-download per "
+            "docs/data_acquisition.md."
+        )
+    else:
+        logger.info(
+            "%s SHA256 verified.",
+            file_key,
+            extra={"extra_fields": {"file": file_key, "sha256": digest, "verified": True}},
+        )
+    return digest

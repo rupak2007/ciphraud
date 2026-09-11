@@ -1,0 +1,57 @@
+# Phase 2 split + preprocessing pipeline config. Loaded via
+# src.config.load_config. See docs/pipeline.md for the full methodology
+# and rationale behind every choice below.
+phase: 2
+seed: 42
+
+# Self-contained duplicate of configs/phase1/eda.yaml's data section
+# (same raw_dir/files/hashes) rather than importing that file -- each
+# pipeline stage stays independently runnable (CLAUDE.md Sec.4/Sec.15),
+# and the two configs are cheap to keep in sync since these values only
+# change when the dataset itself is re-acquired.
+data:
+  raw_dir: data/raw
+  transaction_file: train_transaction.csv
+  identity_file: train_identity.csv
+  expected_sha256:
+    train_transaction.csv: "3a5c83ab6b3cc13dcabe5ffa9f522307fd5f7f7b6e6f6a60c32284ca6283d642"
+    train_identity.csv: "b63c725d8377be90a995268d97f347c17d456b95db45807adcf9f59cd603c37c"
+
+load:
+  chunksize: 50000
+  downcast_floats: true
+  categorical_as_category: true
+
+split:
+  # Quantiles of the TransactionDT *range* (docs/pipeline.md Sec.1),
+  # matching docs/eda.md Sec.8's candidate boundaries. 60/20/20-ish
+  # train/val/test by time range; docs/eda.md Sec.8 shows this is NOT the
+  # same as a 60/20/20 row-count split because transaction volume is
+  # non-uniform over time -- that mismatch is measured and reported, not
+  # silently accepted, in the pipeline's output.
+  train_val_quantile: 0.6
+  val_test_quantile: 0.8
+  # Expanding-window CV folds spanning (0, val_test_quantile] -- see
+  # src/data/split.py::compute_split_boundaries. Never reaches into the
+  # primary test partition (audited in src/data/leakage.py).
+  cv_n_folds: 3
+
+preprocess:
+  # TransactionID: banned per explicit project mandate (Spearman with
+  # TransactionDT ~= 1, docs/eda.md Sec.2). TransactionDT: excluded as a
+  # documented judgment call, see src/data/preprocess.py module docstring.
+  # isFraud: the label.
+  exclude_columns: ["TransactionID", "TransactionDT", "isFraud"]
+  # Columns that are already clean 0/1 indicators and should pass through
+  # unchanged rather than being imputed or frequency-encoded.
+  passthrough_columns: ["has_identity"]
+
+output:
+  dir: results/phase2_pipeline
+  # Optional cache of the transformed train/val/test feature matrices, for
+  # Phase 3's convenience -- written under data/ (fully gitignored, never
+  # committed, regenerable from this config + code). Not a Phase 2
+  # deliverable in itself; disable with `cache_processed_data: false` to
+  # skip it and only produce the split/leakage/preprocessing artifacts.
+  cache_processed_data: true
+  processed_dir: data/processed

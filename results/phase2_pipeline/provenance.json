@@ -1,0 +1,18 @@
+{
+  "config_hash": "f798fb05b36ae028",
+  "config_path": "configs\\phase2\\pipeline.yaml",
+  "git_commit": "b3fa1e8c63280c772aef19eda52a632ea7ee25ca",
+  "library_versions": {
+    "PyYAML": "6.0.3",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.9.0",
+    "xgboost": "3.4.1"
+  },
+  "raw_file_sha256": {
+    "train_identity.csv": "b63c725d8377be90a995268d97f347c17d456b95db45807adcf9f59cd603c37c",
+    "train_transaction.csv": "3a5c83ab6b3cc13dcabe5ffa9f522307fd5f7f7b6e6f6a60c32284ca6283d642"
+  },
+  "seed": 42,
+  "timestamp_utc": "2026-09-11T09:22:01.429384+00:00"
+}
