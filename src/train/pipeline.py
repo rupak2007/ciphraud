@@ -79,6 +79,7 @@ def run(config_path: str) -> dict[str, Any]:
         features.boundaries,
         c_grid=config["models"]["logistic_regression"]["c_grid"],
         seed=seed,
+        max_iter=config["models"]["logistic_regression"]["max_iter"],
     )
 
     logger.info(
@@ -135,6 +136,8 @@ def run(config_path: str) -> dict[str, Any]:
             "selected_C": lr_result.selected_c,
             "cv_results": lr_result.cv_results,
             "val_evaluation": lr_eval,
+            "n_iter": lr_result.n_iter,
+            "converged": lr_result.converged,
         },
         "xgboost": {
             "selected_max_depth": xgb_result.selected_max_depth,

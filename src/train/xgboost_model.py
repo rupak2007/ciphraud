@@ -58,7 +58,7 @@ class XGBoostResult:
     cv_results: list[dict[str, Any]]
 
 
-def _build_model(
+def build_xgb_classifier(
     max_depth: int, learning_rate: float, scale_pos_weight: float, seed: int, n_estimators: int = 500
 ) -> xgb.XGBClassifier:
     return xgb.XGBClassifier(
@@ -100,7 +100,7 @@ def select_hyperparameters_via_cv(
             fold_best_iterations = []
             for fold_index, train_pos, eval_pos in folds:
                 fold_scale_pos_weight = compute_scale_pos_weight(y_arr[train_pos])
-                model = _build_model(max_depth, learning_rate, fold_scale_pos_weight, seed)
+                model = build_xgb_classifier(max_depth, learning_rate, fold_scale_pos_weight, seed)
                 model.fit(
                     X_arr[train_pos],
                     y_arr[train_pos],
@@ -172,7 +172,7 @@ def train_xgboost(
     # reported by src/train/pipeline.py (those are computed separately,
     # after this model is already fit).
     final_scale_pos_weight = compute_scale_pos_weight(y_train.to_numpy())
-    final_model = _build_model(best["max_depth"], best["learning_rate"], final_scale_pos_weight, seed)
+    final_model = build_xgb_classifier(best["max_depth"], best["learning_rate"], final_scale_pos_weight, seed)
     final_model.fit(
         X_train.to_numpy(),
         y_train.to_numpy(),
