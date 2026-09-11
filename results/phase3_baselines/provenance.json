@@ -1,0 +1,15 @@
+{
+  "config_hash": "5e8e5711171533dd",
+  "config_path": "configs\\phase3\\baselines.yaml",
+  "git_commit": "8732dcb24aab9964aa247d149eede21d2c781ef2",
+  "library_versions": {
+    "PyYAML": "6.0.3",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.9.0",
+    "xgboost": "3.4.1"
+  },
+  "raw_file_sha256": {},
+  "seed": 42,
+  "timestamp_utc": "2026-09-11T12:09:12.689054+00:00"
+}

@@ -67,6 +67,20 @@ class SplitBoundaries:
             "cv_boundaries": list(self.cv_boundaries),
         }
 
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> "SplitBoundaries":
+        """Reconstruct from the persisted `split_boundaries.json` (extra keys, e.g.
+        `quantiles`, are ignored). Lets later phases (Phase 3's `src/train/data.py`)
+        reuse the exact boundaries Phase 2 computed without recomputing them from
+        the raw data -- one less place they could ever drift apart."""
+        return cls(
+            dt_min=int(d["dt_min"]),
+            dt_max=int(d["dt_max"]),
+            train_val_boundary=int(d["train_val_boundary"]),
+            val_test_boundary=int(d["val_test_boundary"]),
+            cv_boundaries=tuple(int(x) for x in d["cv_boundaries"]),
+        )
+
 
 def compute_split_boundaries(dt: pd.Series, config: dict[str, Any]) -> SplitBoundaries:
     """Compute DT-range-quantile boundaries for train/val/test and CV folds.
