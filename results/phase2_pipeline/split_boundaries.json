@@ -1,0 +1,17 @@
+{
+  "cv_boundaries": [
+    3231346,
+    6376292,
+    9521239,
+    12666185
+  ],
+  "dt_max": 15811131,
+  "dt_min": 86400,
+  "quantiles": {
+    "cv_n_folds": 3,
+    "train_val_quantile": 0.6,
+    "val_test_quantile": 0.8
+  },
+  "train_val_boundary": 9521239,
+  "val_test_boundary": 12666185
+}

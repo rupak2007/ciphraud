@@ -56,55 +56,21 @@ logger = get_logger(__name__)
 
 LIBRARY_NAMES = ["numpy", "pandas", "scikit-learn", "xgboost", "matplotlib", "PyYAML"]
 
-
-class DataAcquisitionError(Exception):
-    """Raised when the raw dataset files are missing or fail integrity checks."""
-
-
-# ---------------------------------------------------------------------------
-# File resolution and integrity
-# ---------------------------------------------------------------------------
+# Re-exported for backward compatibility: these lived in this module
+# through Phase 1 and moved to src/data/load.py in Phase 2 so
+# src/data/pipeline.py can share the exact same integrity-check logic
+# rather than duplicating it (see src/data/load.py module docstring).
+DataAcquisitionError = data_load.DataAcquisitionError
 
 
 def resolve_raw_paths(config: dict[str, Any]) -> tuple[Path, Path]:
-    raw_dir = PROJECT_ROOT / config["data"]["raw_dir"]
-    transaction_path = raw_dir / config["data"]["transaction_file"]
-    identity_path = raw_dir / config["data"]["identity_file"]
-    missing = [p for p in (transaction_path, identity_path) if not p.exists()]
-    if missing:
-        names = ", ".join(str(p) for p in missing)
-        raise DataAcquisitionError(
-            f"Raw data file(s) not found: {names}. "
-            "See docs/data_acquisition.md for the manual download procedure."
-        )
-    return transaction_path, identity_path
+    return data_load.resolve_raw_paths(config, PROJECT_ROOT)
 
 
 def verify_or_report_digest(path: Path, expected: str, file_key: str) -> str:
-    digest = data_load.compute_file_digest(path)
-    if not expected:
-        logger.info(
-            "No expected SHA256 recorded yet for %s; computed %s. "
-            "Record this in configs/phase1/eda.yaml under data.expected_sha256.%s "
-            "so future runs verify against it.",
-            file_key,
-            digest,
-            file_key,
-            extra={"extra_fields": {"file": file_key, "sha256": digest, "verified": False}},
-        )
-    elif digest != expected:
-        raise DataAcquisitionError(
-            f"{file_key}: SHA256 mismatch. Expected {expected}, got {digest}. "
-            "The download may be truncated or corrupted -- re-download per "
-            "docs/data_acquisition.md."
-        )
-    else:
-        logger.info(
-            "%s SHA256 verified.",
-            file_key,
-            extra={"extra_fields": {"file": file_key, "sha256": digest, "verified": True}},
-        )
-    return digest
+    return data_load.verify_or_report_digest(
+        path, expected, file_key, logger, "configs/phase1/eda.yaml under data.expected_sha256"
+    )
 
 
 # ---------------------------------------------------------------------------

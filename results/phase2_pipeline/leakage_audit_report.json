@@ -1,0 +1,13 @@
+{
+  "all_passed": true,
+  "checks_run": [
+    "split_partitions_are_disjoint_and_complete",
+    "split_is_temporally_ordered",
+    "no_duplicate_dt_straddles_boundary",
+    "cv_folds_never_reach_test",
+    "banned_columns_absent",
+    "fitted_statistic_scope[frequency_encoder]",
+    "fitted_statistic_scope[median_imputer]"
+  ],
+  "n_checks": 7
+}
