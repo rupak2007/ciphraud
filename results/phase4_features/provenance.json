@@ -1,0 +1,15 @@
+{
+  "config_hash": "0b29a85c6d0ae27a",
+  "config_path": "configs\\phase4\\features.yaml",
+  "git_commit": "5fe2dcfef89fd4ed0ad8715bdb3e1b1ae658b3d9",
+  "library_versions": {
+    "PyYAML": "6.0.3",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.9.0",
+    "xgboost": "3.4.1"
+  },
+  "raw_file_sha256": {},
+  "seed": 42,
+  "timestamp_utc": "2026-09-11T19:20:23.953455+00:00"
+}

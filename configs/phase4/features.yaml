@@ -1,0 +1,74 @@
+# Phase 4 feature-importance/tier config. Loaded via src.config.load_config.
+# See docs/features.md for the full methodology and rationale.
+phase: 4
+seed: 42
+
+# Phase 4 sources model-ready data from Phase 2 exactly like Phase 3 does
+# (src/train/data.py::load_phase2_features), and depends on Phase 3's
+# already-trained, already-committed XGBoost model as the ranking source.
+# Neither config's own contents are duplicated here -- tuning grids and
+# selected hyperparameters are read directly FROM configs/phase3/baselines.yaml
+# and results/phase3_baselines/metrics.json at run time, so they cannot drift.
+phase2_config: configs/phase2/pipeline.yaml
+phase3_config: configs/phase3/baselines.yaml
+
+importance:
+  # docs/plan.md Phase 4's first-listed option, per this session's
+  # decision -- not permutation importance (see docs/features.md Sec.2
+  # for why). Ranked from the Phase 3 XGBoost model's own total_gain.
+  method: xgboost_total_gain
+  # Additional seeds (beyond Phase 3's own seed 42) used ONLY to measure
+  # ranking stability (top-k Jaccard overlap) -- these rankings are never
+  # used to build tiers themselves.
+  ranking_stability_seeds: [43, 44]
+
+tiers:
+  # Pre-registered per docs/plan.md/prd.md FR6 ("e.g., top-20/50/100").
+  # Strictly increasing; see src/features/tiers.py::build_tiers for the
+  # validation this must satisfy. If the measured accuracy-vs-feature-
+  # count curve (below) shows these are badly placed, that gets reported,
+  # not silently changed.
+  sizes: [20, 50, 100]
+
+curve:
+  # Dense fixed-hyperparameter sweep for the accuracy-vs-feature-count
+  # plot (a precursor to the eventual FHE Pareto frontier, docs/plan.md
+  # Phase 4 deliverable). The full 832-feature point is always evaluated
+  # in addition to this list (never omitted), as a Phase 3 reproduction
+  # check -- see src/features/pipeline.py.
+  feature_counts: [5, 10, 20, 30, 50, 75, 100, 150, 200, 300, 500]
+
+stability:
+  # Per-tier XGBoost seed stability (LR is deterministic given fixed
+  # data -- src/train/logistic_regression.py). Includes Phase 3's own
+  # seed 42 so the per-tier band is directly comparable to Phase 3's.
+  tier_eval_seeds: [42, 43, 44]
+
+reproduction_check:
+  # How closely a full-feature-set refit -- in PHASE 2's ORIGINAL COLUMN
+  # ORDER, with Phase 3's exact hyperparameters/seed
+  # (src/features/pipeline.py::run, "Reproduction check") -- must match
+  # Phase 3's own committed val PR-AUC.
+  #
+  # An earlier version of this check reused the accuracy-vs-feature-count
+  # curve's full-feature-set point, which selects columns in RANK order,
+  # not Phase 2's order, and misattributed the resulting diff (LR ~0.0011,
+  # XGBoost ~0.0085 on real data) to XGBoost n_jobs=-1 thread
+  # nondeterminism. A controlled experiment (refit at k=832 in Phase 2
+  # order vs. rank order, both against the real dataset) disproved that:
+  # the Phase-2-order refit reproduces Phase 3 to EXACTLY 0.0 diff for
+  # both models, while the rank-order refit reproduces the EXACT SAME
+  # diffs (0.0010595.../0.0084924...) seen in both real-data pipeline
+  # runs -- deterministic and column-order-driven, not threading noise.
+  # (Mechanism: XGBoost's colsample_bytree=0.8 samples column POSITIONS
+  # each split, so reordering columns changes which named features that
+  # sample contains; LR's much smaller residual is consistent with
+  # floating-point summation-order sensitivity in lbfgs's gradients.)
+  #
+  # Tolerance is now tight, matching this empirical finding, not the
+  # withdrawn thread-nondeterminism theory.
+  pr_auc_tolerance: 1.0e-6
+
+output:
+  dir: results/phase4_features
+  models_dir: models/phase4_features
