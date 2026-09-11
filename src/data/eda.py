@@ -323,6 +323,9 @@ def run_full_pass(
                 extra={"extra_fields": {"rows_seen": rows_seen, "total_rows": total_rows}},
             )
 
+    # Repeated .add() across ~12 chunks leaves the frame fragmented (pandas
+    # PerformanceWarning); defragment once, here, rather than per chunk.
+    missingness_by_day = missingness_by_day.copy()
     global_missing = (missingness_by_day.sum(axis=0)).astype(int)
     global_non_null = global_missing  # count() sums are non-null counts
     missingness_global = pd.DataFrame(
