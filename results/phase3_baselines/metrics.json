@@ -1,0 +1,446 @@
+{
+  "error_analysis": {
+    "false_negative_rate_of_positives": 0.4877750611246944,
+    "false_positive_rate_of_negatives": 0.013455711994296916,
+    "n_false_negative": 1995,
+    "n_false_positive": 1359,
+    "sample_false_negatives": [
+      {
+        "TransactionID": 3367866,
+        "predicted_probability": 0.44776663184165955
+      },
+      {
+        "TransactionID": 3367937,
+        "predicted_probability": 0.47537344694137573
+      },
+      {
+        "TransactionID": 3368022,
+        "predicted_probability": 0.23525162041187286
+      },
+      {
+        "TransactionID": 3368115,
+        "predicted_probability": 0.6617594957351685
+      },
+      {
+        "TransactionID": 3368214,
+        "predicted_probability": 0.26317456364631653
+      },
+      {
+        "TransactionID": 3368230,
+        "predicted_probability": 0.5507648587226868
+      },
+      {
+        "TransactionID": 3368241,
+        "predicted_probability": 0.573035478591919
+      },
+      {
+        "TransactionID": 3368263,
+        "predicted_probability": 0.6161173582077026
+      },
+      {
+        "TransactionID": 3368443,
+        "predicted_probability": 0.6162753105163574
+      },
+      {
+        "TransactionID": 3368643,
+        "predicted_probability": 0.7347134947776794
+      },
+      {
+        "TransactionID": 3368674,
+        "predicted_probability": 0.7089197635650635
+      },
+      {
+        "TransactionID": 3368777,
+        "predicted_probability": 0.4105491638183594
+      },
+      {
+        "TransactionID": 3368825,
+        "predicted_probability": 0.6570985317230225
+      },
+      {
+        "TransactionID": 3368836,
+        "predicted_probability": 0.5854347348213196
+      },
+      {
+        "TransactionID": 3368885,
+        "predicted_probability": 0.7356436848640442
+      },
+      {
+        "TransactionID": 3368891,
+        "predicted_probability": 0.6673838496208191
+      },
+      {
+        "TransactionID": 3368893,
+        "predicted_probability": 0.525235652923584
+      },
+      {
+        "TransactionID": 3368896,
+        "predicted_probability": 0.3836652636528015
+      },
+      {
+        "TransactionID": 3368934,
+        "predicted_probability": 0.40500640869140625
+      },
+      {
+        "TransactionID": 3369015,
+        "predicted_probability": 0.2957231402397156
+      }
+    ],
+    "sample_false_positives": [
+      {
+        "TransactionID": 3367839,
+        "predicted_probability": 0.7924322485923767
+      },
+      {
+        "TransactionID": 3367871,
+        "predicted_probability": 0.9406440258026123
+      },
+      {
+        "TransactionID": 3367875,
+        "predicted_probability": 0.8162865042686462
+      },
+      {
+        "TransactionID": 3367876,
+        "predicted_probability": 0.966541051864624
+      },
+      {
+        "TransactionID": 3367894,
+        "predicted_probability": 0.7758265137672424
+      },
+      {
+        "TransactionID": 3367927,
+        "predicted_probability": 0.7833307981491089
+      },
+      {
+        "TransactionID": 3368013,
+        "predicted_probability": 0.865070104598999
+      },
+      {
+        "TransactionID": 3368113,
+        "predicted_probability": 0.8297311663627625
+      },
+      {
+        "TransactionID": 3368118,
+        "predicted_probability": 0.8159716725349426
+      },
+      {
+        "TransactionID": 3368201,
+        "predicted_probability": 0.8413351774215698
+      },
+      {
+        "TransactionID": 3368206,
+        "predicted_probability": 0.7990713715553284
+      },
+      {
+        "TransactionID": 3368808,
+        "predicted_probability": 0.8065786361694336
+      },
+      {
+        "TransactionID": 3368968,
+        "predicted_probability": 0.8078835606575012
+      },
+      {
+        "TransactionID": 3368980,
+        "predicted_probability": 0.9262983798980713
+      },
+      {
+        "TransactionID": 3368987,
+        "predicted_probability": 0.8296803832054138
+      },
+      {
+        "TransactionID": 3369069,
+        "predicted_probability": 0.7790800929069519
+      },
+      {
+        "TransactionID": 3369173,
+        "predicted_probability": 0.8050216436386108
+      },
+      {
+        "TransactionID": 3369255,
+        "predicted_probability": 0.8767799735069275
+      },
+      {
+        "TransactionID": 3369388,
+        "predicted_probability": 0.8456438183784485
+      },
+      {
+        "TransactionID": 3369393,
+        "predicted_probability": 0.7765262722969055
+      }
+    ],
+    "threshold": 0.7592958807945251
+  },
+  "logistic_regression": {
+    "cv_results": [
+      {
+        "C": 0.01,
+        "fold_pr_auc": [
+          0.16048011703030868,
+          0.13663915613428773,
+          0.20364362573766856
+        ],
+        "mean_pr_auc": 0.166920966300755,
+        "std_pr_auc": 0.027731007208550897
+      },
+      {
+        "C": 0.1,
+        "fold_pr_auc": [
+          0.1621623482232465,
+          0.13790885296350522,
+          0.19571969416310842
+        ],
+        "mean_pr_auc": 0.1652636317832867,
+        "std_pr_auc": 0.023702838224444297
+      },
+      {
+        "C": 1.0,
+        "fold_pr_auc": [
+          0.16742514339507283,
+          0.13832213403646118,
+          0.1782601664907303
+        ],
+        "mean_pr_auc": 0.16133581464075478,
+        "std_pr_auc": 0.016863600892418888
+      },
+      {
+        "C": 10.0,
+        "fold_pr_auc": [
+          0.1690546488827346,
+          0.13837324327780515,
+          0.18513942920596876
+        ],
+        "mean_pr_auc": 0.16418910712216953,
+        "std_pr_auc": 0.019399727816557022
+      }
+    ],
+    "selected_C": 0.01,
+    "val_evaluation": {
+      "f1_selected": {
+        "confusion_matrix": {
+          "fn": 2950,
+          "fp": 2834,
+          "tn": 98164,
+          "tp": 1140
+        },
+        "f1": 0.28273809523809523,
+        "f2": 0.28031867807612865,
+        "metric_optimized": "f1",
+        "precision": 0.28686462003019625,
+        "recall": 0.2787286063569682,
+        "selected_threshold": 0.7056736350059509,
+        "threshold": 0.7056736350059509
+      },
+      "f2_selected": {
+        "confusion_matrix": {
+          "fn": 1933,
+          "fp": 11604,
+          "tn": 89394,
+          "tp": 2157
+        },
+        "f1": 0.2416671334939219,
+        "f2": 0.35805584143952723,
+        "metric_optimized": "f2",
+        "precision": 0.15674732940919991,
+        "recall": 0.5273838630806846,
+        "selected_threshold": 0.5857532024383545,
+        "threshold": 0.5857532024383545
+      },
+      "fixed_thresholds": [
+        {
+          "confusion_matrix": {
+            "fn": 48,
+            "fp": 91275,
+            "tn": 9723,
+            "tp": 4042
+          },
+          "f1": 0.08132224088846862,
+          "f2": 0.180968328303948,
+          "precision": 0.042405866739406405,
+          "recall": 0.9882640586797066,
+          "threshold": 0.1
+        },
+        {
+          "confusion_matrix": {
+            "fn": 243,
+            "fp": 70688,
+            "tn": 30310,
+            "tp": 3847
+          },
+          "f1": 0.09785691573926868,
+          "f2": 0.21161780075911765,
+          "precision": 0.05161333601663648,
+          "recall": 0.9405867970660147,
+          "threshold": 0.3
+        },
+        {
+          "confusion_matrix": {
+            "fn": 1066,
+            "fp": 37264,
+            "tn": 63734,
+            "tp": 3024
+          },
+          "f1": 0.13628374419757538,
+          "f2": 0.26691145318457843,
+          "precision": 0.07505957108816522,
+          "recall": 0.7393643031784841,
+          "threshold": 0.5
+        }
+      ],
+      "pr_auc": 0.20364363862132537,
+      "roc_auc": 0.778319666791436
+    }
+  },
+  "split_sizes": {
+    "test": 104637,
+    "train": 380815,
+    "val": 105088
+  },
+  "strongest_model": "xgboost",
+  "test_partition_touched": false,
+  "xgboost": {
+    "cv_results": [
+      {
+        "fold_best_iterations": [
+          304,
+          499,
+          492
+        ],
+        "fold_pr_auc": [
+          0.526450663906835,
+          0.5162802012920802,
+          0.5536883049757129
+        ],
+        "learning_rate": 0.05,
+        "max_depth": 4,
+        "mean_pr_auc": 0.5321397233915427,
+        "std_pr_auc": 0.01579273258320125
+      },
+      {
+        "fold_best_iterations": [
+          170,
+          398,
+          318
+        ],
+        "fold_pr_auc": [
+          0.5250416382190704,
+          0.5296740739098821,
+          0.5566482137338431
+        ],
+        "learning_rate": 0.1,
+        "max_depth": 4,
+        "mean_pr_auc": 0.5371213086209319,
+        "std_pr_auc": 0.013936519952361526
+      },
+      {
+        "fold_best_iterations": [
+          178,
+          383,
+          494
+        ],
+        "fold_pr_auc": [
+          0.5238014552223875,
+          0.5267991852263946,
+          0.5710767547664618
+        ],
+        "learning_rate": 0.05,
+        "max_depth": 6,
+        "mean_pr_auc": 0.5405591317384147,
+        "std_pr_auc": 0.021613893413816452
+      },
+      {
+        "fold_best_iterations": [
+          99,
+          180,
+          319
+        ],
+        "fold_pr_auc": [
+          0.5242081175429252,
+          0.5216158745353865,
+          0.5662886131201258
+        ],
+        "learning_rate": 0.1,
+        "max_depth": 6,
+        "mean_pr_auc": 0.5373708683994791,
+        "std_pr_auc": 0.02047530057978634
+      }
+    ],
+    "selected_learning_rate": 0.05,
+    "selected_max_depth": 6,
+    "selected_n_estimators": 495,
+    "val_evaluation": {
+      "f1_selected": {
+        "confusion_matrix": {
+          "fn": 1995,
+          "fp": 1359,
+          "tn": 99639,
+          "tp": 2095
+        },
+        "f1": 0.555408271474019,
+        "f2": 0.5286665993741799,
+        "metric_optimized": "f1",
+        "precision": 0.6065431383902722,
+        "recall": 0.5122249388753056,
+        "selected_threshold": 0.7592958807945251,
+        "threshold": 0.7592958807945251
+      },
+      "f2_selected": {
+        "confusion_matrix": {
+          "fn": 1476,
+          "fp": 3694,
+          "tn": 97304,
+          "tp": 2614
+        },
+        "f1": 0.5027889978842085,
+        "f2": 0.5765837303688018,
+        "metric_optimized": "f2",
+        "precision": 0.4143944197844008,
+        "recall": 0.639119804400978,
+        "selected_threshold": 0.6022076606750488,
+        "threshold": 0.6022076606750488
+      },
+      "fixed_thresholds": [
+        {
+          "confusion_matrix": {
+            "fn": 157,
+            "fp": 53605,
+            "tn": 47393,
+            "tp": 3933
+          },
+          "f1": 0.12763678847277213,
+          "f2": 0.2661100435735744,
+          "precision": 0.06835482637561263,
+          "recall": 0.9616136919315403,
+          "threshold": 0.1
+        },
+        {
+          "confusion_matrix": {
+            "fn": 674,
+            "fp": 16538,
+            "tn": 84460,
+            "tp": 3416
+          },
+          "f1": 0.2841457328231575,
+          "f2": 0.47034201685300436,
+          "precision": 0.1711937456149143,
+          "recall": 0.8352078239608802,
+          "threshold": 0.3
+        },
+        {
+          "confusion_matrix": {
+            "fn": 1229,
+            "fp": 6336,
+            "tn": 94662,
+            "tp": 2861
+          },
+          "f1": 0.4306464965756002,
+          "f2": 0.5597292326955433,
+          "precision": 0.311079699902142,
+          "recall": 0.6995110024449878,
+          "threshold": 0.5
+        }
+      ],
+      "pr_auc": 0.5711215203726022,
+      "roc_auc": 0.9143488897671652
+    }
+  }
+}

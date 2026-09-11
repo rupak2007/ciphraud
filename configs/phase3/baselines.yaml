@@ -1,0 +1,31 @@
+# Phase 3 baseline-model config. Loaded via src.config.load_config. See
+# docs/baselines.md for the full methodology and rationale.
+phase: 3
+seed: 42
+
+# Which Phase 2 config to source model-ready data from
+# (src/train/data.py::load_phase2_features) -- Phase 2's pipeline is the
+# ONLY source of model-ready data for this phase.
+phase2_config: configs/phase2/pipeline.yaml
+
+models:
+  logistic_regression:
+    # Small, bounded grid -- Phase 3 is a BASELINE, not the systematic
+    # research sweep (that's Phase 8). Selected via Phase 2's
+    # expanding-window CV folds (src/train/cv.py), never random k-fold.
+    c_grid: [0.01, 0.1, 1.0, 10.0]
+  xgboost:
+    max_depth_grid: [4, 6]
+    learning_rate_grid: [0.05, 0.1]
+    # n_estimators is not tuned directly -- early stopping (20 rounds,
+    # monitored on the fold's own eval slice during CV selection, and on
+    # X_val for the final model) decides it. See src/train/xgboost_model.py.
+
+# Which selected-threshold to use for the error-analysis report
+# (src/train/metrics.py::error_analysis) -- computed on VAL only.
+error_analysis:
+  threshold_metric: f1
+
+output:
+  dir: results/phase3_baselines
+  models_dir: models/phase3_baselines
