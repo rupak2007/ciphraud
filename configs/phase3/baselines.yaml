@@ -14,6 +14,21 @@ models:
     # research sweep (that's Phase 8). Selected via Phase 2's
     # expanding-window CV folds (src/train/cv.py), never random k-fold.
     c_grid: [0.01, 0.1, 1.0, 10.0]
+    # lbfgs failed to converge within the old default (200) against the
+    # real, unscaled-magnitude feature matrix -- see docs/baselines.md
+    # Sec.7.3. Paired with the StandardScaler now in the fit pipeline
+    # (src/train/logistic_regression.py). 1000 was ALSO measured
+    # insufficient for the CV-selected C=10.0 (hit the cap on every fold);
+    # a controlled empirical test (fit directly against the real train
+    # data at increasing max_iter) found the true convergence point is
+    # n_iter=1207, reached identically at max_iter=3000 and max_iter=8000
+    # with PR-AUC differing by ~0.001 from the non-converged max_iter=1000
+    # fit -- i.e. 1000 was "close enough" numerically but NOT actually
+    # converged, which CLAUDE.md Sec.17/19 treats as a real correctness
+    # gap, not a cosmetic warning. 3000 is a verified-sufficient margin
+    # above the measured 1207, not a guess. Every fit's actual n_iter/
+    # converged flag is still recorded in metrics.json regardless.
+    max_iter: 3000
   xgboost:
     max_depth_grid: [4, 6]
     learning_rate_grid: [0.05, 0.1]

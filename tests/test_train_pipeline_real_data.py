@@ -71,6 +71,17 @@ def test_pipeline_real_data_metrics_are_not_accuracy_only(pipeline_result):
         assert "accuracy" not in val_eval
 
 
+def test_pipeline_real_data_logistic_regression_converges(pipeline_result):
+    """Regression guard for the real bug documented in docs/baselines.md
+    Sec.7.3: LR trained on the unscaled real feature matrix (TransactionAmt
+    up to ~$31,937 alongside [0,1] frequency encodings) failed to converge
+    within lbfgs's iteration budget. The fix adds a train-only-fit
+    StandardScaler; this asserts the fix actually holds on real data,
+    not just on synthetic fixtures."""
+    lr_result = pipeline_result["logistic_regression"]
+    assert lr_result["converged"] is True, f"LR did not converge: n_iter={lr_result['n_iter']}"
+
+
 def test_pipeline_real_data_test_partition_not_in_results(pipeline_result):
     assert pipeline_result["test_partition_touched"] is False
     import json
@@ -95,17 +106,18 @@ def seed_stability_results(pipeline_result):
     from sklearn.metrics import average_precision_score
 
     from src.train.imbalance import compute_scale_pos_weight
-    from src.train.logistic_regression import _fit_one as _fit_lr
-    from src.train.xgboost_model import _build_model as _build_xgb
+    from src.train.logistic_regression import fit_logistic_regression as _fit_lr
+    from src.train.xgboost_model import build_xgb_classifier as _build_xgb
 
     best_c = pipeline_result["logistic_regression"]["selected_C"]
     best_depth = pipeline_result["xgboost"]["selected_max_depth"]
     best_lr = pipeline_result["xgboost"]["selected_learning_rate"]
+    max_iter = load_config(_PHASE3_CONFIG_PATH)["models"]["logistic_regression"]["max_iter"]
 
     seeds = [42, 43, 44]
     lr_scores, xgb_scores = [], []
     for seed in seeds:
-        lr_model = _fit_lr(features.X_train.to_numpy(), features.y_train.to_numpy(), best_c, seed)
+        lr_model = _fit_lr(features.X_train.to_numpy(), features.y_train.to_numpy(), best_c, seed, max_iter)
         lr_scores.append(
             average_precision_score(features.y_val, lr_model.predict_proba(features.X_val.to_numpy())[:, 1])
         )

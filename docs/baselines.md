@@ -47,7 +47,8 @@ is selected.
 
 - **Logistic Regression** (`src/train/logistic_regression.py`): grid over
   `C ∈ {0.01, 0.1, 1.0, 10.0}` (`configs/phase3/baselines.yaml`), `solver="lbfgs"`,
-  `max_iter=200`. The selected `C` is refit on the **full** train partition.
+  `max_iter=3000` (see Sec.7.3 for why 3000, not the original 200). The selected `C` is
+  refit on the **full** train partition.
 - **XGBoost** (`src/train/xgboost_model.py`): grid over `max_depth ∈ {4, 6}` ×
   `learning_rate ∈ {0.05, 0.1}` (4 combos). `n_estimators` is never grid-searched
   directly — each fit uses `early_stopping_rounds=20` monitoring `aucpr` (XGBoost's
@@ -60,15 +61,22 @@ Both grids are deliberately small (4 settings each). Phase 3's job is a **baseli
 not the systematic FHE-focused research sweep — that is Phase 8's explicit scope
 (`docs/plan.md`).
 
-### Why a plain `sklearn`/`xgboost` model, not a `Pipeline`
+### Why LR is a `Pipeline` (scaler + model) but XGBoost is a plain `xgboost.XGBClassifier`
 
-Both models are trained as a plain `sklearn.linear_model.LogisticRegression` /
-`xgboost.XGBClassifier` over the already-preprocessed float32 feature matrix, not
-wrapped in an `sklearn.Pipeline` with custom transformers. `concrete.ml.sklearn.LogisticRegression`
-/ `XGBClassifier` (Phase 5+) are drop-in, quantization-aware replacements for exactly
-these classes over the same feature matrix — preprocessing itself stays client-side and
-plaintext per `docs/architecture.md` Sec.6, so nothing about *how* these models are fit
-needs to change for FHE compatibility. No FHE code is introduced in this phase.
+XGBoost is trained as a plain `xgboost.XGBClassifier` over the already-preprocessed
+float32 feature matrix, with no `sklearn.Pipeline` wrapper — `concrete.ml.sklearn.XGBClassifier`
+(Phase 5+) is a drop-in, quantization-aware replacement for exactly this class over the
+same feature matrix, and tree splits are scale-invariant, so no scaling step is needed.
+
+Logistic Regression, by contrast, IS `sklearn.pipeline.Pipeline([("scaler",
+StandardScaler()), ("lr", LogisticRegression(...))])` — not the bare `LogisticRegression`
+originally used. Sec.7.3 documents the real bug this fixes. `Pipeline.fit` fits
+`StandardScaler` only on the rows it is given, so it stays train-only by construction
+exactly like the `lr` step itself. This remains FHE-compatible: per `docs/architecture.md`
+Sec.6, feature preprocessing (which now includes this scaler) stays client-side and
+plaintext, and `concrete.ml.sklearn.LogisticRegression` (Phase 5+) is a drop-in
+replacement for the pipeline's `lr` step over the scaler's output. No FHE code is
+introduced in this phase.
 
 ## 3. Metrics (`src/train/metrics.py`)
 
@@ -93,27 +101,42 @@ Computed on `val` only:
 ## 4. Real-dataset validation results
 
 Produced by `python -m src.train.pipeline --config configs/phase3/baselines.yaml`
-against the real IEEE-CIS data (`results/phase3_baselines/metrics.json`,
-`git_commit` `8732dcb`, `config_hash` `5e8e5711171533dd`). Split sizes: train 380,815 /
-val 105,088 / test 104,637 (test untouched, Sec.5).
+against the real IEEE-CIS data (`results/phase3_baselines/metrics.json`). Split sizes:
+train 380,815 / val 105,088 / test 104,637 (test untouched, Sec.6). These are the
+**final, post-fix** numbers (Sec.7.3 documents the LR scaling/convergence bug this
+superseded — the first real run's LR PR-AUC was 0.2036, unscaled and never converged).
 
 | Metric (on `val`) | Logistic Regression | XGBoost |
 |---|---|---|
-| Selected hyperparameters | `C = 0.01` | `max_depth = 6`, `learning_rate = 0.05`, `n_estimators = 495` |
-| Mean CV PR-AUC (selection criterion) | 0.1669 | 0.5406 |
-| **PR-AUC** | **0.2036** | **0.5711** |
-| ROC-AUC | 0.7783 | 0.9143 |
-| F1 (at F1-optimal threshold) | 0.2827 (P=0.2869, R=0.2787, thr=0.706) | 0.5554 (P=0.6065, R=0.5122, thr=0.759) |
-| F2 (at F2-optimal threshold) | 0.3581 (P=0.1567, R=0.5274, thr=0.586) | 0.5766 (P=0.4144, R=0.6391, thr=0.602) |
-| Confusion matrix @ F1-optimal threshold | TN=98,164 FP=2,834 / FN=2,950 TP=1,140 | TN=99,639 FP=1,359 / FN=1,995 TP=2,095 |
+| Selected hyperparameters | `C = 1.0` | `max_depth = 6`, `learning_rate = 0.05`, `n_estimators = 495` |
+| Final fit `n_iter` / converged | 987 / **True** | n/a (tree ensemble) |
+| Mean CV PR-AUC (selection criterion) | 0.4051 | 0.5406 |
+| **PR-AUC** | **0.4561** | **0.5711** |
+| ROC-AUC | see `metrics.json` | 0.9143 |
+| Confusion matrix @ F1-optimal threshold | see `metrics.json` | TN=99,639 FP=1,359 / FN=1,995 TP=2,095 |
 
 Both models clear the val PR-AUC baseline the real-data test suite enforces
 (`tests/test_train_pipeline_real_data.py::test_pipeline_real_data_pr_auc_beats_baseline`,
 threshold 0.15 — well above the ~0.035 PR-AUC a random/constant classifier would score
-at this fraud rate). **XGBoost is the strongest model** (PR-AUC 0.571 vs. 0.204) and is
+at this fraud rate). **XGBoost is the strongest model** (PR-AUC 0.571 vs. 0.456) and is
 therefore the one `error_analysis` runs against, at its F1-optimal threshold (0.759):
 1,359 false positives (1.35% of negatives) and 1,995 false negatives (48.8% of
 positives) on `val`.
+
+Every LR fit's actual `n_iter` and `converged` flag is recorded per-fold, in
+`cv_results`, and for the final model — not just assumed sufficient (Sec.7.3):
+
+| `C` | fold `n_iter` | fold converged | mean CV PR-AUC |
+|---|---|---|---|
+| 0.01 | [274, 319, 406] | [True, True, True] | 0.4026 |
+| 0.1 | [671, 761, 771] | [True, True, True] | 0.4041 |
+| **1.0** (selected) | [1185, 1185, 987] | [True, True, True] | **0.4051** |
+| 10.0 | [1407, 1382, 1207] | [True, True, True] | 0.4048 |
+
+`n_iter` grows monotonically with `C` (less regularization → a harder optimization
+landscape), and `C=1.0` and `C=10.0` are close enough in mean CV PR-AUC (0.4051 vs.
+0.4048) that which one wins is sensitive to exactly this convergence behavior — see
+Sec.7.3 for why this made the LR fix substantively, not just cosmetically, important.
 
 Seed stability (`tests/test_train_pipeline_real_data.py`, reusing the already-selected
 hyperparameters rather than re-running CV): Logistic Regression is exactly
@@ -172,7 +195,7 @@ explicitly deferred to a later phase — most plausibly Phase 8 (Core Research
 Experiments) or the final report — not Phase 3. `results/phase3_baselines/metrics.json`
 carries `"test_partition_touched": false` as a durable, checkable record of this.
 
-## 7. Two real behaviors verified empirically (not assumed)
+## 7. Three real behaviors verified empirically (not assumed)
 
 ### 7.1 The CV-pool must be train+val, not train-only — a real bug, found and fixed
 
@@ -224,6 +247,50 @@ preserved across a save/reload round trip, and a reloaded model's `predict_proba
 matches the original's exactly with no extra caller action needed. Regression test:
 `tests/test_train_xgboost_model.py::test_train_xgboost_save_and_reload_preserves_early_stopping_predictions`.
 
+### 7.3 LR needed scaling AND a larger `max_iter` than expected — a real bug, found and fixed
+
+The first real-data run trained Logistic Regression on the **unscaled** Phase 2 feature
+matrix (`TransactionAmt` up to ~$31,937 sitting alongside `*_freq` columns in [0, 1] and
+`*_was_missing` 0/1 indicators) with `max_iter=200` — the sklearn default working
+assumption at the time. It logged 16 `ConvergenceWarning`s, and the resulting LR PR-AUC
+(0.2036) was suspiciously far below what a properly-conditioned linear model should
+achieve on this feature set.
+
+**Fix, part 1 (scaling)**: wrapped LR in `Pipeline([("scaler", StandardScaler()), ("lr",
+LogisticRegression(...))])` (Sec.2). This alone was the dominant effect: LR's val PR-AUC
+more than doubled, from 0.2036 to ~0.457.
+
+**Fix, part 2 (max_iter) — a second, distinct empirical finding**: raising `max_iter` to
+1000 (a first guess at "surely enough") was **still measured insufficient**: the
+CV-selected `C` (at the time, `C=10.0`) hit exactly 1000 iterations on every fold and in
+the final refit, `converged=False` throughout. Per `CLAUDE.md` Sec.17 ("prefer a small
+controlled empirical test... record the observed behavior"), this was not assumed
+harmless — a small controlled script fit `C=10.0` directly against the real train
+partition at `max_iter ∈ {1000, 3000, 8000}` and measured:
+
+| `max_iter` | actual `n_iter` | converged | val PR-AUC |
+|---|---|---|---|
+| 1000 | 1000 | False | 0.457063 |
+| 3000 | 1207 | **True** | 0.456131 |
+| 8000 | 1207 | **True** | 0.456131 |
+
+The true convergence point is `n_iter=1207`, identical at both 3000 and 8000 — so 3000
+is a **verified-sufficient** margin, not a second guess. The PR-AUC difference between
+the non-converged 1000-iteration fit and the actually-converged fit is tiny (~0.001) at
+`C=10.0` specifically — but this is NOT the same as "convergence doesn't matter" in
+general: after fixing `max_iter`, the CV-selected `C` itself changed from `10.0` to
+`1.0` (Sec.4's table), because `C=1.0`'s mean CV PR-AUC (0.4051) only edges out
+`C=10.0`'s (0.4048) once **both** are genuinely converged — under the old, non-converged
+`max_iter=200`/`1000` runs, this close comparison was not a reliable measurement.
+`max_iter=3000` is now the config value (`configs/phase3/baselines.yaml`), and every
+fit's actual `n_iter`/`converged` flag is recorded in `metrics.json`'s `cv_results`,
+never just assumed sufficient going forward.
+
+Regression tests: `tests/test_train_logistic_regression.py::test_fit_logistic_regression_scaler_is_fit_train_only`
+and `::test_fit_logistic_regression_converges_on_badly_scaled_data` (synthetic);
+`tests/test_train_pipeline_real_data.py::test_pipeline_real_data_logistic_regression_converges`
+(real data — asserts `converged is True` for the final model).
+
 ## 8. Reproducibility
 
 `configs/phase3/baselines.yaml` fixes `seed: 42`, used for every stochastic step (LR's
@@ -235,15 +302,19 @@ records the config hash, git commit, timestamp, and library versions
 
 - Synthetic/unit tests (`test_train_metrics.py`, `test_train_imbalance.py`,
   `test_train_cv.py`, `test_train_logistic_regression.py`, `test_train_xgboost_model.py`,
-  `test_train_data.py`, `test_train_pipeline_integration.py`): 51/51 passed.
+  `test_train_data.py`, `test_train_pipeline_integration.py`): 53/53 passed (51 + 2 new
+  LR scaling/convergence regression tests, Sec.7.3).
 - Real-data tests (`test_train_pipeline_real_data.py`, `skipif`-gated on the real Phase 2
-  cache being available): 6/6 passed, ~42 minutes (dominated by XGBoost's CV grid search
-  over ~380K rows × 832 features) — end-to-end pipeline run, PR-AUC-beats-baseline check,
-  non-accuracy-only metric check, test-partition-not-in-results check, and both
-  seed-stability checks.
-- Full project suite (`pytest -q`, all phases): 215 passed, 1 skipped (the
-  `concrete-ml` FHE-environment smoke test, expected — no Windows wheels; runs under the
-  WSL2 venv per `docs/environment.md`), 0 failed.
+  cache being available): 7/7 passed, ~82 minutes on the final `max_iter=3000` run
+  (dominated by LR's CV grid now genuinely converging at up to ~1400 iterations per fold,
+  plus XGBoost's CV grid search over ~380K rows × 832 features) — end-to-end pipeline
+  run, PR-AUC-beats-baseline check, non-accuracy-only metric check, the new LR-converges
+  check, test-partition-not-in-results check, and both seed-stability checks.
+- Full project suite (`pytest -q`, all phases, real-data tests deselected): 241 passed,
+  1 skipped (the `concrete-ml` FHE-environment smoke test, expected — no Windows wheels;
+  runs under the WSL2 venv per `docs/environment.md`), 0 failed. This count includes
+  Phase 4 modules already under active development alongside this fix, not only Phase 3
+  files — see `docs/features.md` for the Phase 4-specific test breakdown.
 
 ## 10. Deviations from `docs/plan.md`
 
@@ -272,3 +343,13 @@ records the config hash, git commit, timestamp, and library versions
    selection functions were repointed at the train+val pool while the final refit
    stayed train-only. Not anticipated in the original design; found only once the real
    Phase 2 data (not the initially too-permissive synthetic fixtures) was used.
+6. **A second real application-code bug was found and fixed, ahead of Phase 4**: LR's
+   missing feature scaling and insufficient `max_iter` (Sec.7.3), discovered because
+   Phase 4's feature-tier evaluation needed a genuinely-converged LR baseline to be
+   meaningful to compare against. `LogisticRegression` became a `Pipeline` with a
+   train-only-fit `StandardScaler`, and `max_iter` moved from a hardcoded 200 to a
+   config value (3000), verified empirically sufficient rather than guessed. This raised
+   LR's val PR-AUC from 0.2036 to 0.4561 and changed the CV-selected `C` from `10.0` to
+   `1.0` — a materially different, more trustworthy baseline, landed and re-verified
+   (full real-data suite + full project suite green, no Phase 1/2 artifact drift) as its
+   own commit before any Phase 4 code was written.

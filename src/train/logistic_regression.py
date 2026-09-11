@@ -15,13 +15,21 @@ then refit on `(X_train, y_train)` ONLY -- never val -- keeping val
 reserved for the model's headline evaluation
 (`src/train/pipeline.py`), never touched during hyperparameter selection.
 
-A plain `sklearn.linear_model.LogisticRegression` is used deliberately --
-not a `Pipeline` wrapping custom transformers -- because Concrete-ML's
-`concrete.ml.sklearn.LogisticRegression` (Phase 5+) is a drop-in,
-quantization-aware replacement for exactly this class over the same
-already-preprocessed float32 feature matrix; preprocessing itself stays
-client-side and plaintext per `docs/architecture.md` Sec.6, so nothing
-about *how* this model is fit needs to change for FHE compatibility.
+The model itself is `sklearn.linear_model.LogisticRegression` wrapped in an
+`sklearn.pipeline.Pipeline` with a `StandardScaler` as its only other step
+-- not a bare, unwrapped `LogisticRegression` -- because a real run against
+the actual Phase 2 feature matrix (`TransactionAmt` up to ~$31,937 sitting
+alongside frequency encodings in [0, 1] and 0/1 indicators) never converged
+within `lbfgs`'s default iteration budget (16 `ConvergenceWarning`s on the
+committed Phase 3 run; see `docs/baselines.md` Sec.7.3). `Pipeline.fit`
+fits `StandardScaler` only on the rows it is given, so it is train-only by
+construction in exactly the same way the final `LogisticRegression` step
+is -- both in each CV fold (fit on that fold's train window only) and in
+the final refit (fit on `X_train` only). This is still FHE-compatible:
+per `docs/architecture.md` Sec.6, feature preprocessing (which now
+includes this scaler) stays client-side and plaintext, and
+`concrete.ml.sklearn.LogisticRegression` (Phase 5+) remains a drop-in
+replacement for the pipeline's `lr` step over the scaler's output.
 """
 
 from __future__ import annotations
@@ -33,6 +41,8 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 from src.train.cv import build_positional_cv_folds
 from src.train.imbalance import class_weight_dict
@@ -44,18 +54,37 @@ logger = get_logger(__name__)
 
 @dataclass
 class LogisticRegressionResult:
-    model: LogisticRegression
+    model: Pipeline
     selected_c: float
     cv_results: list[dict[str, Any]]
+    n_iter: int
+    converged: bool
 
 
-def _fit_one(X: np.ndarray, y: np.ndarray, c: float, seed: int) -> LogisticRegression:
-    model = LogisticRegression(
-        C=c,
-        class_weight=class_weight_dict(y),
-        solver="lbfgs",
-        max_iter=200,
-        random_state=seed,
+def _n_iter_and_converged(model: Pipeline, max_iter: int) -> tuple[int, bool]:
+    """`LogisticRegression.n_iter_` is an array (one entry per class for
+    some solvers); `lbfgs` on a binary problem gives a single-element
+    array. Take its max so a partial-convergence edge case can't be
+    silently missed."""
+    n_iter = int(np.max(model.named_steps["lr"].n_iter_))
+    return n_iter, n_iter < max_iter
+
+
+def fit_logistic_regression(X: np.ndarray, y: np.ndarray, c: float, seed: int, max_iter: int) -> Pipeline:
+    model = Pipeline(
+        [
+            ("scaler", StandardScaler()),
+            (
+                "lr",
+                LogisticRegression(
+                    C=c,
+                    class_weight=class_weight_dict(y),
+                    solver="lbfgs",
+                    max_iter=max_iter,
+                    random_state=seed,
+                ),
+            ),
+        ]
     )
     model.fit(X, y)
     return model
@@ -68,6 +97,7 @@ def select_c_via_cv(
     boundaries: data_split.SplitBoundaries,
     c_grid: list[float],
     seed: int,
+    max_iter: int,
 ) -> list[dict[str, Any]]:
     """Mean CV PR-AUC for each candidate `C`, using Phase 2's expanding-window folds.
 
@@ -81,14 +111,27 @@ def select_c_via_cv(
     results = []
     for c in c_grid:
         fold_scores = []
+        fold_n_iter = []
+        fold_converged = []
         for fold_index, train_pos, eval_pos in folds:
-            model = _fit_one(X_arr[train_pos], y_arr[train_pos], c, seed)
+            model = fit_logistic_regression(X_arr[train_pos], y_arr[train_pos], c, seed, max_iter)
             y_prob = model.predict_proba(X_arr[eval_pos])[:, 1]
             score = float(average_precision_score(y_arr[eval_pos], y_prob))
             fold_scores.append(score)
+            n_iter, converged = _n_iter_and_converged(model, max_iter)
+            fold_n_iter.append(n_iter)
+            fold_converged.append(converged)
             logger.info(
                 "LR CV fold scored",
-                extra={"extra_fields": {"C": c, "fold_index": fold_index, "pr_auc": score}},
+                extra={
+                    "extra_fields": {
+                        "C": c,
+                        "fold_index": fold_index,
+                        "pr_auc": score,
+                        "n_iter": n_iter,
+                        "converged": converged,
+                    }
+                },
             )
         results.append(
             {
@@ -96,6 +139,8 @@ def select_c_via_cv(
                 "fold_pr_auc": fold_scores,
                 "mean_pr_auc": float(np.mean(fold_scores)),
                 "std_pr_auc": float(np.std(fold_scores)),
+                "fold_n_iter": fold_n_iter,
+                "fold_converged": fold_converged,
             }
         )
     return results
@@ -110,11 +155,12 @@ def train_logistic_regression(
     boundaries: data_split.SplitBoundaries,
     c_grid: list[float],
     seed: int,
+    max_iter: int,
 ) -> LogisticRegressionResult:
     """`(X_train, y_train)`: train-only, used for the final refit.
     `(X_cv, y_cv, cv_dt)`: train+val, used only for CV-based `C` selection.
     See module docstring for why these must NOT be the same data."""
-    cv_results = select_c_via_cv(X_cv, y_cv, cv_dt, boundaries, c_grid, seed)
+    cv_results = select_c_via_cv(X_cv, y_cv, cv_dt, boundaries, c_grid, seed, max_iter)
     best = max(cv_results, key=lambda r: r["mean_pr_auc"])
     selected_c = best["C"]
     logger.info(
@@ -122,5 +168,13 @@ def train_logistic_regression(
         extra={"extra_fields": {"selected_C": selected_c, "mean_cv_pr_auc": best["mean_pr_auc"]}},
     )
 
-    final_model = _fit_one(X_train.to_numpy(), y_train.to_numpy(), selected_c, seed)
-    return LogisticRegressionResult(model=final_model, selected_c=selected_c, cv_results=cv_results)
+    final_model = fit_logistic_regression(X_train.to_numpy(), y_train.to_numpy(), selected_c, seed, max_iter)
+    n_iter, converged = _n_iter_and_converged(final_model, max_iter)
+    if not converged:
+        logger.warning(
+            "Final LogisticRegression did not converge within max_iter",
+            extra={"extra_fields": {"max_iter": max_iter, "n_iter": n_iter}},
+        )
+    return LogisticRegressionResult(
+        model=final_model, selected_c=selected_c, cv_results=cv_results, n_iter=n_iter, converged=converged
+    )

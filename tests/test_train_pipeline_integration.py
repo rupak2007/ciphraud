@@ -103,7 +103,7 @@ def synthetic_config(tmp_path: Path, monkeypatch) -> tuple[str, Phase2Features]:
         "seed": 42,
         "phase2_config": "configs/phase2/pipeline.yaml",
         "models": {
-            "logistic_regression": {"c_grid": [0.1, 1.0]},
+            "logistic_regression": {"c_grid": [0.1, 1.0], "max_iter": 200},
             "xgboost": {"max_depth_grid": [3], "learning_rate_grid": [0.1]},
         },
         "error_analysis": {"threshold_metric": "f1"},
