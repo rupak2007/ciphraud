@@ -1,0 +1,74 @@
+{
+  "all_gates_passed": false,
+  "circuit_stats": {
+    "compile_seconds": 112.991065381,
+    "complexity": 1273.0,
+    "global_p_error": 5.331805212857728e-13,
+    "p_error": 5.331805212857728e-13,
+    "programmable_bootstrap_count": 0,
+    "size_of_bootstrap_keys_bytes": 0,
+    "size_of_inputs_bytes": 480,
+    "size_of_keyswitch_keys_bytes": 0,
+    "size_of_outputs_bytes": 10192,
+    "size_of_secret_keys_bytes": 10184
+  },
+  "correctness_report": {
+    "t0": {
+      "max_abs_diff": 1.1102230246251565e-16,
+      "mean_abs_diff": 1.604018348057498e-19,
+      "passed": true,
+      "tolerance": 1e-09
+    },
+    "t1": {
+      "exact_match": true,
+      "max_abs_diff": 0.0,
+      "n_rows_executed": 100,
+      "passed": true
+    },
+    "t2": {
+      "exact_match": true,
+      "max_abs_diff": 0.0,
+      "n_mismatched": 0,
+      "n_total": 105088,
+      "passed": true
+    },
+    "t3": {
+      "decision_agreement": 0.9576355054811205,
+      "float_confusion_matrix": {
+        "fn": 2608,
+        "fp": 2259,
+        "tn": 98739,
+        "tp": 1482
+      },
+      "float_pr_auc": 0.3484381889851565,
+      "float_roc_auc": 0.8218975964616405,
+      "max_abs_prob_diff": 1.0,
+      "max_pr_auc_drop": 0.01,
+      "mean_abs_prob_diff": 0.351259963683393,
+      "min_decision_agreement": 0.99,
+      "passed": false,
+      "pr_auc_drop": 0.2930454238417987,
+      "quantized_confusion_matrix": {
+        "fn": 3754,
+        "fp": 2735,
+        "tn": 98263,
+        "tp": 336
+      },
+      "quantized_pr_auc": 0.05539276514335778,
+      "quantized_roc_auc": 0.5701289141700789
+    }
+  },
+  "n_bits": 8,
+  "n_execute_sample": 100,
+  "n_features": 20,
+  "n_train_calibration": 380815,
+  "n_val": 105088,
+  "round_trip_timing": {
+    "keygen_seconds": 0.00010645700012901216,
+    "max_row_seconds": 0.024025674000085928,
+    "mean_row_seconds": 0.009924492159991588,
+    "min_row_seconds": 0.006497152999827449
+  },
+  "test_partition_touched": false,
+  "tier": "top_20"
+}
