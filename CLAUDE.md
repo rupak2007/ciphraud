@@ -1,8 +1,8 @@
-# CLAUDE.md — Fraud Detection Using Fully Homomorphic Encryption
+# CLAUDE.md — Ciphraud
 
 ## 1. Project Identity
 
-Project: **Latency-Bounded Privacy-Preserving Fraud Detection Under FHE**
+Project: **Ciphraud** — Latency-Bounded Privacy-Preserving Fraud Detection Under FHE
 
 The project builds a rigorous, research-grade fraud detection system in which a client encrypts transaction features with Fully Homomorphic Encryption (FHE), an inference server evaluates the ML model directly on ciphertext, and the client decrypts the returned encrypted result.
 

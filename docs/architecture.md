@@ -1,4 +1,4 @@
-# Architecture — Latency-Bounded Privacy-Preserving Fraud Detection Under FHE
+# Architecture — Ciphraud (Latency-Bounded Privacy-Preserving Fraud Detection Under FHE)
 
 ## 1. System Overview
 
