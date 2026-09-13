@@ -188,7 +188,7 @@ sudo apt-get install -y cmake build-essential python3-dev python3.12-dev python3
 python3 -m venv ~/.venvs/fhe-fraud-detection
 ~/.venvs/fhe-fraud-detection/bin/python -m pip install -r requirements-fhe.txt
 # Run project code/tests from the Windows-mounted project directory:
-cd "/mnt/c/Users/Rupak/Downloads/ML PROJECTS/Fraud Detection Using FHE"
+cd "/mnt/c/Users/Rupak/Downloads/ML PROJECTS/Ciphraud"
 ~/.venvs/fhe-fraud-detection/bin/python -m pytest
 ```
 
@@ -220,3 +220,18 @@ empirically, not assumed: the real Phase 5 run's T0 check (WSL-reconstructed
 float model vs. the Windows-computed reference) measured a max absolute
 difference of `1.11e-16` -- true float64 machine-epsilon-level agreement,
 not merely "close enough." Full detail: `docs/fhe_poc.md` Sec.2/Sec.6.1.
+
+## Post-Phase-5 addendum: project renamed to Ciphraud
+
+After Phase 5, the project was renamed **Ciphraud**; the local project
+folder and the GitHub repository were both renamed to match (previously
+`Fraud Detection Using FHE` / `fraud-detection-fhe`). This is a naming
+change only -- no code, data, model, or methodology was touched. The
+historical narrative above (Phase 0's environment setup, including the
+`ld` linker error) is left exactly as it was recorded, quoting the old
+path, because it is a factual record of what actually happened at the
+time; only the "How to reproduce this environment" command above was
+updated to the current path so it stays actionable. Any other historical
+document in this repo that quotes the old path (e.g. Phase 5's real WSL
+run logs or manifest fields recording a Windows git commit hash) is left
+untouched for the same reason.

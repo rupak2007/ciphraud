@@ -1,4 +1,4 @@
-# PRD — Latency-Bounded Privacy-Preserving Fraud Detection Under FHE
+# PRD — Ciphraud (Latency-Bounded Privacy-Preserving Fraud Detection Under FHE)
 
 ## 1. Project Overview
 
