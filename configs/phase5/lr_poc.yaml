@@ -1,0 +1,72 @@
+# Phase 5 FHE proof-of-concept config. Loaded via src.config.load_config.
+# See docs/fhe_poc.md for the full methodology.
+#
+# Logistic Regression on the committed Phase 4 top_20 tier. docs/plan.md
+# Phase 5's literal scope: "start with Logistic Regression, the simplest"
+# on "the smallest feature tier". Do not add other models or tiers here
+# (that is Phase 8's benchmark grid).
+#
+# n_bits=8 (the original PoC value) FAILED T3 (docs/fhe_poc.md Sec.5/8):
+# decision agreement 0.9576 (<0.99), PR-AUC drop 0.2930 (>0.01). Measured
+# cause: several top_20 columns (C8, V187, V294, V308, TransactionAmt)
+# have their 1st-99th percentile in well under 4% of their full min-max
+# range, so an 8-bit uniform min/max-calibrated quantizer wastes nearly
+# all 256 levels on their sparse tail.
+#
+# A single controlled follow-up experiment at n_bits=16 (the highest
+# n_bits Concrete-ML can actually compile for a circuit shaped like this
+# one -- 18+ fails with `NoParametersFound`, confirmed empirically) also
+# FAILED T3: decision agreement 0.9614, PR-AUC drop 0.2901 -- essentially
+# unchanged. This confirms the failure is not resolution-limited (more
+# quantization levels alone does not fix a uniform min/max range that is
+# badly allocated for heavy-tailed features). Restored to n_bits=8 (the
+# plan.md-scoped PoC value) since raising it further is not viable and
+# is not being pursued without further explicit approval. See
+# docs/fhe_poc.md Sec.5/8 for full detail on both measured results.
+n_bits: 8
+
+# Fixes a config bug introduced while editing this file for the n_bits=16
+# experiment: this key was accidentally dropped, which crashed the
+# n_bits=16 rerun's T1 step with `KeyError: 'seed'` at src/fhe/poc.py:180
+# before any artifact was written (results/phase5_fhe_poc/ still holds the
+# original, valid n_bits=8 output -- nothing was lost). Restored to 42,
+# matching every other seeded stage of this project.
+seed: 42
+
+# Tolerance for re-verifying the committed Phase 4 top_20 LR model's val
+# PR-AUC after reloading it (no re-fit) -- same pattern and same tolerance
+# as src/features/pipeline.py::_verify_phase3_integrity, for the same
+# reason: a reload-and-predict involves no fitting, so it should match to
+# near-exact floating-point precision.
+phase4_integrity_tolerance: 1.0e-6
+
+execute_sample:
+  # Real encrypt->run->decrypt round trips (E5/T1) are slow (per-row
+  # keygen-amortized wall time not yet measured for this project -- see
+  # docs/fhe_poc.md). 100 rows, stratified to include both classes, is
+  # enough to satisfy docs/plan.md's "at least one full round trip"
+  # exit criterion without turning this PoC into a benchmark (Phase 7).
+  n: 100
+  n_positive: 25
+  split: val
+
+tolerances:
+  # T0 (cross-environment transfer, src/fhe/validate/correctness.py): the
+  # WSL-reconstructed float model vs. the Windows reference probabilities
+  # is the SAME float64 arithmetic on the SAME numbers -- any drift beyond
+  # float64 noise means the handoff itself is broken. Fail hard.
+  t0_max_abs_diff: 1.0e-9
+  # T1 (real FHE execution) and T2 (fhe="simulate") require EXACT
+  # agreement -- no tolerance parameter for either; see
+  # src/fhe/validate/correctness.py.
+  # T3 (quantization: fhe="disable" vs. float), approved by the user:
+  # >=99% decision agreement at the tier's val-selected F1 threshold, and
+  # PR-AUC must not drop by more than 0.01 vs. the float reference.
+  t3_min_decision_agreement: 0.99
+  t3_max_pr_auc_drop: 0.01
+
+output:
+  handoff_npz: data/fhe_handoff/lr_top20.npz
+  handoff_manifest: results/phase5_fhe_poc/handoff_manifest.json
+  params_path: results/phase5_fhe_poc/lr_top20_params.json
+  dir: results/phase5_fhe_poc

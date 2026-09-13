@@ -201,3 +201,22 @@ cd "/mnt/c/Users/Rupak/Downloads/ML PROJECTS/Fraud Detection Using FHE"
 | `import concrete.ml` | WSL2 | Pass |
 | `LogisticRegression(...).compile()` + clear predict + FHE-simulate predict | WSL2 | Pass |
 | `import concrete-ml` (native Windows) | Windows | **Fails** -- no wheel exists for any platform tag; documented above |
+
+## Phase 5 addendum: resolving the cross-environment model/data handoff
+
+This document flagged (above) that "a plaintext model trained under the
+Windows venv's package versions is not guaranteed to deserialize/behave
+identically when loaded under the WSL2 FHE venv's older scikit-learn/numpy",
+and deferred resolving it to Phase 5.
+
+**Resolution**: never cross the boundary with a pickle. `src/fhe/export.py`
+(Windows) extracts the fitted model's exact numeric parameters into plain
+JSON, and the calibration/correctness-check feature matrices into a
+pickle-free `.npz` (`allow_pickle=False` enforced on load). `src/fhe/handoff.py`
+reimplements `predict_proba` from those parameters using only numpy
+arithmetic, so it is reproducible from the parameters alone regardless of
+which scikit-learn version is installed on either side. Verified
+empirically, not assumed: the real Phase 5 run's T0 check (WSL-reconstructed
+float model vs. the Windows-computed reference) measured a max absolute
+difference of `1.11e-16` -- true float64 machine-epsilon-level agreement,
+not merely "close enough." Full detail: `docs/fhe_poc.md` Sec.2/Sec.6.1.
