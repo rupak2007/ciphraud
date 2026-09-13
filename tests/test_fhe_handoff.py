@@ -1,0 +1,135 @@
+"""Tests for src/fhe/handoff.py -- runs in both the Windows and WSL FHE
+venvs (numpy + stdlib only), since the handoff format itself must be
+readable/writable identically in both."""
+
+import numpy as np
+import pytest
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+
+from src.fhe.handoff import (
+    HandoffError,
+    extract_lr_pipeline_params,
+    load_handoff,
+    rebuild_pipeline_predict_proba,
+    save_handoff,
+)
+
+
+@pytest.fixture
+def fitted_pipeline():
+    rng = np.random.RandomState(0)
+    X = rng.randn(300, 5) * np.array([1.0, 50.0, 0.01, 200.0, 3.0])  # deliberately unscaled
+    y = (X[:, 0] + X[:, 1] / 50.0 > 0).astype(int)
+    pipeline = Pipeline([("scaler", StandardScaler()), ("lr", LogisticRegression(C=2.0, max_iter=500))])
+    pipeline.fit(X, y)
+    return pipeline, X, y
+
+
+def test_extract_lr_pipeline_params_shapes(fitted_pipeline):
+    pipeline, X, _ = fitted_pipeline
+    params = extract_lr_pipeline_params(pipeline)
+    assert params["n_features"] == X.shape[1]
+    assert len(params["scaler_mean"]) == X.shape[1]
+    assert len(params["scaler_scale"]) == X.shape[1]
+    assert len(params["lr_coef"][0]) == X.shape[1]
+    assert params["lr_C"] == 2.0
+
+
+def test_rebuild_pipeline_predict_proba_matches_original_exactly(fitted_pipeline):
+    pipeline, X, _ = fitted_pipeline
+    params = extract_lr_pipeline_params(pipeline)
+    original = pipeline.predict_proba(X)
+    rebuilt = rebuild_pipeline_predict_proba(params, X)
+    np.testing.assert_allclose(original, rebuilt, atol=1e-12)
+
+
+def test_rebuild_pipeline_predict_proba_matches_on_unseen_rows(fitted_pipeline):
+    """Not just the training rows -- the val-shaped use case."""
+    pipeline, X, _ = fitted_pipeline
+    rng = np.random.RandomState(1)
+    X_new = rng.randn(50, X.shape[1]) * np.array([1.0, 50.0, 0.01, 200.0, 3.0])
+    params = extract_lr_pipeline_params(pipeline)
+    np.testing.assert_allclose(pipeline.predict_proba(X_new), rebuild_pipeline_predict_proba(params, X_new), atol=1e-12)
+
+
+def test_save_and_load_handoff_round_trip(fitted_pipeline, tmp_path):
+    pipeline, X, y = fitted_pipeline
+    columns = [f"f{i}" for i in range(X.shape[1])]
+    ref_prob = pipeline.predict_proba(X[:50])[:, 1]
+
+    npz_path = tmp_path / "handoff.npz"
+    manifest_path = tmp_path / "manifest.json"
+    save_handoff(
+        npz_path, manifest_path,
+        X_train=X[50:], X_val=X[:50], y_val=y[:50],
+        val_transaction_ids=np.arange(50), reference_val_prob=ref_prob,
+        columns=columns, manifest_extra={"tier": "top_20"},
+    )
+
+    manifest, arrays = load_handoff(npz_path, manifest_path)
+    assert manifest["columns"] == columns
+    assert manifest["n_features"] == X.shape[1]
+    assert manifest["tier"] == "top_20"
+    np.testing.assert_array_equal(arrays["X_val"], X[:50])
+    np.testing.assert_array_equal(arrays["y_val"], y[:50])
+    np.testing.assert_allclose(arrays["reference_val_prob"], ref_prob)
+
+
+def test_load_handoff_rejects_missing_files(tmp_path):
+    with pytest.raises(HandoffError, match="not found"):
+        load_handoff(tmp_path / "missing.npz", tmp_path / "missing.json")
+
+
+def test_load_handoff_rejects_tampered_npz(fitted_pipeline, tmp_path):
+    pipeline, X, y = fitted_pipeline
+    columns = [f"f{i}" for i in range(X.shape[1])]
+    npz_path = tmp_path / "handoff.npz"
+    manifest_path = tmp_path / "manifest.json"
+    save_handoff(
+        npz_path, manifest_path,
+        X_train=X[50:], X_val=X[:50], y_val=y[:50],
+        val_transaction_ids=np.arange(50), reference_val_prob=pipeline.predict_proba(X[:50])[:, 1],
+        columns=columns, manifest_extra={},
+    )
+    # Tamper: re-save the npz with different content but leave the manifest's
+    # recorded hash pointing at the original.
+    with open(npz_path, "wb") as f:
+        np.savez(f, X_train=X[50:] + 1.0, X_val=X[:50], y_val=y[:50],
+                  val_transaction_ids=np.arange(50), reference_val_prob=np.zeros(50))
+
+    with pytest.raises(HandoffError, match="SHA-256 mismatch"):
+        load_handoff(npz_path, manifest_path)
+
+
+def test_load_handoff_rejects_manifest_column_count_mismatch(fitted_pipeline, tmp_path):
+    pipeline, X, y = fitted_pipeline
+    columns = [f"f{i}" for i in range(X.shape[1])]
+    npz_path = tmp_path / "handoff.npz"
+    manifest_path = tmp_path / "manifest.json"
+    save_handoff(
+        npz_path, manifest_path,
+        X_train=X[50:], X_val=X[:50], y_val=y[:50],
+        val_transaction_ids=np.arange(50), reference_val_prob=pipeline.predict_proba(X[:50])[:, 1],
+        columns=columns, manifest_extra={},
+    )
+    import json
+
+    manifest = json.loads(manifest_path.read_text())
+    manifest["columns"] = columns[:-1]  # drop one column name, now mismatched
+    manifest_path.write_text(json.dumps(manifest))
+
+    with pytest.raises(HandoffError, match="columns"):
+        load_handoff(npz_path, manifest_path)
+
+
+def test_save_handoff_rejects_non_npz_suffix(fitted_pipeline, tmp_path):
+    pipeline, X, y = fitted_pipeline
+    with pytest.raises(HandoffError, match="npz_path"):
+        save_handoff(
+            tmp_path / "handoff.bin", tmp_path / "manifest.json",
+            X_train=X, X_val=X[:10], y_val=y[:10],
+            val_transaction_ids=np.arange(10), reference_val_prob=np.zeros(10),
+            columns=["a"] * X.shape[1], manifest_extra={},
+        )

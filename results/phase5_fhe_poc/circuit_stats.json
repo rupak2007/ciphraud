@@ -1,0 +1,12 @@
+{
+  "compile_seconds": 112.991065381,
+  "complexity": 1273.0,
+  "global_p_error": 5.331805212857728e-13,
+  "p_error": 5.331805212857728e-13,
+  "programmable_bootstrap_count": 0,
+  "size_of_bootstrap_keys_bytes": 0,
+  "size_of_inputs_bytes": 480,
+  "size_of_keyswitch_keys_bytes": 0,
+  "size_of_outputs_bytes": 10192,
+  "size_of_secret_keys_bytes": 10184
+}

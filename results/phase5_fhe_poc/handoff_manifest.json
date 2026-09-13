@@ -1,0 +1,41 @@
+{
+  "columns": [
+    "V258",
+    "C14",
+    "V294",
+    "C13",
+    "C1",
+    "TransactionAmt",
+    "V70",
+    "card1",
+    "C8",
+    "D2",
+    "card2",
+    "card6_freq",
+    "addr1",
+    "V308",
+    "C11",
+    "D15",
+    "C5",
+    "V187",
+    "P_emaildomain_freq",
+    "M4_freq"
+  ],
+  "n_features": 20,
+  "n_train": 380815,
+  "n_val": 105088,
+  "npz_sha256": "c6f5c222a077695529fe64dbcbfc4b61bf2f411e05c1e68640fa8390a97fe85b",
+  "params_path": "results/phase5_fhe_poc/lr_top20_params.json",
+  "params_sha256": "5c2cbebcbb23d01928d741e1b07d8f3807c6c3fe87638787afa50f98cc64a48b",
+  "phase4_model_sha256": "604c0d86e5824692c36e5df9245826081308fa51df29749a3823b60d765528f9",
+  "phase4_tiers_membership_hash": "ffe76f3b2c4af9ca3abc63a13026908607e1dfdda86baa4863806bb3b97d3d86",
+  "threshold": 0.7086411714553833,
+  "tier": "top_20",
+  "windows_git_commit": "f8e8bfe2802ba0a8ef20200f90c26bc4687ddc1e",
+  "windows_library_versions": {
+    "PyYAML": "6.0.3",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.9.0"
+  }
+}
