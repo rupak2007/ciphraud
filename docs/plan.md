@@ -316,6 +316,23 @@ latency figures.
 document conditions; increase trial count if variance is high rather
 than reporting noisy single-trial numbers.
 
+**Status: CLOSED, exit criterion met.** The config-driven harness
+(`src/benchmark/`) implements every required measurement -- repeated-trial
+latency (plaintext and FHE) with mean/std, peak memory, ciphertext size,
+compile time kept separate from inference latency, and config-hash-keyed
+structured result storage -- by reusing, never re-validating, the existing
+Phase 5/6 compile/handoff/provenance infrastructure. The smoke test
+(`configs/phase7/smoke.yaml`, 2 configurations, 2 trials each) passed with
+sane, fully reproducible output: a Logistic Regression configuration (zero
+programmable bootstraps, ~99ms real FHE round trip) and an XGBoost
+configuration (`top_50`, 151,986 bootstraps, ~22.6-minute real FHE round
+trip), both with bit-identical decrypted output across every trial
+(`docs/benchmark.md` Sec.6). No Phase 1-6 model, tier, config, or result was
+touched. Deviations (2 configurations rather than 3, 2 trials rather than
+Phase 8's eventual ≥5) are documented in `docs/benchmark.md` Sec.8, both
+explicitly permitted by this phase's own "few trials"/"2-3" wording, not
+guessed.
+
 ---
 
 ## Phase 8 — Core Research Experiments

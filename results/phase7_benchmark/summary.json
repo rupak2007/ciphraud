@@ -1,0 +1,40 @@
+{
+  "configurations": [
+    {
+      "ciphertext_input_bytes": 480,
+      "ciphertext_output_bytes": 10192,
+      "compile_seconds": 118.09086843699998,
+      "config_hash": "ae19211c2a11c397",
+      "fhe_mean_seconds": 0.09935768349998852,
+      "fhe_outputs_reproducible": true,
+      "fhe_std_seconds": 0.0861987681658776,
+      "label": "lr_top20_bits8",
+      "model_type": "lr",
+      "n_bits": 8,
+      "plaintext_mean_seconds": 0.0015592040000171892,
+      "plaintext_std_seconds": 0.002114172908227023,
+      "programmable_bootstrap_count": 0,
+      "tier": null
+    },
+    {
+      "ciphertext_input_bytes": 1200,
+      "ciphertext_output_bytes": 3589848,
+      "compile_seconds": 55.90112578499998,
+      "config_hash": "dd83f858add9d27f",
+      "fhe_mean_seconds": 1358.5723503595,
+      "fhe_outputs_reproducible": true,
+      "fhe_std_seconds": 88.59168900965933,
+      "label": "xgboost_top50_bits8",
+      "model_type": "xgboost",
+      "n_bits": 8,
+      "plaintext_mean_seconds": 0.0070137374999887925,
+      "plaintext_std_seconds": 0.008385974590792876,
+      "programmable_bootstrap_count": 151986,
+      "tier": "top_50"
+    }
+  ],
+  "n_bits_by_config": {
+    "lr_top20_bits8": 8,
+    "xgboost_top50_bits8": 8
+  }
+}

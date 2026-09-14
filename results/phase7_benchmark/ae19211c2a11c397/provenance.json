@@ -1,0 +1,17 @@
+{
+  "config_hash": "941cb4d772f53687",
+  "config_path": "configs/phase7/smoke.yaml",
+  "git_commit": "51962e2e91fd593382d208e4f493c12345418d0f",
+  "library_versions": {
+    "PyYAML": "6.0.3",
+    "concrete-ml": "1.9.0",
+    "concrete-python": "2.10.0",
+    "numpy": "1.26.4",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.5.0",
+    "xgboost": "1.6.2"
+  },
+  "raw_file_sha256": {},
+  "seed": 42,
+  "timestamp_utc": "2026-09-14T13:13:06.667818+00:00"
+}

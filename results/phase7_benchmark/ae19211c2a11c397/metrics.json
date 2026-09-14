@@ -1,0 +1,103 @@
+{
+  "ciphertext_size_bytes": {
+    "input": 480,
+    "output": 10192
+  },
+  "circuit_stats": {
+    "complexity": 1273.0,
+    "global_p_error": 5.331805212857728e-13,
+    "p_error": 5.331805212857728e-13,
+    "programmable_bootstrap_count": 0,
+    "size_of_bootstrap_keys_bytes": 0,
+    "size_of_inputs_bytes": 480,
+    "size_of_keyswitch_keys_bytes": 0,
+    "size_of_outputs_bytes": 10192,
+    "size_of_secret_keys_bytes": 10184
+  },
+  "compile_seconds": 118.09086843699998,
+  "config_hash": "ae19211c2a11c397",
+  "fhe_latency": {
+    "decrypt": {
+      "max_seconds": 0.0012322750000066662,
+      "mean_seconds": 0.001012321000018801,
+      "min_seconds": 0.0007923670000309357,
+      "n_trials": 2,
+      "std_seconds": 0.0003110619298810506,
+      "trials_seconds": [
+        0.0012322750000066662,
+        0.0007923670000309357
+      ]
+    },
+    "encrypt": {
+      "max_seconds": 0.008345515999963027,
+      "mean_seconds": 0.005862678999989157,
+      "min_seconds": 0.0033798420000152873,
+      "n_trials": 2,
+      "std_seconds": 0.0035112617585247746,
+      "trials_seconds": [
+        0.0033798420000152873,
+        0.008345515999963027
+      ]
+    },
+    "keygen_seconds": 0.0011260329999913665,
+    "outputs_reproducible": true,
+    "run": {
+      "max_seconds": 0.15568914199997153,
+      "mean_seconds": 0.09247732099998984,
+      "min_seconds": 0.02926550000000816,
+      "n_trials": 2,
+      "std_seconds": 0.08939501456047451,
+      "trials_seconds": [
+        0.15568914199997153,
+        0.02926550000000816
+      ]
+    },
+    "throughput_requests_per_second": 10.06464688762712,
+    "total": {
+      "max_seconds": 0.16030941700000767,
+      "mean_seconds": 0.09935768349998852,
+      "min_seconds": 0.03840594999996938,
+      "n_trials": 2,
+      "std_seconds": 0.0861987681658776,
+      "trials_seconds": [
+        0.16030941700000767,
+        0.03840594999996938
+      ]
+    }
+  },
+  "key_size_bytes": {
+    "bootstrap": 0,
+    "keyswitch": 0,
+    "secret": 10184
+  },
+  "label": "lr_top20_bits8",
+  "model_type": "lr",
+  "n_bits": 8,
+  "n_features": 20,
+  "n_positive": 0,
+  "peak_rss_mb": 903.67578125,
+  "plaintext_latency": {
+    "max_seconds": 0.003054150000025402,
+    "mean_seconds": 0.0015592040000171892,
+    "min_seconds": 6.425800000897652e-05,
+    "n_trials": 2,
+    "outputs_reproducible": true,
+    "std_seconds": 0.002114172908227023,
+    "throughput_requests_per_second": 641.3528954447113,
+    "trials_seconds": [
+      0.003054150000025402,
+      6.425800000897652e-05
+    ]
+  },
+  "row_selection": {
+    "n_positive": 0,
+    "position": 32148,
+    "y_true": 0
+  },
+  "seed": 42,
+  "source_config": "configs/phase5/lr_poc.yaml",
+  "source_config_hash": "617c2ea546ad7a4e",
+  "test_partition_touched": false,
+  "tier": null,
+  "trials": 2
+}
