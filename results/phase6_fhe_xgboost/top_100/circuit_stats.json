@@ -1,0 +1,18 @@
+{
+  "complexity": 10194240678525.0,
+  "global_p_error": 8.692623818031609e-13,
+  "max_integer_bit_width": 10,
+  "n_bits_inputs": [
+    8
+  ],
+  "n_bits_output": 8,
+  "n_features": 100,
+  "n_trees": 271,
+  "p_error": 8.692623818031609e-13,
+  "programmable_bootstrap_count": 188074,
+  "size_of_bootstrap_keys_bytes": 840876032,
+  "size_of_inputs_bytes": 2400,
+  "size_of_keyswitch_keys_bytes": 115953664,
+  "size_of_outputs_bytes": 4442232,
+  "size_of_secret_keys_bytes": 59136
+}

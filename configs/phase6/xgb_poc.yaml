@@ -1,0 +1,115 @@
+# Phase 6 FHE XGBoost config. Loaded via src.config.load_config.
+# See docs/fhe_xgboost.md for the full methodology.
+#
+# docs/plan.md Phase 6: compile XGBoost per feature tier at ONE initial
+# bit-width, validate every configuration, record compile time. Not the
+# bit-width sweep (Phase 8) and not a benchmark (Phase 7).
+phase: 6
+seed: 42
+
+phase2_config: configs/phase2/pipeline.yaml
+phase4_config: configs/phase4/features.yaml
+
+# The committed Phase 4 tiers, used exactly (tiers.json order), each with its
+# own committed Phase 4 XGBoost model as the plaintext reference.
+tiers: [top_20, top_50, top_100]
+
+# docs/plan.md and docs/prd.md name no number for "an initial bit-width";
+# 8 is Phase 5's initial value, kept for consistency across model types.
+n_bits: 8
+
+# Reloading a committed Phase 4 model involves no fitting, so its val PR-AUC
+# must match the committed value to near floating-point precision (same
+# tolerance Phase 5 uses for the LR tier model).
+phase4_integrity_tolerance: 1.0e-6
+
+# Quantization calibration / compile inputset: the train partition only,
+# never val or test. "all" (Phase 5's convention for LR) is infeasible here:
+# Concrete-ML's from_sklearn_model materializes a (trees x calibration rows x
+# nodes) tensor for the WHOLE calibration set in one call, so cost scales with
+# tree count, not just feature count. Measured on the real top_20 booster (358
+# trees -- the most of the three tiers, so the worst case) in the WSL venv
+# (3.8 GiB RAM): 2000 rows -> 8.9s / 1.87 GB peak rss; 3000 rows -> 22.5s /
+# 2.41 GB; 5000 rows -> 119.8s / 3.33 GB (87% of the ceiling, non-linear
+# slowdown consistent with swap pressure, not a safe margin). 3000 rows is
+# chosen for a comfortable safety margin (~1.4 GB headroom) while still being
+# fast; include_extremes adds each feature's min/max row on top so the
+# quantization range covers the true train-set extremes regardless of the
+# random subsample. Documented as a Phase 6 scope deviation from Phase 5's
+# "all" convention -- see docs/fhe_xgboost.md.
+calibration:
+  rows: 3000
+  include_extremes: true
+
+# Rows per call to the clear-quantized tree forward; bounds memory, not results.
+disable_chunk_size: 1000
+
+# T2: rows of val simulated (official Circuit.simulate, one row at a time --
+# Concrete-ML has no batched simulate). Measured on the real top_20 circuit
+# (358 trees, PBS=248,452, the compiled config -- not a toy): mean 0.249 s/row
+# (15-row sample: min 0.052s, max 2.184s). "all" (Phase 5's LR convention) is
+# ~105,088 val rows -> ~7.3h for top_20 alone; LR's circuit had zero PBS so
+# "all" was cheap there, but XGBoost's PBS-bearing circuit makes full-val
+# simulation a genuine benchmark-scale run, not a correctness-gate-scale one.
+# Scoped down to a seeded 5000-row sample (~21 min/tier at the measured rate)
+# -- large enough to have a real chance of catching a simulate/disable
+# divergence, small enough to run and re-run reliably in this environment
+# (the WSL2 VM has spontaneously restarted twice this session, each time
+# killing an unattended multi-minute job; chunk_size below still checkpoints
+# so a restart mid-run resumes rather than restarts). Documented as a Phase 6
+# scope deviation from Phase 5's "all" convention -- see docs/fhe_xgboost.md.
+t2:
+  rows: 5000
+  chunk_size: 1000
+
+# T1: real encrypt -> run -> decrypt, one row at a time, no batching.
+# Measured directly on the real top_50 circuit (219 trees, 151,986 PBS -- the
+# fewest trees of the three tiers): encrypt 0.010s, run 1409.4s (~23.5 min),
+# decrypt 0.084s for ONE row -- decrypted output matched simulate exactly.
+# top_20 (358 trees, 248,452 PBS, ~1.63x top_50's PBS count) did not complete
+# a single row's `run` step across three separate attempts, each cut off past
+# 7+ minutes by this interactive environment's WSL2 VM / session lifecycle,
+# not by the computation itself -- extrapolating from the PBS ratio, one row
+# there is on the order of ~35-40 minutes. Phase 5's LR execute_sample (n=100)
+# was only affordable because that circuit has zero PBS; at this per-row cost,
+# n=100 would take on the order of 40-65 hours per tier. Scoped down to a
+# stratified sample of 2 rows (1 fraud, 1 legitimate) per tier -- enough to
+# demonstrate the real encrypt->run->decrypt path completes correctly for both
+# decision classes without requiring many hours of uninterrupted wall time.
+# Each row is checkpointed to disk immediately after it completes
+# (src/fhe/xgb_poc.py::explicit_round_trip) so a run interrupted mid-sample
+# resumes at the next row rather than restarting. Documented as a Phase 6
+# scope deviation from Phase 5's n=100 convention -- see docs/fhe_xgboost.md.
+execute_sample:
+  n: 2
+  n_positive: 1
+  split: val
+
+tolerances:
+  # T0: WSL xgboost 1.6.2 predicting the exported booster vs. the Windows
+  # xgboost 3.4.1 reference. Phase 5's T0 tolerance (1e-9) was copied here
+  # first, but measured on all three real tiers it fails: max|diff| is
+  # exactly 5.960464e-08 (== 2^-24, float32 machine epsilon) for every tier,
+  # affecting only 45-50 of 105,088 val rows (~0.05%); p99 and p99.9 are
+  # exactly 0.0 (>99.9% of rows are bit-identical). This is NOT the same
+  # situation as Phase 5's T0 -- that compared a numpy-reimplemented
+  # `predict_proba` (exact, no cross-binary variability) against the
+  # reference, whereas Phase 6's T0 compares two REAL, independently
+  # compiled xgboost releases' own C++ prediction routines evaluating the
+  # identical booster JSON (already verified byte-for-byte reproduced on
+  # Windows in src/fhe/export_xgboost.py). A single-ULP float32 divergence
+  # between xgboost 1.6.2 and 3.4.1 on a handful of rows is an expected
+  # cross-version floating-point floor, not a modeling error. Set to 1e-7:
+  # comfortably above the observed max with margin, still far tighter than
+  # any decision-relevant probability difference. Documented as a Phase 6
+  # deviation from Phase 5's copied tolerance -- see docs/fhe_xgboost.md.
+  t0_max_abs_diff: 1.0e-7
+  # T3: copied verbatim from Phase 5 (configs/phase5/lr_poc.yaml).
+  t3_min_decision_agreement: 0.99
+  t3_max_pr_auc_drop: 0.01
+  # T1/T2: exact equality of the circuits' integer outputs -- no tolerance
+  # parameter. See src/fhe/validate/correctness.py::integer_output_check.
+
+output:
+  dir: results/phase6_fhe_xgboost
+  handoff_dir: data/fhe_handoff/phase6

@@ -1,0 +1,17 @@
+{
+  "config_hash": "540bc88ed52446a9",
+  "config_path": "configs/phase6/xgb_poc.yaml",
+  "git_commit": "0b6aa508e009efdbc8e34feb4ea4c4ecfe592141",
+  "library_versions": {
+    "PyYAML": "6.0.3",
+    "concrete-ml": "1.9.0",
+    "concrete-python": "2.10.0",
+    "numpy": "1.26.4",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.5.0",
+    "xgboost": "1.6.2"
+  },
+  "raw_file_sha256": {},
+  "seed": 42,
+  "timestamp_utc": "2026-09-14T11:55:15.155522+00:00"
+}

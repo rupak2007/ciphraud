@@ -12,18 +12,22 @@ python -m src.fhe.export --config configs/phase5/lr_poc.yaml
 ~/.venvs/fhe-fraud-detection/bin/python -m src.fhe.poc --config configs/phase5/lr_poc.yaml
 ```
 
-**Status: PARTIALLY COMPLETE.** `docs/plan.md`'s literal exit criterion --
-"at least one full encrypt→infer→decrypt round trip completes correctly" --
-**is met** (T1, below), and independently re-verified after a config fix
-(Sec.9.4). This session's own additional acceptance gate on quantization
-accuracy (T3) **failed at `n_bits=8`**, with a measured, well-characterized
-cause (Sec.6), **and failed again at `n_bits=16`** (the empirically
-confirmed maximum bit-width Concrete-ML can compile for this circuit
-shape) in a single controlled follow-up experiment (Sec.9) -- ruling out
-"insufficient quantization resolution" as a fix. Per this session's
-explicit instruction, both failures are reported, not silently worked
-around, retrained, or loosened past. Phase 5 is not declared fully
-complete; Sec.8/Sec.9 lay out the options for how to proceed.
+**Status: CLOSED, exit criterion met (`docs/plan.md`).** `docs/plan.md`'s
+literal exit criterion -- "at least one full encrypt→infer→decrypt round
+trip completes correctly" -- **is met** (T1, below), and independently
+re-verified after a config fix (Sec.9.4). This session's own additional
+acceptance gate on quantization accuracy (T3) **failed at `n_bits=8`**, with
+a measured, well-characterized cause (Sec.6), **and failed again at
+`n_bits=16`** (the empirically confirmed maximum bit-width Concrete-ML can
+compile for this circuit shape) in a single controlled follow-up experiment
+(Sec.9) -- ruling out "insufficient quantization resolution" as a fix. Per
+this session's explicit instruction, both failures are reported, not
+silently worked around, retrained, or loosened past. Phase 5 is closed per
+the roadmap's own exit criterion; T3's failure is forwarded as a documented
+research finding to Phase 8's systematic bit-width sweep (Sec.8 Option 4),
+not treated as a Phase 5 blocker -- independently reproduced for XGBoost in
+Phase 6 (`docs/fhe_xgboost.md`), reinforcing that this is a quantization
+finding, not a Logistic-Regression- or Phase-5-specific defect.
 
 ## 1. Objective and scope
 

@@ -1,0 +1,62 @@
+{
+  "all_gates_passed": false,
+  "booster_sha256": "a827dd3cfed70a56d87bb8ebd6aa8737e187bf2b043fc9205b40666b84c86ad7",
+  "calibration": {
+    "include_extremes": true,
+    "n_rows": 3109,
+    "positions_sha256": "f38a58ce91b90d564f189c64730692a02730aa9317cfd8f2943f666749983748",
+    "requested_rows": 3000,
+    "source": "train"
+  },
+  "circuit_stats": {
+    "complexity": 10194240678525.0,
+    "global_p_error": 8.692623818031609e-13,
+    "max_integer_bit_width": 10,
+    "n_bits_inputs": [
+      8
+    ],
+    "n_bits_output": 8,
+    "n_features": 100,
+    "n_trees": 271,
+    "p_error": 8.692623818031609e-13,
+    "programmable_bootstrap_count": 188074,
+    "size_of_bootstrap_keys_bytes": 840876032,
+    "size_of_inputs_bytes": 2400,
+    "size_of_keyswitch_keys_bytes": 115953664,
+    "size_of_outputs_bytes": 4442232,
+    "size_of_secret_keys_bytes": 59136
+  },
+  "compile_seconds": 90.53976519099979,
+  "disable_full_val_seconds": 344.65952159300014,
+  "disable_prob_vs_public_predict_proba_max_abs_diff": 7.771561172376096e-16,
+  "from_sklearn_model_seconds": 19.278142250999736,
+  "gates_passed": {
+    "t0": true,
+    "t1": true,
+    "t2": true,
+    "t3": false
+  },
+  "handoff_npz_sha256": "060fc6359304ae485bd9128750c608b4a0454c346852336df04cf37b598fae44",
+  "n_bits": 8,
+  "n_execute_sample": 2,
+  "n_features": 100,
+  "n_trees": 271,
+  "n_trees_stored_in_phase4_booster": 291,
+  "n_val": 105088,
+  "peak_rss_after_compile_mb": 2391.4375,
+  "peak_rss_mb": 3018.59765625,
+  "round_trip_timing": {
+    "keygen_seconds": 2.155694100000801,
+    "max_run_seconds": 1564.071531538999,
+    "mean_decrypt_seconds": 0.166985505500179,
+    "mean_encrypt_seconds": 0.02471839899999395,
+    "mean_run_seconds": 1525.1849246434995,
+    "min_run_seconds": 1486.298317748
+  },
+  "simulate_seconds_per_row": 0.25929059219339995,
+  "status": "failed_gates",
+  "test_partition_touched": false,
+  "threshold": 0.7784428000450134,
+  "tier": "top_100",
+  "windows_git_commit": "0b6aa508e009efdbc8e34feb4ea4c4ecfe592141"
+}
