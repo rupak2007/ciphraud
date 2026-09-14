@@ -1,0 +1,110 @@
+{
+  "ciphertext_size_bytes": {
+    "input": 1200,
+    "output": 3589848
+  },
+  "circuit_stats": {
+    "complexity": 8238150216225.0,
+    "global_p_error": 8.692623818031609e-13,
+    "max_integer_bit_width": 10,
+    "n_bits_inputs": [
+      8
+    ],
+    "n_bits_output": 8,
+    "n_features": 50,
+    "n_trees": 219,
+    "p_error": 8.692623818031609e-13,
+    "programmable_bootstrap_count": 151986,
+    "size_of_bootstrap_keys_bytes": 840876032,
+    "size_of_inputs_bytes": 1200,
+    "size_of_keyswitch_keys_bytes": 115953664,
+    "size_of_outputs_bytes": 3589848,
+    "size_of_secret_keys_bytes": 59136
+  },
+  "compile_seconds": 55.90112578499998,
+  "config_hash": "dd83f858add9d27f",
+  "fhe_latency": {
+    "decrypt": {
+      "max_seconds": 0.4176996999999574,
+      "mean_seconds": 0.24851823350002178,
+      "min_seconds": 0.07933676700008618,
+      "n_trials": 2,
+      "std_seconds": 0.23925872442637836,
+      "trials_seconds": [
+        0.07933676700008618,
+        0.4176996999999574
+      ]
+    },
+    "encrypt": {
+      "max_seconds": 0.0647017250000772,
+      "mean_seconds": 0.03732057100003772,
+      "min_seconds": 0.00993941699999823,
+      "n_trials": 2,
+      "std_seconds": 0.038722799340282166,
+      "trials_seconds": [
+        0.00993941699999823,
+        0.0647017250000772
+      ]
+    },
+    "keygen_seconds": 1.8531719250000265,
+    "outputs_reproducible": true,
+    "run": {
+      "max_seconds": 1421.12653749,
+      "mean_seconds": 1358.286054735,
+      "min_seconds": 1295.44557198,
+      "n_trials": 2,
+      "std_seconds": 88.8698629781935,
+      "trials_seconds": [
+        1421.12653749,
+        1295.44557198
+      ]
+    },
+    "throughput_requests_per_second": 0.0007360667981616025,
+    "total": {
+      "max_seconds": 1421.216134415,
+      "mean_seconds": 1358.5723503595,
+      "min_seconds": 1295.9285663040002,
+      "n_trials": 2,
+      "std_seconds": 88.59168900965933,
+      "trials_seconds": [
+        1421.216134415,
+        1295.9285663040002
+      ]
+    }
+  },
+  "key_size_bytes": {
+    "bootstrap": 840876032,
+    "keyswitch": 115953664,
+    "secret": 59136
+  },
+  "label": "xgboost_top50_bits8",
+  "model_type": "xgboost",
+  "n_bits": 8,
+  "n_features": 50,
+  "n_positive": 0,
+  "peak_rss_mb": 2214.37109375,
+  "plaintext_latency": {
+    "max_seconds": 0.012943516999996518,
+    "mean_seconds": 0.0070137374999887925,
+    "min_seconds": 0.0010839579999810667,
+    "n_trials": 2,
+    "outputs_reproducible": true,
+    "std_seconds": 0.008385974590792876,
+    "throughput_requests_per_second": 142.57733483775203,
+    "trials_seconds": [
+      0.012943516999996518,
+      0.0010839579999810667
+    ]
+  },
+  "row_selection": {
+    "n_positive": 0,
+    "position": 32148,
+    "y_true": 0
+  },
+  "seed": 42,
+  "source_config": "configs/phase6/xgb_poc.yaml",
+  "source_config_hash": "540bc88ed52446a9",
+  "test_partition_touched": false,
+  "tier": "top_50",
+  "trials": 2
+}

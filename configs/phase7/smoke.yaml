@@ -1,0 +1,53 @@
+# Phase 7 benchmark harness smoke-test config (`docs/plan.md` Phase 7).
+# See docs/benchmark.md for the full methodology.
+#
+# "smoke-test mode (small grid, few trials)" (docs/plan.md Phase 7 Tasks) --
+# "Benchmark harness has its own smoke test (small grid, few trials) that
+# must pass before a full benchmark run is executed" (architecture.md
+# Sec.19). Deliberately NOT the >=5-trials-per-configuration Phase 8
+# research grid (docs/instructions.md Benchmarking Rules): this exists only
+# to prove the harness itself works correctly (config-hash-keyed storage,
+# repeated-trial statistics, structured output), on already-committed,
+# already-correctness-validated Phase 5/6 configurations. No new model,
+# tier, or bit-width is introduced here.
+#
+# 2 configurations (within docs/plan.md's "2-3" range), NOT 3: XGBoost's
+# real per-row FHE execution cost is 20.6-31.5 minutes (docs/fhe_xgboost.md
+# Sec.5, measured directly), so this grid uses only the cheapest tier of
+# each already-compiled model type -- Logistic Regression (zero PBS, real
+# round trips complete in well under a second, docs/fhe_poc.md) and
+# XGBoost's top_50 tier (219 trees, the fewest of the three committed
+# tiers, ~20.6 min/row measured) -- to keep this smoke test's wall time
+# bounded (~40-45 minutes) rather than the ~1-2 hours a 3rd configuration
+# (top_20 or top_100 XGBoost) would add, per NFR3's "scoped to what can
+# complete... in feasible wall-clock time".
+phase: 7
+seed: 42
+
+# "few trials" (docs/plan.md Phase 7 Tasks; architecture.md Sec.19) -- the
+# minimum for a sample standard deviation to be defined (n-1=1 degree of
+# freedom). Phase 8's real grid uses >=5 (docs/instructions.md).
+trials: 2
+
+# One fixed, seeded row per configuration, reused for every trial (see
+# src/benchmark/run.py::benchmark_configuration docstring for why FHE
+# latency does not depend on which row is chosen). n_positive=0 selects a
+# legitimate-class row; the choice of class does not affect latency, only
+# the plaintext-prediction VALUE reported alongside it.
+row_selection:
+  n_positive: 0
+
+# model_type/tier/n_bits are read from each entry's OWN source_config --
+# never declared here -- so this benchmark cannot silently diverge from
+# what Phase 5/6 already compiled and validated.
+configurations:
+  - label: lr_top20_bits8
+    model_type: lr
+    source_config: configs/phase5/lr_poc.yaml
+  - label: xgboost_top50_bits8
+    model_type: xgboost
+    source_config: configs/phase6/xgb_poc.yaml
+    tier: top_50
+
+output:
+  dir: results/phase7_benchmark
