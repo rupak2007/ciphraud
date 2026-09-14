@@ -3,12 +3,74 @@ import, so these run in both the Windows and WSL environments."""
 
 import numpy as np
 
+import pytest
+
 from src.fhe.validate.correctness import (
+    integer_output_check,
     t0_transfer_check,
     t1_execution_check,
     t2_simulation_check,
     t3_quantization_check,
 )
+
+
+def _tree_outputs(n_rows=6, n_trees=5, seed=0):
+    return np.random.RandomState(seed).randint(-20, 20, size=(n_rows, 1, n_trees)).astype(np.int64)
+
+
+def test_integer_output_check_exact_match_passes():
+    q = _tree_outputs()
+    result = integer_output_check(q, q.copy())
+    assert result["passed"] is True
+    assert result["exact_integer_match"] is True
+    assert result["n_rows"] == 6
+    assert result["n_outputs_per_row"] == 5
+    assert result["n_rows_with_integer_mismatch"] == 0
+
+
+def test_integer_output_check_single_tree_off_by_one_fails():
+    q = _tree_outputs()
+    other = q.copy()
+    other[3, 0, 2] += 1
+    result = integer_output_check(other, q)
+    assert result["passed"] is False
+    assert result["n_rows_with_integer_mismatch"] == 1
+    assert result["n_integer_outputs_mismatched"] == 1
+
+
+def test_integer_output_check_ignores_memory_layout():
+    """Same values, different strides (a non-contiguous view vs a contiguous copy)
+    must compare equal -- the measured difference between Concrete-ML's batched
+    `disable` path and its per-row `simulate` path."""
+    non_contiguous = _tree_outputs(n_trees=14)[:, :, ::2]
+    assert not non_contiguous.flags["C_CONTIGUOUS"]
+    result = integer_output_check(np.ascontiguousarray(non_contiguous), non_contiguous)
+    assert result["passed"] is True
+
+
+def test_integer_output_check_reports_float_noise_without_failing():
+    q = _tree_outputs()
+    prob = np.array([0.1, 0.4, 0.5, 0.69, 0.71, 0.9])
+    noisy = prob + np.array([0, 4e-16, 0, 0, 0, 0])
+    result = integer_output_check(q, q.copy(), candidate_prob=noisy, reference_prob=prob, threshold=0.7)
+    assert result["passed"] is True
+    assert result["prob_n_not_bit_identical"] == 1
+    assert result["prob_max_abs_diff"] < 1e-15
+    assert result["n_decision_flips"] == 0
+
+
+def test_integer_output_check_counts_decision_flips():
+    q = _tree_outputs()
+    prob = np.array([0.1, 0.4, 0.5, 0.69, 0.71, 0.9])
+    moved = prob.copy()
+    moved[3] = 0.72
+    result = integer_output_check(q, q.copy(), candidate_prob=moved, reference_prob=prob, threshold=0.7)
+    assert result["n_decision_flips"] == 1
+
+
+def test_integer_output_check_rejects_shape_mismatch():
+    with pytest.raises(ValueError, match="shape mismatch"):
+        integer_output_check(_tree_outputs(n_trees=5), _tree_outputs(n_trees=4))
 
 
 def test_t0_transfer_check_passes_within_tolerance():

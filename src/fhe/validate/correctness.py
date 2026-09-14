@@ -109,6 +109,48 @@ def t2_simulation_check(simulate_prob: np.ndarray, disable_prob: np.ndarray) -> 
     }
 
 
+def integer_output_check(
+    candidate_q: np.ndarray,
+    reference_q: np.ndarray,
+    candidate_prob: np.ndarray | None = None,
+    reference_prob: np.ndarray | None = None,
+    threshold: float | None = None,
+) -> dict[str, Any]:
+    """Exact, row-aligned comparison of two runs' INTEGER circuit outputs.
+
+    For tree models (Phase 6) the circuit outputs one integer per tree; the
+    tree sum and sigmoid run afterwards in plaintext numpy on the client.
+    Comparing integers verifies exactly what the FHE circuit computed. The
+    float probabilities can differ by ~1e-16 from numpy summing arrays with
+    different memory layouts (measured: docs/fhe_xgboost.md), so they are
+    reported, along with threshold decision flips, but don't decide `passed`.
+    """
+    candidate_q = np.asarray(candidate_q)
+    reference_q = np.asarray(reference_q)
+    if candidate_q.shape != reference_q.shape:
+        raise ValueError(f"shape mismatch: candidate {candidate_q.shape} vs reference {reference_q.shape}")
+    n_rows = candidate_q.shape[0]
+    element_mismatch = candidate_q.reshape(n_rows, -1) != reference_q.reshape(n_rows, -1)
+    result: dict[str, Any] = {
+        "exact_integer_match": bool(not element_mismatch.any()),
+        "n_rows": int(n_rows),
+        "n_outputs_per_row": int(element_mismatch.shape[1]),
+        "n_rows_with_integer_mismatch": int(element_mismatch.any(axis=1).sum()),
+        "n_integer_outputs_mismatched": int(element_mismatch.sum()),
+    }
+    if candidate_prob is not None and reference_prob is not None:
+        candidate_prob = np.asarray(candidate_prob)
+        reference_prob = np.asarray(reference_prob)
+        diff = np.abs(candidate_prob - reference_prob)
+        result["prob_max_abs_diff"] = float(diff.max()) if diff.size else 0.0
+        result["prob_n_not_bit_identical"] = int((diff > 0).sum())
+        if threshold is not None:
+            result["threshold"] = float(threshold)
+            result["n_decision_flips"] = int(np.sum((candidate_prob >= threshold) != (reference_prob >= threshold)))
+    result["passed"] = result["exact_integer_match"]
+    return result
+
+
 def t1_execution_check(decrypted_prob: np.ndarray, simulate_prob: np.ndarray) -> dict[str, Any]:
     """Real encrypt->run->decrypt round-trip output vs. `fhe="simulate"`,
     on the seeded execute sample. Isolates actual FHE execution error

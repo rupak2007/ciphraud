@@ -1,0 +1,62 @@
+{
+  "all_gates_passed": false,
+  "booster_sha256": "ea21677fd393ce78810542cd55bcdf585d6796ed63489ee989269bbfd91f3188",
+  "calibration": {
+    "include_extremes": true,
+    "n_rows": 3027,
+    "positions_sha256": "e9bc1a150f15ebb3f70adb734c42cd7b26433cf1081b19d6d18f27a9b9e04e35",
+    "requested_rows": 3000,
+    "source": "train"
+  },
+  "circuit_stats": {
+    "complexity": 13466930490450.0,
+    "global_p_error": 8.692623818031609e-13,
+    "max_integer_bit_width": 10,
+    "n_bits_inputs": [
+      8
+    ],
+    "n_bits_output": 8,
+    "n_features": 20,
+    "n_trees": 358,
+    "p_error": 8.692623818031609e-13,
+    "programmable_bootstrap_count": 248452,
+    "size_of_bootstrap_keys_bytes": 840876032,
+    "size_of_inputs_bytes": 480,
+    "size_of_keyswitch_keys_bytes": 115953664,
+    "size_of_outputs_bytes": 5868336,
+    "size_of_secret_keys_bytes": 59136
+  },
+  "compile_seconds": 60.49139392399957,
+  "disable_full_val_seconds": 228.99108363900086,
+  "disable_prob_vs_public_predict_proba_max_abs_diff": 9.992007221626409e-16,
+  "from_sklearn_model_seconds": 22.844083022000632,
+  "gates_passed": {
+    "t0": true,
+    "t1": true,
+    "t2": true,
+    "t3": false
+  },
+  "handoff_npz_sha256": "4e18a35a5fc8d81ca6f1fec76c804782ec5e89de32fdb3b44d0172fd893772a0",
+  "n_bits": 8,
+  "n_execute_sample": 2,
+  "n_features": 20,
+  "n_trees": 358,
+  "n_trees_stored_in_phase4_booster": 378,
+  "n_val": 105088,
+  "peak_rss_after_compile_mb": 2440.4453125,
+  "peak_rss_mb": 2980.58203125,
+  "round_trip_timing": {
+    "keygen_seconds": 2.1642508639997686,
+    "max_run_seconds": 2088.600031852,
+    "mean_decrypt_seconds": 0.2587757400006012,
+    "mean_encrypt_seconds": 0.022940692500014848,
+    "mean_run_seconds": 1892.7655831370002,
+    "min_run_seconds": 1696.9311344220005
+  },
+  "simulate_seconds_per_row": 0.2944824401041998,
+  "status": "failed_gates",
+  "test_partition_touched": false,
+  "threshold": 0.8031212687492371,
+  "tier": "top_20",
+  "windows_git_commit": "0b6aa508e009efdbc8e34feb4ea4c4ecfe592141"
+}

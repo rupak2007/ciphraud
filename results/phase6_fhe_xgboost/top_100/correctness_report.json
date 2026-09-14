@@ -1,0 +1,59 @@
+{
+  "t0": {
+    "max_abs_diff": 5.960464477539063e-08,
+    "mean_abs_diff": 5.705666822754527e-12,
+    "passed": true,
+    "tolerance": 1e-07
+  },
+  "t1": {
+    "decrypted_vs_disable_exact_integer_match": true,
+    "exact_integer_match": true,
+    "n_decision_flips": 0,
+    "n_integer_outputs_mismatched": 0,
+    "n_outputs_per_row": 271,
+    "n_rows": 2,
+    "n_rows_with_integer_mismatch": 0,
+    "passed": true,
+    "prob_max_abs_diff": 0.0,
+    "prob_n_not_bit_identical": 0,
+    "threshold": 0.7784428000450134
+  },
+  "t2": {
+    "exact_integer_match": true,
+    "n_decision_flips": 0,
+    "n_integer_outputs_mismatched": 0,
+    "n_outputs_per_row": 271,
+    "n_rows": 5000,
+    "n_rows_with_integer_mismatch": 0,
+    "passed": true,
+    "prob_max_abs_diff": 0.0,
+    "prob_n_not_bit_identical": 0,
+    "threshold": 0.7784428000450134,
+    "val_rows": 5000
+  },
+  "t3": {
+    "decision_agreement": 0.8937081303288672,
+    "float_confusion_matrix": {
+      "fn": 2034,
+      "fp": 1274,
+      "tn": 99724,
+      "tp": 2056
+    },
+    "float_pr_auc": 0.5677994646626904,
+    "float_roc_auc": 0.9151435991542789,
+    "max_abs_prob_diff": 0.9087892055842088,
+    "max_pr_auc_drop": 0.01,
+    "mean_abs_prob_diff": 0.21818091076248405,
+    "min_decision_agreement": 0.99,
+    "passed": false,
+    "pr_auc_drop": 0.28536686801908084,
+    "quantized_confusion_matrix": {
+      "fn": 2108,
+      "fp": 10508,
+      "tn": 90490,
+      "tp": 1982
+    },
+    "quantized_pr_auc": 0.28243259664360953,
+    "quantized_roc_auc": 0.8007098400021575
+  }
+}

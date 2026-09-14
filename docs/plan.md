@@ -221,6 +221,16 @@ in reasonable time on available hardware, document the exact resource
 usage observed and consider cloud compute before considering any
 reduction of the research question itself.
 
+**Status: CLOSED, exit criterion met.** At least one full encrypt→infer→decrypt
+round trip completes correctly (T1, `docs/fhe_poc.md` Sec.5) -- the literal
+exit criterion above, independently re-verified at `n_bits=8` after a config
+fix (`docs/fhe_poc.md` Sec.9.4). This session's own additional accuracy gate
+(T3) fails at both `n_bits=8` and `n_bits=16` and is preserved as a
+documented, unresolved research finding (`docs/fhe_poc.md` Sec.8-9) -- not
+remediated, not silently dropped. Phase 5 is closed per this phase's own
+written exit criterion; the T3 limitation carries forward into Phase 6 and
+is independently reproduced there for XGBoost (below).
+
 ---
 
 ## Phase 6 — FHE Fraud Inference (XGBoost)
@@ -249,6 +259,35 @@ memory limits.
 **Fallback strategy**: if a specific tier fails to compile/run in
 feasible time, document the specific limitation (tree depth, number of
 trees, feature count) rather than silently shrinking scope elsewhere.
+
+**Status: CLOSED, exit criterion met.** "Validate correctly" is defined
+consistently elsewhere in this document set as circuit output vs. plaintext
+(quantized) output, not quantized-vs-float accuracy: `architecture.md` §5
+("validate compiled-circuit output against plaintext output"), `prd.md` FR7,
+and `instructions.md`'s FHE Rules all define it the same way. By that
+definition, all three tiers compile and validate correctly for XGBoost at
+`n_bits=8`: T0/T1/T2 pass exactly for `top_20`, `top_50`, and `top_100`,
+including a real (non-simulated) encrypt→run→decrypt round trip per tier
+whose decrypted output matches that circuit's own simulation bit-for-bit
+(`docs/fhe_xgboost.md` Sec.5). This phase's exit criterion is met.
+
+T3 -- this project's own additional accuracy gate (quantized output vs. the
+float reference; see `docs/fhe_poc.md`'s framing of the same gate for LR) --
+fails for every tier at `n_bits=8`: decision agreement 0.649-0.894 (need
+≥0.99), PR-AUC dropping 0.19-0.29 (need ≤0.01). This is the same
+quantization limitation Phase 5 found for Logistic Regression, independently
+reproduced here for a structurally different model (`docs/fhe_xgboost.md`
+Sec.7). It is preserved as a documented research finding, not remediated: no
+tree depth/count/feature count was reduced and no tolerance was loosened to
+force a pass, per this phase's own fallback strategy above. The systematic
+investigation this finding calls for -- the bit-width dimension of this
+project's central research question -- is Phase 8's explicit mandate (the
+feature-count × bit-width × model-type grid), not Phase 6's. Compile times,
+PBS counts, and real per-row execution times (20.6-31.5 minutes/row,
+dominated by `run`) were recorded as observations, not benchmarks -- Phase
+7's scope. Deviations from this plan's implicit assumptions (calibration
+size, T2/T1 sample sizes, T0 tolerance) are in `docs/fhe_xgboost.md` Sec.8,
+all measured and justified, none guessed.
 
 ---
 
