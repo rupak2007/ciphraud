@@ -40,6 +40,14 @@ research finding to Phase 8's systematic bit-width sweep -- the roadmap's
 designated venue for the feature-count × bit-width × model-type
 investigation (`docs/plan.md` Phase 8), not Phase 6's.
 
+> **ERRATUM (2026-09-25/26).** The XGBoost findings here stand and were reproduced
+> exactly in Phase 8 (`docs/research.md`): T3 fails at 8 bits for all three tiers,
+> and passes at 14 bits for all three. What is superseded is the comparison to
+> Logistic Regression ("the same quantization-accuracy problem Phase 5 found ...
+> independently reproduced"): Phase 5's LR failure was mostly a scaler-omission
+> bug (`docs/fhe_poc.md` erratum; `docs/research.md` §5), so it was not the same
+> problem. The 8-bit XGBoost failure is a genuine quantization effect.
+
 ## 1. Objective and scope
 
 Compile the committed Phase 4 XGBoost model for each of `top_20`, `top_50`,
