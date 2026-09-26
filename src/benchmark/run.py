@@ -51,7 +51,7 @@ from src.config import PROJECT_ROOT, load_config
 from src.data import provenance as data_provenance
 from src.fhe.compile.linear import circuit_stats, compile_model
 from src.fhe.compile.tree import build_concrete_xgb, load_inference_classifier, tree_stats
-from src.fhe.handoff import load_handoff, rebuild_pipeline_predict_proba
+from src.fhe.handoff import load_handoff, rebuild_pipeline_predict_proba, standardize_features
 from src.fhe.poc import _stratified_sample_positions
 from src.fhe.xgb_poc import calibration_positions, peak_rss_mb
 from src.logging_setup import get_logger
@@ -65,8 +65,12 @@ class BenchmarkConfigError(Exception):
     """Raised when a benchmark entry's referenced source config/handoff is inconsistent."""
 
 
-def _load_lr(source_config: dict[str, Any]) -> dict[str, Any]:
-    """Rebuild + compile the committed Phase 5 LR exactly as `src/fhe/poc.py` does."""
+def _load_lr(source_config: dict[str, Any], n_bits: int | None = None) -> dict[str, Any]:
+    """Rebuild + compile the committed Phase 5 LR exactly as `src/fhe/poc.py`
+    does. `n_bits`, when given, overrides the source config's own value --
+    used ONLY by Phase 8 to test a second bit-width against the SAME
+    already-validated tier/calibration; omitted (the default), this
+    behaves identically to Phase 7's own call sites."""
     npz_path = PROJECT_ROOT / source_config["output"]["handoff_npz"]
     manifest_path = PROJECT_ROOT / source_config["output"]["handoff_manifest"]
     manifest, arrays = load_handoff(npz_path, manifest_path)
@@ -74,9 +78,18 @@ def _load_lr(source_config: dict[str, Any]) -> dict[str, Any]:
 
     from src.fhe.compile.linear import build_concrete_lr
 
-    X_train, X_val, y_val = arrays["X_train"], arrays["X_val"], arrays["y_val"]
-    cml_model = build_concrete_lr(params, X_train, source_config["n_bits"])
-    circuit, compile_seconds = compile_model(cml_model, X_train)
+    effective_n_bits = n_bits if n_bits is not None else source_config["n_bits"]
+    X_val, y_val = arrays["X_val"], arrays["y_val"]
+    # The handoff holds RAW features but `lr_coef` belongs to the model trained on
+    # STANDARDIZED features, so the compiled model is built, calibrated and evaluated
+    # on standardized inputs only (client-side scaler; docs/architecture.md Sec.6).
+    # `X_val` stays raw -- `plaintext_predict` rebuilds the whole pipeline (scaler
+    # included) from it -- and `X_val_model` is what the circuit/quantizer consume.
+    # The raw train matrix is dropped once standardized to bound memory (top_100).
+    X_train_model = standardize_features(params, arrays.pop("X_train"))
+    X_val_model = standardize_features(params, X_val)
+    cml_model = build_concrete_lr(params, X_train_model, effective_n_bits)
+    circuit, compile_seconds = compile_model(cml_model, X_train_model)
     return {
         "cml_model": cml_model,
         "circuit": circuit,
@@ -84,27 +97,33 @@ def _load_lr(source_config: dict[str, Any]) -> dict[str, Any]:
         "extra_stats": {},
         "plaintext_predict": lambda X: rebuild_pipeline_predict_proba(params, X)[:, 1],
         "X_val": X_val,
+        "X_val_model": X_val_model,
         "y_val": y_val,
         "n_features": manifest["n_features"],
-        "n_bits": source_config["n_bits"],
+        "n_bits": effective_n_bits,
+        "reference_val_prob": arrays["reference_val_prob"],
+        "threshold": manifest.get("threshold"),
+        "val_transaction_ids": arrays["val_transaction_ids"],
     }
 
 
-def _load_xgboost(source_config: dict[str, Any], tier: str) -> dict[str, Any]:
+def _load_xgboost(source_config: dict[str, Any], tier: str, n_bits: int | None = None) -> dict[str, Any]:
     """Rebuild + compile a committed Phase 6 XGBoost tier exactly as
     `src/fhe/xgb_poc.py::run_tier` does -- SAME `calibration_positions` call,
-    SAME seed, SAME n_bits, all read from `source_config`."""
+    SAME seed, all read from `source_config`. `n_bits`, when given,
+    overrides the source config's own value (Phase 8 only; see `_load_lr`)."""
     handoff_dir = PROJECT_ROOT / source_config["output"]["handoff_dir"]
     manifest_path = PROJECT_ROOT / source_config["output"]["dir"] / tier / "handoff_manifest.json"
     manifest, arrays = load_handoff(handoff_dir / f"xgb_{tier}.npz", manifest_path)
     booster_path = PROJECT_ROOT / manifest["booster_path"]
     clf = load_inference_classifier(booster_path)
 
+    effective_n_bits = n_bits if n_bits is not None else source_config["n_bits"]
     X_train, X_val, y_val = arrays["X_train"], arrays["X_val"], arrays["y_val"]
     cal_cfg = source_config["calibration"]
     cal_pos = calibration_positions(X_train, cal_cfg["rows"], cal_cfg.get("include_extremes", False), source_config["seed"])
     X_cal = X_train[cal_pos]
-    cml_model = build_concrete_xgb(clf, X_cal, source_config["n_bits"])
+    cml_model = build_concrete_xgb(clf, X_cal, effective_n_bits)
     circuit, compile_seconds = compile_model(cml_model, X_cal)
     return {
         "cml_model": cml_model,
@@ -113,9 +132,14 @@ def _load_xgboost(source_config: dict[str, Any], tier: str) -> dict[str, Any]:
         "extra_stats": tree_stats(clf, cml_model, circuit),
         "plaintext_predict": lambda X: clf.predict_proba(X)[:, 1],
         "X_val": X_val,
+        "X_val_model": X_val,  # trees consume the raw features directly; alias kept so callers are model-agnostic
         "y_val": y_val,
         "n_features": manifest["n_features"],
-        "n_bits": source_config["n_bits"],
+        "n_bits": effective_n_bits,
+        "reference_val_prob": arrays["reference_val_prob"],
+        "threshold": manifest.get("threshold"),
+        "val_transaction_ids": arrays["val_transaction_ids"],
+        "clf": clf,
     }
 
 
@@ -148,7 +172,7 @@ def benchmark_configuration(entry: dict[str, Any], seed: int, trials: int, n_pos
     # either path's LATENCY; documented, not assumed.
     row_position = _stratified_sample_positions(y_val, n=1, n_positive=n_positive, seed=seed)[0]
     X_row = X_val[row_position : row_position + 1]
-    q_row = cml_model.quantize_input(X_row)
+    q_row = cml_model.quantize_input(loaded["X_val_model"][row_position : row_position + 1])
 
     logger.info("Benchmarking configuration", extra={"extra_fields": {"label": entry["label"], "trials": trials}})
     plaintext_latency = plaintext_latency_trials(lambda: loaded["plaintext_predict"](X_row), trials)

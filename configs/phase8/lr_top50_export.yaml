@@ -1,0 +1,31 @@
+# Phase 8 LR export config for the `top_50` tier (`docs/plan.md` Phase 8).
+# See docs/research.md for the full methodology (once written).
+#
+# Runs the EXISTING, UNMODIFIED src/fhe/export.py -- Phase 5's own script,
+# reused exactly as-is (it is already single-tier and config-driven; only
+# `tier` and `output` differ from configs/phase5/lr_poc.yaml). Produces a
+# NEW handoff under data/fhe_handoff/phase8/ -- Phase 5's own
+# data/fhe_handoff/lr_top20.npz and results/phase5_fhe_poc/ are never
+# touched by this config.
+#
+# n_bits/execute_sample/tolerances are carried here (matching Phase 5's
+# config shape) for later reuse by the Phase 8 grid runner; export.py
+# itself only reads tier/phase2_config/phase4_config/
+# phase4_integrity_tolerance/output.
+phase: 8
+seed: 42
+tier: top_50
+
+phase2_config: configs/phase2/pipeline.yaml
+phase4_config: configs/phase4/features.yaml
+
+# Same tolerance and rationale as configs/phase5/lr_poc.yaml: a reload
+# with no re-fit should match the committed Phase 4 val PR-AUC to near
+# float precision.
+phase4_integrity_tolerance: 1.0e-6
+
+output:
+  handoff_npz: data/fhe_handoff/phase8/lr_top50.npz
+  handoff_manifest: results/phase8_research/lr_export/top_50/handoff_manifest.json
+  params_path: results/phase8_research/lr_export/top_50/lr_top50_params.json
+  dir: results/phase8_research/lr_export/top_50

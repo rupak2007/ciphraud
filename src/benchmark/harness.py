@@ -19,7 +19,9 @@ infrastructure.
 
 from __future__ import annotations
 
+import json
 import time
+from pathlib import Path
 from typing import Any, Callable
 
 import numpy as np
@@ -64,13 +66,26 @@ def trial_stats(seconds: list[float]) -> dict[str, Any]:
     }
 
 
-def fhe_round_trip_trials(circuit: Any, q_row: np.ndarray, n_trials: int) -> dict[str, Any]:
-    """Repeated real `encrypt -> run -> decrypt` trials on a FIXED,
-    already-quantized single row, using ONE `circuit.keygen()` amortized
-    across all trials -- matching Phase 5/6's own `_explicit_round_trip`/
-    `explicit_round_trip` pattern (keygen is a once-per-client-session
-    cost, not a per-request one, so it is measured and reported
-    separately, never folded into the per-request latency statistics).
+def fhe_round_trip_trials(
+    circuit: Any, q_row: np.ndarray, n_trials: int,
+    checkpoint_dir: Path | None = None, fingerprint: str | None = None,
+) -> dict[str, Any]:
+    """5 REPEATED EXECUTIONS OF A FIXED REPRESENTATIVE INPUT -- real
+    `encrypt -> run -> decrypt`, on the SAME already-quantized row every
+    time, using ONE `circuit.keygen()` amortized across all trials
+    (matching Phase 5/6's own `_explicit_round_trip`/`explicit_round_trip`
+    pattern: keygen is a once-per-client-session cost, not a per-request
+    one, so it is measured and reported separately, never folded into the
+    per-request latency statistics). These are repeated executions of ONE
+    input, not independent samples across different inputs -- see the
+    caller's `row_selection` record for exactly which row/seed was used.
+
+    `checkpoint_dir`/`fingerprint`, when given, persist each trial's
+    decrypted result + per-step timing to disk immediately after it
+    completes (mirroring `src/fhe/xgb_poc.py::explicit_round_trip`'s exact
+    pattern) so a run interrupted mid-grid resumes at the next un-executed
+    trial rather than restarting -- essential at Phase 8's scale (a single
+    XGBoost trial can cost 30-50 minutes; docs/research.md).
 
     Every trial's decrypted integer output is compared for exact,
     bit-for-bit reproducibility (a deterministic circuit on the same
@@ -79,28 +94,59 @@ def fhe_round_trip_trials(circuit: Any, q_row: np.ndarray, n_trials: int) -> dic
     module measures latency, not correctness -- Phase 5/6 already own
     correctness (T0-T3) and are not re-validated here.
     """
+    if checkpoint_dir is not None:
+        checkpoint_dir.mkdir(parents=True, exist_ok=True)
+        meta_path = checkpoint_dir / "meta.json"
+        if meta_path.exists() and json.loads(meta_path.read_text()).get("fingerprint") != fingerprint:
+            for stale in checkpoint_dir.glob("trial_*"):
+                stale.unlink()
+        meta_path.write_text(json.dumps({"fingerprint": fingerprint, "n_trials": n_trials}))
+
     t0 = time.perf_counter()
     circuit.keygen()
     keygen_seconds = time.perf_counter() - t0
 
     encrypt_s, run_s, decrypt_s, total_s, decrypted_outputs = [], [], [], [], []
-    for _ in range(n_trials):
+    for i in range(n_trials):
+        result_path = checkpoint_dir / f"trial_{i:03d}.npy" if checkpoint_dir else None
+        timing_path = checkpoint_dir / f"trial_{i:03d}_timing.json" if checkpoint_dir else None
+
+        if result_path is not None and result_path.exists():
+            decrypted = np.load(result_path, allow_pickle=False)
+            if not np.array_equal(decrypted, np.asarray(circuit.simulate(q_row))):
+                raise RuntimeError(f"checkpoint {result_path} disagrees with a fresh simulation of this row")
+            timing = json.loads(timing_path.read_text())
+            encrypt_s.append(timing["encrypt_seconds"])
+            run_s.append(timing["run_seconds"])
+            decrypt_s.append(timing["decrypt_seconds"])
+            total_s.append(timing["total_seconds"])
+            decrypted_outputs.append(decrypted)
+            continue
+
         t_total = time.perf_counter()
 
         t0 = time.perf_counter()
         encrypted = circuit.encrypt(q_row)
-        encrypt_s.append(time.perf_counter() - t0)
+        e_s = time.perf_counter() - t0
 
         t0 = time.perf_counter()
         ran = circuit.run(encrypted)
-        run_s.append(time.perf_counter() - t0)
+        r_s = time.perf_counter() - t0
 
         t0 = time.perf_counter()
         decrypted = np.asarray(circuit.decrypt(ran))
-        decrypt_s.append(time.perf_counter() - t0)
+        d_s = time.perf_counter() - t0
 
-        total_s.append(time.perf_counter() - t_total)
+        t_s = time.perf_counter() - t_total
+        encrypt_s.append(e_s)
+        run_s.append(r_s)
+        decrypt_s.append(d_s)
+        total_s.append(t_s)
         decrypted_outputs.append(decrypted)
+
+        if result_path is not None:
+            np.save(result_path, decrypted)
+            timing_path.write_text(json.dumps({"encrypt_seconds": e_s, "run_seconds": r_s, "decrypt_seconds": d_s, "total_seconds": t_s}))
 
     outputs_reproducible = all(np.array_equal(decrypted_outputs[0], o) for o in decrypted_outputs[1:])
 
