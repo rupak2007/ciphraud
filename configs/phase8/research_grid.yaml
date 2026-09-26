@@ -1,0 +1,116 @@
+# Phase 8 core research grid (`docs/plan.md` Phase 8). See docs/research.md
+# for the full methodology once written; see the approved planning
+# exchange (this session) for how every number below was derived.
+#
+# 12 configurations = 2 models x 3 tiers x 2 bit-widths per model. Bit-widths
+# are NOT symmetric across models -- this is a measured, not guessed,
+# finding from the compile-feasibility probes:
+#   - LR:      8 and 16 (16 is the empirically-confirmed max for LR's
+#              circuit shape, docs/fhe_poc.md Sec.9.1; re-confirmed here to
+#              compile for ALL THREE tiers, not just top_20).
+#   - XGBoost: 8 and 14 (16 is INFEASIBLE for every XGBoost tier -- a tree
+#              node comparison needs an 18-bit table lookup at n_bits=16,
+#              but Concrete only supports up to 16-bit TLUs; a step-down
+#              search [16 fail, 15 fail, 14 pass all 3 tiers, 12 pass all 3]
+#              found 14 as the largest bit-width that compiles for all
+#              three tiers -- not a conservative guess, the measured
+#              boundary itself).
+phase: 8
+seed: 42
+
+# 5 REPEATED EXECUTIONS OF A FIXED REPRESENTATIVE INPUT (not 5 independent
+# samples -- approved plan clarification 1). Exactly which input/seed is
+# used is recorded per-configuration in metrics.json's own `row_selection`
+# block (clarification 3), reusing Phase 7's exact convention: one
+# seeded, class-stratified row, reused unchanged across every trial.
+latency_trials: 5
+
+# Kept structurally distinct from latency_trials throughout
+# src/benchmark/phase8_grid.py (clarification 2): a SEPARATE 2-row
+# stratified sample (1 fraud, 1 legitimate), each row executed once, for
+# the T1 accuracy/correctness gate -- matching Phase 6's own already-
+# justified size for XGBoost, applied here to LR too for consistency.
+correctness_sample:
+  n: 2
+  n_positive: 1
+
+# One fixed, seeded row per configuration for the latency trials (same
+# convention as configs/phase7/smoke.yaml).
+row_selection:
+  n_positive: 0
+
+# XGBoost-only (src/benchmark/phase8_grid.py::_accuracy_xgboost): same
+# conventions Phase 6 already validated for memory/time-safety, reused
+# unchanged, not re-decided here.
+disable_chunk_size: 1000
+t2:
+  rows: 5000
+  chunk_size: 1000
+
+tolerances:
+  t0_max_abs_diff: 1.0e-7   # docs/fhe_xgboost.md Sec.6.4's measured float32 ULP floor -- shared by both models here since both compare a real, independently-compiled prediction path against the reference
+  t3_min_decision_agreement: 0.99
+  t3_max_pr_auc_drop: 0.01
+
+output:
+  dir: results/phase8_research
+  handoff_dir: data/fhe_handoff/phase8
+
+configurations:
+  # ---- Logistic Regression: top_20, top_50, top_100 x {8, 16} ----
+  - label: lr_top20_bits8
+    model_type: lr
+    n_bits: 8
+    source_config: configs/phase5/lr_poc.yaml
+  - label: lr_top20_bits16
+    model_type: lr
+    n_bits: 16
+    source_config: configs/phase5/lr_poc.yaml
+  - label: lr_top50_bits8
+    model_type: lr
+    n_bits: 8
+    source_config: configs/phase8/lr_top50_export.yaml
+  - label: lr_top50_bits16
+    model_type: lr
+    n_bits: 16
+    source_config: configs/phase8/lr_top50_export.yaml
+  - label: lr_top100_bits8
+    model_type: lr
+    n_bits: 8
+    source_config: configs/phase8/lr_top100_export.yaml
+  - label: lr_top100_bits16
+    model_type: lr
+    n_bits: 16
+    source_config: configs/phase8/lr_top100_export.yaml
+
+  # ---- XGBoost: top_20, top_50, top_100 x {8, 14} ----
+  - label: xgboost_top20_bits8
+    model_type: xgboost
+    tier: top_20
+    n_bits: 8
+    source_config: configs/phase6/xgb_poc.yaml
+  - label: xgboost_top20_bits14
+    model_type: xgboost
+    tier: top_20
+    n_bits: 14
+    source_config: configs/phase6/xgb_poc.yaml
+  - label: xgboost_top50_bits8
+    model_type: xgboost
+    tier: top_50
+    n_bits: 8
+    source_config: configs/phase6/xgb_poc.yaml
+  - label: xgboost_top50_bits14
+    model_type: xgboost
+    tier: top_50
+    n_bits: 14
+    source_config: configs/phase6/xgb_poc.yaml
+  - label: xgboost_top100_bits8
+    model_type: xgboost
+    tier: top_100
+    n_bits: 8
+    source_config: configs/phase6/xgb_poc.yaml
+  - label: xgboost_top100_bits14
+    model_type: xgboost
+    tier: top_100
+    n_bits: 14
+    source_config: configs/phase6/xgb_poc.yaml

@@ -134,6 +134,35 @@ def test_fhe_round_trip_trials_matches_simulate_and_reports_reproducibility(toy_
 
 
 @skip_without_concrete_ml
+def test_fhe_round_trip_trials_checkpoints_are_reused_and_invalidated_by_fingerprint(toy_lr_circuit, tmp_path):
+    """Phase 8 relies on this: a single trial can cost 30-50 minutes at
+    n_bits=14/16 on real tiers, so a resumed grid run must not redo an
+    already-completed trial. Mirrors `src/fhe/xgb_poc.py`'s existing
+    checkpoint test pattern exactly."""
+    from src.benchmark.harness import fhe_round_trip_trials
+
+    cml_model, circuit, X_scaled = toy_lr_circuit
+    q_row = cml_model.quantize_input(X_scaled[:1])
+    ckpt = tmp_path / "ckpt"
+
+    first = fhe_round_trip_trials(circuit, q_row, n_trials=3, checkpoint_dir=ckpt, fingerprint="fp-a")
+    assert sorted(p.name for p in ckpt.glob("trial_*.npy")) == ["trial_000.npy", "trial_001.npy", "trial_002.npy"]
+
+    resumed = fhe_round_trip_trials(circuit, q_row, n_trials=3, checkpoint_dir=ckpt, fingerprint="fp-a")
+    assert resumed["total"]["trials_seconds"] == first["total"]["trials_seconds"]  # reused, not re-timed
+
+    tampered = np.load(ckpt / "trial_000.npy")
+    tampered[0] += 1
+    np.save(ckpt / "trial_000.npy", tampered)
+    with pytest.raises(RuntimeError, match="disagrees"):
+        fhe_round_trip_trials(circuit, q_row, n_trials=3, checkpoint_dir=ckpt, fingerprint="fp-a")
+
+    fresh = fhe_round_trip_trials(circuit, q_row, n_trials=3, checkpoint_dir=ckpt, fingerprint="fp-b")  # new fingerprint discards stale trials
+    assert fresh["outputs_reproducible"] is True
+    assert json.loads((ckpt / "meta.json").read_text())["fingerprint"] == "fp-b"
+
+
+@skip_without_concrete_ml
 def test_benchmark_configuration_end_to_end_on_synthetic_lr(tmp_path):
     """Exercises the full `src.benchmark.run.benchmark_configuration` path
     -- config-hash-keyed result, both latency paths, ciphertext/key sizes
@@ -166,7 +195,7 @@ def test_benchmark_configuration_end_to_end_on_synthetic_lr(tmp_path):
     manifest_path = tmp_path / "handoff_manifest.json"
     save_handoff(
         npz_path, manifest_path,
-        X_train=X_scaled, X_val=X_scaled, y_val=y, val_transaction_ids=np.arange(n),
+        X_train=X, X_val=X, y_val=y, val_transaction_ids=np.arange(n),  # RAW X, like src/fhe/export.py (the loader standardizes)
         reference_val_prob=reference_prob, columns=[f"f{i}" for i in range(d)],
         manifest_extra={"params_path": str(params_path)},
     )

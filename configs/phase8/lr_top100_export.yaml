@@ -1,0 +1,17 @@
+# Phase 8 LR export config for the `top_100` tier -- see
+# configs/phase8/lr_top50_export.yaml for the full rationale (identical,
+# only the tier and output paths differ).
+phase: 8
+seed: 42
+tier: top_100
+
+phase2_config: configs/phase2/pipeline.yaml
+phase4_config: configs/phase4/features.yaml
+
+phase4_integrity_tolerance: 1.0e-6
+
+output:
+  handoff_npz: data/fhe_handoff/phase8/lr_top100.npz
+  handoff_manifest: results/phase8_research/lr_export/top_100/handoff_manifest.json
+  params_path: results/phase8_research/lr_export/top_100/lr_top100_params.json
+  dir: results/phase8_research/lr_export/top_100
