@@ -47,7 +47,7 @@ import pandas as pd
 from src.config import PROJECT_ROOT, load_config
 from src.data import provenance as data_provenance
 from src.fhe.compile.linear import build_concrete_lr, circuit_stats, compile_model
-from src.fhe.handoff import load_handoff, rebuild_pipeline_predict_proba
+from src.fhe.handoff import load_handoff, rebuild_pipeline_predict_proba, standardize_features
 from src.fhe.validate.correctness import (
     t0_transfer_check,
     t1_execution_check,
@@ -137,6 +137,12 @@ def run(config_path: str) -> dict[str, Any]:
     params = json.loads(params_path.read_text())
 
     X_train, X_val, y_val = arrays["X_train"], arrays["X_val"], arrays["y_val"]
+    # The handoff holds RAW features, but `lr_coef` belongs to the model trained on
+    # STANDARDIZED features: the compiled model must only ever see standardized
+    # inputs (client-side scaler, docs/architecture.md Sec.6). T0 below stays on the
+    # raw matrix because it rebuilds the whole pipeline (scaler included) from params.
+    X_train_model = standardize_features(params, X_train)
+    X_val_model = standardize_features(params, X_val)
     val_transaction_ids = arrays["val_transaction_ids"]
     reference_val_prob = arrays["reference_val_prob"]
     threshold = manifest["threshold"]
@@ -149,8 +155,8 @@ def run(config_path: str) -> dict[str, Any]:
     logger.info("T0 passed", extra={"extra_fields": t0})
 
     logger.info("Building + compiling Concrete-ML LR", extra={"extra_fields": {"n_bits": config["n_bits"]}})
-    cml_model = build_concrete_lr(params, X_train, config["n_bits"])
-    circuit, compile_seconds = compile_model(cml_model, X_train)
+    cml_model = build_concrete_lr(params, X_train_model, config["n_bits"])
+    circuit, compile_seconds = compile_model(cml_model, X_train_model)
     stats = circuit_stats(circuit)
     stats["compile_seconds"] = compile_seconds
     logger.info("Compiled", extra={"extra_fields": stats})
@@ -162,7 +168,7 @@ def run(config_path: str) -> dict[str, Any]:
     # failing run still leaves a complete, inspectable report rather than
     # losing whatever was already measured.
     logger.info("T3: quantization check (fhe=disable vs. float reference, full val)")
-    disable_prob = cml_model.predict_proba(X_val, fhe="disable")[:, 1]
+    disable_prob = cml_model.predict_proba(X_val_model, fhe="disable")[:, 1]
     t3 = t3_quantization_check(
         quantized_prob=disable_prob, float_prob=reference_val_prob, y_true=y_val, threshold=threshold,
         min_decision_agreement=tolerances["t3_min_decision_agreement"],
@@ -171,14 +177,14 @@ def run(config_path: str) -> dict[str, Any]:
     logger.info("T3 result", extra={"extra_fields": {k: v for k, v in t3.items() if not isinstance(v, dict)}})
 
     logger.info("T2: simulation check (fhe=simulate vs. fhe=disable, full val)")
-    simulate_prob_full = cml_model.predict_proba(X_val, fhe="simulate")[:, 1]
+    simulate_prob_full = cml_model.predict_proba(X_val_model, fhe="simulate")[:, 1]
     t2 = t2_simulation_check(simulate_prob_full, disable_prob)
     logger.info("T2 result", extra={"extra_fields": t2})
 
     logger.info("E5/T1: explicit encrypt->run->decrypt round trip on a stratified execute sample")
     exec_cfg = config["execute_sample"]
     sample_positions = _stratified_sample_positions(y_val, exec_cfg["n"], exec_cfg["n_positive"], config["seed"])
-    X_sample = X_val[sample_positions]
+    X_sample = X_val_model[sample_positions]
     y_sample = y_val[sample_positions]
     sample_transaction_ids = val_transaction_ids[sample_positions]
 

@@ -14,6 +14,7 @@ from src.fhe.handoff import (
     load_handoff,
     rebuild_pipeline_predict_proba,
     save_handoff,
+    standardize_features,
 )
 
 
@@ -133,3 +134,33 @@ def test_save_handoff_rejects_non_npz_suffix(fitted_pipeline, tmp_path):
             val_transaction_ids=np.arange(10), reference_val_prob=np.zeros(10),
             columns=["a"] * X.shape[1], manifest_extra={},
         )
+
+
+def _sigmoid_score(params, X):
+    coef = np.asarray(params["lr_coef"], dtype=np.float64).reshape(-1)
+    intercept = float(np.asarray(params["lr_intercept"], dtype=np.float64).reshape(-1)[0])
+    with np.errstate(over="ignore"):  # raw-feature scores saturate on purpose in the control test
+        return 1.0 / (1.0 + np.exp(-(X @ coef + intercept)))
+
+
+def test_standardize_features_makes_exported_coefficients_reproduce_the_pipeline(fitted_pipeline):
+    """`lr_coef` are the coefficients of the model trained on STANDARDIZED
+    features: applying them to `standardize_features(params, X)` must give
+    exactly the pipeline's probabilities. This is the contract every
+    Concrete-ML LR build depends on (src/fhe/compile/linear.py)."""
+    pipeline, X, _ = fitted_pipeline
+    params = extract_lr_pipeline_params(pipeline)
+    np.testing.assert_allclose(_sigmoid_score(params, standardize_features(params, X)), pipeline.predict_proba(X)[:, 1], atol=1e-12)
+
+
+def test_applying_exported_coefficients_to_raw_features_is_not_the_pipeline(fitted_pipeline):
+    """Regression lock for the Phase 8 audit finding: the handoff holds RAW
+    features, so using them directly with `lr_coef` (no scaler) evaluates a
+    different function. Asserted to be materially different so the mistake
+    can't hide behind a loose tolerance."""
+    pipeline, X, _ = fitted_pipeline
+    params = extract_lr_pipeline_params(pipeline)
+    raw_prob = _sigmoid_score(params, X)
+    true_prob = pipeline.predict_proba(X)[:, 1]
+    assert np.max(np.abs(raw_prob - true_prob)) > 0.1
+
