@@ -70,6 +70,24 @@ def extract_lr_pipeline_params(pipeline: Any) -> dict[str, Any]:
     }
 
 
+def standardize_features(params: dict[str, Any], X: np.ndarray) -> np.ndarray:
+    """The pipeline's `StandardScaler` step, as a client-side plaintext
+    transform: `(X - mean) / scale` in float64, from the exported parameters.
+
+    The exported `lr_coef` are the coefficients of the model trained on
+    STANDARDIZED features, so the compiled Concrete-ML LR must be built,
+    calibrated, and evaluated on this function's output -- never on the raw
+    handoff matrices (`docs/architecture.md` Sec.6: preprocessing stays
+    client-side and plaintext). Feeding raw X to a model holding these
+    coefficients silently evaluates sigmoid(w.x_raw + b) instead of
+    sigmoid(w.(x-mean)/scale + b) (found in the Phase 8 audit; see
+    docs/research.md, LR scaler erratum). Same arithmetic as
+    `rebuild_pipeline_predict_proba`, so the two can never diverge."""
+    mean = np.asarray(params["scaler_mean"], dtype=np.float64)
+    scale = np.asarray(params["scaler_scale"], dtype=np.float64)
+    return (np.asarray(X, dtype=np.float64) - mean) / scale
+
+
 def rebuild_pipeline_predict_proba(params: dict[str, Any], X: np.ndarray) -> np.ndarray:
     """Pure-numpy reimplementation of `Pipeline.predict_proba(X)`, from
     parameters alone -- no scikit-learn estimator object involved, so this

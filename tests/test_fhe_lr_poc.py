@@ -139,3 +139,50 @@ def test_explicit_round_trip_matches_simulate_exactly(toy_pipeline_and_params):
     assert result["passed"] is True
     assert timing["keygen_seconds"] > 0
     assert timing["mean_row_seconds"] > 0
+
+
+@pytest.fixture
+def toy_raw_features_pipeline():
+    """The REAL handoff contract: RAW (unscaled) features plus the exported
+    pipeline parameters -- unlike `toy_pipeline_and_params`, which pre-scales."""
+    from src.fhe.handoff import extract_lr_pipeline_params
+
+    rng = np.random.RandomState(3)
+    n, d = 600, 5
+    X = rng.randn(n, d) * np.array([1.0, 50.0, 0.01, 200.0, 3.0]) + np.array([0.0, 20.0, 0.5, -300.0, 1.0])
+    y = (X[:, 0] + (X[:, 1] - 20.0) / 50.0 > 0).astype(int)
+    pipeline = Pipeline([("scaler", StandardScaler()), ("lr", LogisticRegression(C=1.0, max_iter=500))])
+    pipeline.fit(X, y)
+    return pipeline, extract_lr_pipeline_params(pipeline), X
+
+
+def test_compiled_lr_built_on_standardized_inputs_matches_the_pipeline(toy_raw_features_pipeline):
+    """Regression lock for the Phase 8 audit finding (docs/research.md, LR scaler erratum):
+    starting from RAW features, the compiled model -- built, calibrated and
+    evaluated on `standardize_features` output, as src/fhe/poc.py and
+    src/benchmark/run.py now do -- must agree with the plaintext pipeline up to
+    quantization noise. Before the fix this comparison was never made against
+    the real raw-feature handoff contract."""
+    from src.fhe.compile.linear import build_concrete_lr
+    from src.fhe.handoff import standardize_features
+
+    pipeline, params, X = toy_raw_features_pipeline
+    X_model = standardize_features(params, X)
+    cml_model = build_concrete_lr(params, X_model, n_bits=8)
+    prob = cml_model.predict_proba(X_model, fhe="disable")[:, 1]
+    reference = pipeline.predict_proba(X)[:, 1]
+    assert np.mean((prob >= 0.5) == (reference >= 0.5)) >= 0.9
+    assert np.mean(np.abs(prob - reference)) < 0.1
+
+
+def test_compiled_lr_built_on_raw_inputs_does_not_match_the_pipeline(toy_raw_features_pipeline):
+    """Negative control: the pre-fix behaviour (raw features straight into a
+    model holding standardized-space coefficients) must NOT pass the check
+    above, so that check demonstrably has teeth."""
+    from src.fhe.compile.linear import build_concrete_lr
+
+    pipeline, params, X = toy_raw_features_pipeline
+    cml_model = build_concrete_lr(params, X, n_bits=8)
+    prob = cml_model.predict_proba(X, fhe="disable")[:, 1]
+    reference = pipeline.predict_proba(X)[:, 1]
+    assert np.mean(np.abs(prob - reference)) > 0.1
