@@ -1,0 +1,17 @@
+{
+  "config_hash": "153a51ac94a4bb39",
+  "config_path": "configs/phase8/research_grid.yaml",
+  "git_commit": "e85d16a0675b261cbbe3c6893e17f055a8b297e5",
+  "library_versions": {
+    "PyYAML": "6.0.3",
+    "concrete-ml": "1.9.0",
+    "concrete-python": "2.10.0",
+    "numpy": "1.26.4",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.5.0",
+    "xgboost": "1.6.2"
+  },
+  "raw_file_sha256": {},
+  "seed": 42,
+  "timestamp_utc": "2026-09-24T21:47:45.462391+00:00"
+}
