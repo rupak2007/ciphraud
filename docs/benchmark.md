@@ -135,6 +135,11 @@ The individual per-trial numbers (`trials_seconds`) are in each config's
 2-trial sample, not a correctness concern (T0-T3 already own correctness;
 this harness only measures already-validated circuits).
 
+> **Erratum (2026-09-25):** the LR row in the Phase 7 smoke test was compiled on
+> raw (unstandardized) features, so its accuracy numbers are not valid
+> quantization evidence; its timings and circuit shape remain valid
+> observations. See `docs/research.md` §5.
+
 The 3-4 order-of-magnitude latency gap between LR (zero PBS, sub-100ms real
 FHE round trip) and XGBoost (151,986 PBS, ~22.6-minute round trip) is the
 same PBS-driven cost `docs/fhe_xgboost.md` §5-6 already measured in Phase

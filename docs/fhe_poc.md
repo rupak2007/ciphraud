@@ -29,6 +29,20 @@ not treated as a Phase 5 blocker -- independently reproduced for XGBoost in
 Phase 6 (`docs/fhe_xgboost.md`), reinforcing that this is a quantization
 finding, not a Logistic-Regression- or Phase-5-specific defect.
 
+> **ERRATUM (2026-09-25) — the T3 diagnosis in this document is superseded.**
+> The compiled LR in this phase was built, calibrated and evaluated on **raw**
+> features while holding coefficients trained on **standardized** features (the
+> handoff stores raw `X`; the `StandardScaler` step was never applied on the
+> compiled side). The T3 failures reported below at `n_bits=8` and `n_bits=16`
+> were therefore mostly this preprocessing mismatch, **not** heavy-tailed
+> min/max quantization, and "independently reproduced for XGBoost" (above) does
+> not hold for LR. T0/T1/T2 were unaffected (they cannot see the mismatch). Fixed
+> in `src/fhe/handoff.py::standardize_features`; the corrected results are in
+> `docs/research.md` §5: LR passes T3 at 16 bits for all three tiers and still
+> fails at 8 bits (a genuine quantization effect). The original text and the
+> committed `results/phase5_fhe_poc/` files are left unmodified as the historical
+> record; do not cite their accuracy numbers as quantization results.
+
 ## 1. Objective and scope
 
 Quantize the committed Phase 4 `top_20` Logistic Regression at `n_bits=8`,

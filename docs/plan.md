@@ -231,6 +231,13 @@ remediated, not silently dropped. Phase 5 is closed per this phase's own
 written exit criterion; the T3 limitation carries forward into Phase 6 and
 is independently reproduced there for XGBoost (below).
 
+**Erratum (2026-09-25):** the LR T3 failure recorded above was mostly caused by
+a defect found later: the compiled LR consumed raw features while its
+coefficients were trained on standardized features. It is fixed, and the
+corrected LR results (16-bit passes T3 at every tier; 8-bit still fails) are in
+`docs/research.md` §5. The "independently reproduced for XGBoost" claim does not
+apply to LR; the Phase 5 result files are left unmodified as history.
+
 ---
 
 ## Phase 6 — FHE Fraud Inference (XGBoost)
@@ -365,6 +372,14 @@ budget.
 **Fallback strategy**: reduce grid density (fewer bit-width steps) with
 a documented rationale before reducing trial count (variance reporting
 is higher priority than grid density).
+
+**Status: CLOSED, exit criteria met (2026-09-26); full write-up in `docs/research.md`.**
+- **Full grid executed:** 12 of 12 configurations (LR and XGBoost × `top_20`/`top_50`/`top_100` × two bit-widths each), 5 repeated executions of one fixed input per configuration, plus a 2-row real encrypt→run→decrypt correctness sample per configuration. T0/T1/T2 pass in all 12; T3 passes in 9 (LR 16 bits and XGBoost 14 bits at all three tiers) and fails in 3+3 (all 8-bit LR and XGBoost configurations), which is a reported finding, not a defect.
+- **Pareto frontiers generated:** accuracy vs latency, vs peak memory and vs ciphertext size, plus feature-count / bit-width / model effect tables (`python -m src.analysis.phase8_pareto`; outputs in `results/phase8_research/pareto/`).
+- **Prior-art comparison written up as an honest divergence:** the ~6 ms XGBoost figure in `docs/prd.md` §11 is not reproduced (measured 931–4,099 s); no explanation is asserted (`docs/research.md` §6.4).
+- **Tests:** results-schema validation and means-vs-raw-trial checks with negative controls (`tests/test_phase8_results.py`); runner tests (`tests/test_phase8_grid.py`).
+- **Deviations from this phase's task text** (all recorded in `docs/research.md` §9): bit-widths differ by model (LR 8/16, XGBoost 8/14; XGBoost 15/16 do not compile — a measured Concrete limit); latency is repeated executions of one input, not independent samples; a 2-row rather than 100-row correctness sample for XGBoost (cost); committed Phase 5/7 **code** was edited to fix the LR `StandardScaler` defect (`docs/research.md` §5) while committed Phase 1–7 **result** files were not modified; the per-configuration `provenance.json` files record `git_commit = e85d16a` (the pre-Phase-8 commit) because the Phase 8 code was uncommitted when the runs happened.
+- **Not established by Phase 8:** test-partition accuracy, latency across different inputs, more than two bit-widths per model, any GPU/cloud run (`docs/research.md` §11).
 
 ---
 
