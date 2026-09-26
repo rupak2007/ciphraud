@@ -1,0 +1,212 @@
+{
+  "accuracy": {
+    "correctness_sample_positions": [
+      32148,
+      13560
+    ],
+    "float_full_metrics": {
+      "confusion_matrix": {
+        "fn": 2506,
+        "fp": 1565,
+        "tn": 99433,
+        "tp": 1584
+      },
+      "f1": 0.43762950683796104,
+      "f2": 0.4059664770106105,
+      "pr_auc": 0.4223780321639392,
+      "precision": 0.5030168307399174,
+      "recall": 0.38728606356968215,
+      "roc_auc": 0.8521998716864373,
+      "threshold": 0.8343608975410461
+    },
+    "gates": {
+      "t0": {
+        "max_abs_diff": 1.1102230246251565e-16,
+        "mean_abs_diff": 1.464737656365256e-19,
+        "passed": true,
+        "tolerance": 1e-07
+      },
+      "t1_correctness": {
+        "exact_match": true,
+        "max_abs_diff": 0.0,
+        "n_rows_executed": 2,
+        "passed": true,
+        "round_trip_timing": {
+          "keygen_seconds": 0.007250910999573534,
+          "max_row_seconds": 0.15451122600006784,
+          "mean_row_seconds": 0.0977615430001606,
+          "min_row_seconds": 0.041011860000253364
+        }
+      },
+      "t2": {
+        "exact_match": true,
+        "max_abs_diff": 0.0,
+        "n_mismatched": 0,
+        "n_total": 105088,
+        "passed": true
+      },
+      "t3": {
+        "decision_agreement": 0.9699585109622412,
+        "float_confusion_matrix": {
+          "fn": 2506,
+          "fp": 1565,
+          "tn": 99433,
+          "tp": 1584
+        },
+        "float_pr_auc": 0.4223780321639392,
+        "float_roc_auc": 0.8521998716864373,
+        "max_abs_prob_diff": 1.0,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.317794268753258,
+        "min_decision_agreement": 0.99,
+        "passed": false,
+        "pr_auc_drop": 0.3830611655638246,
+        "quantized_confusion_matrix": {
+          "fn": 4085,
+          "fp": 17,
+          "tn": 100981,
+          "tp": 5
+        },
+        "quantized_pr_auc": 0.03931686660011465,
+        "quantized_roc_auc": 0.5017334398788114
+      }
+    },
+    "quantized_full_metrics": {
+      "confusion_matrix": {
+        "fn": 4085,
+        "fp": 17,
+        "tn": 100981,
+        "tp": 5
+      },
+      "f1": 0.0024319066147859923,
+      "f2": 0.0015260651935050666,
+      "pr_auc": 0.03931686660011465,
+      "precision": 0.22727272727272727,
+      "recall": 0.0012224938875305623,
+      "roc_auc": 0.5017334398788114,
+      "threshold": 0.8343608975410461
+    }
+  },
+  "all_gates_passed": false,
+  "ciphertext_size_bytes": {
+    "input": 2400,
+    "output": 18440
+  },
+  "circuit_stats": {
+    "complexity": 2304.0,
+    "global_p_error": 5.056724541632733e-13,
+    "p_error": 5.056724541632733e-13,
+    "programmable_bootstrap_count": 0,
+    "size_of_bootstrap_keys_bytes": 0,
+    "size_of_inputs_bytes": 2400,
+    "size_of_keyswitch_keys_bytes": 0,
+    "size_of_outputs_bytes": 18440,
+    "size_of_secret_keys_bytes": 18432
+  },
+  "compile_seconds": 142.0217788509999,
+  "fhe_latency": {
+    "decrypt": {
+      "max_seconds": 0.0068320099999255035,
+      "mean_seconds": 0.0020762213998750667,
+      "min_seconds": 0.0008754999998927815,
+      "n_trials": 5,
+      "std_seconds": 0.0026585979262767692,
+      "trials_seconds": [
+        0.0068320099999255035,
+        0.0008754999998927815,
+        0.0008838989997457247,
+        0.0008806989999357029,
+        0.0009089989998756209
+      ]
+    },
+    "encrypt": {
+      "max_seconds": 0.022379580000233545,
+      "mean_seconds": 0.019106600200393585,
+      "min_seconds": 0.017058685000847618,
+      "n_trials": 5,
+      "std_seconds": 0.001996723238400655,
+      "trials_seconds": [
+        0.0184608270001263,
+        0.018339226000534836,
+        0.022379580000233545,
+        0.019294683000225632,
+        0.017058685000847618
+      ]
+    },
+    "keygen_seconds": 1.0199999451288022e-05,
+    "outputs_reproducible": true,
+    "run": {
+      "max_seconds": 0.030169373000717314,
+      "mean_seconds": 0.02436109380014386,
+      "min_seconds": 0.02082158199937112,
+      "n_trials": 5,
+      "std_seconds": 0.0035421409565942787,
+      "trials_seconds": [
+        0.024813435000396566,
+        0.023089899999831687,
+        0.030169373000717314,
+        0.02082158199937112,
+        0.022911179000402626
+      ]
+    },
+    "throughput_requests_per_second": 21.955026910137843,
+    "total": {
+      "max_seconds": 0.05343565200018929,
+      "mean_seconds": 0.04554765539996879,
+      "min_seconds": 0.040882263000639796,
+      "n_trials": 5,
+      "std_seconds": 0.005830666789263837,
+      "trials_seconds": [
+        0.050111571999877924,
+        0.04230862599979446,
+        0.05343565200018929,
+        0.041000163999342476,
+        0.040882263000639796
+      ]
+    }
+  },
+  "gates_passed": {
+    "t0": true,
+    "t1_correctness": true,
+    "t2": true,
+    "t3": false
+  },
+  "key_size_bytes": {
+    "bootstrap": 0,
+    "keyswitch": 0,
+    "secret": 18432
+  },
+  "label": "lr_top100_bits16",
+  "model_type": "lr",
+  "n_bits": 16,
+  "n_features": 100,
+  "peak_rss_mb": 2043.640625,
+  "peak_rss_mb_after_compile": 2043.640625,
+  "plaintext_latency": {
+    "max_seconds": 0.0033091040004364913,
+    "mean_seconds": 0.0006933410002602613,
+    "min_seconds": 2.8101000680180732e-05,
+    "n_trials": 5,
+    "outputs_reproducible": true,
+    "std_seconds": 0.001462345818258218,
+    "throughput_requests_per_second": 1442.2917433479734,
+    "trials_seconds": [
+      0.0033091040004364913,
+      6.7299999500392e-05,
+      3.300000025774352e-05,
+      2.9200000426499173e-05,
+      2.8101000680180732e-05
+    ]
+  },
+  "row_selection": {
+    "n_positive": 0,
+    "position": 32148,
+    "seed": 42,
+    "y_true": 0
+  },
+  "seed": 42,
+  "source_config_hash": "24f95507283a60c6",
+  "status": "failed_accuracy_gates",
+  "test_partition_touched": false,
+  "tier": null
+}

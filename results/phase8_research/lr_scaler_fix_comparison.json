@@ -1,0 +1,290 @@
+{
+  "lr_top100_bits16": {
+    "corrected": {
+      "ciphertext_size_bytes": {
+        "input": 2400,
+        "output": 18128
+      },
+      "compile_seconds": 96.25247223100087,
+      "fhe_latency_mean_seconds": 0.030919320201064693,
+      "fhe_latency_std_seconds": 0.0012575494575909245,
+      "float_pr_auc": 0.4223780321639392,
+      "float_roc_auc": 0.8521998716864373,
+      "gates_passed": {
+        "t0": true,
+        "t1_correctness": true,
+        "t2": true,
+        "t3": true
+      },
+      "mean_abs_prob_diff": 0.0028017036442257214,
+      "quantized_pr_auc": 0.42208232086880737,
+      "quantized_roc_auc": 0.8519225380095401,
+      "status": "passed",
+      "t3_decision_agreement": 0.9995432399512789,
+      "t3_pr_auc_drop": 0.0002957112951318397
+    },
+    "pre_fix": {
+      "ciphertext_size_bytes": {
+        "input": 2400,
+        "output": 18440
+      },
+      "compile_seconds": 142.0217788509999,
+      "fhe_latency_mean_seconds": 0.04554765539996879,
+      "fhe_latency_std_seconds": 0.005830666789263837,
+      "float_pr_auc": 0.4223780321639392,
+      "float_roc_auc": 0.8521998716864373,
+      "gates_passed": {
+        "t0": true,
+        "t1_correctness": true,
+        "t2": true,
+        "t3": false
+      },
+      "mean_abs_prob_diff": 0.317794268753258,
+      "quantized_pr_auc": 0.03931686660011465,
+      "quantized_roc_auc": 0.5017334398788114,
+      "status": "failed_accuracy_gates",
+      "t3_decision_agreement": 0.9699585109622412,
+      "t3_pr_auc_drop": 0.3830611655638246
+    }
+  },
+  "lr_top100_bits8": {
+    "corrected": {
+      "ciphertext_size_bytes": {
+        "input": 2400,
+        "output": 10656
+      },
+      "compile_seconds": 96.0234525809974,
+      "fhe_latency_mean_seconds": 0.0184904040004767,
+      "fhe_latency_std_seconds": 0.0007245596314569003,
+      "float_pr_auc": 0.4223780321639392,
+      "float_roc_auc": 0.8521998716864373,
+      "gates_passed": {
+        "t0": true,
+        "t1_correctness": true,
+        "t2": true,
+        "t3": false
+      },
+      "mean_abs_prob_diff": 0.07387367457694974,
+      "quantized_pr_auc": 0.28290416108881705,
+      "quantized_roc_auc": 0.8202281269604167,
+      "status": "failed_accuracy_gates",
+      "t3_decision_agreement": 0.9790651644336176,
+      "t3_pr_auc_drop": 0.13947387107512216
+    },
+    "pre_fix": {
+      "ciphertext_size_bytes": {
+        "input": 2400,
+        "output": 10968
+      },
+      "compile_seconds": 133.4927319590006,
+      "fhe_latency_mean_seconds": 0.047451922599793764,
+      "fhe_latency_std_seconds": 0.01671023124938741,
+      "float_pr_auc": 0.4223780321639392,
+      "float_roc_auc": 0.8521998716864373,
+      "gates_passed": {
+        "t0": true,
+        "t1_correctness": true,
+        "t2": true,
+        "t3": false
+      },
+      "mean_abs_prob_diff": 0.3176996125665175,
+      "quantized_pr_auc": 0.03898644385268096,
+      "quantized_roc_auc": 0.5010643533041469,
+      "status": "failed_accuracy_gates",
+      "t3_decision_agreement": 0.970034637637028,
+      "t3_pr_auc_drop": 0.38339158831125825
+    }
+  },
+  "lr_top20_bits16": {
+    "corrected": {
+      "ciphertext_size_bytes": {
+        "input": 480,
+        "output": 17656
+      },
+      "compile_seconds": 93.66990765100127,
+      "fhe_latency_mean_seconds": 0.008570871200208784,
+      "fhe_latency_std_seconds": 0.0008665416081913285,
+      "float_pr_auc": 0.3484381889851565,
+      "float_roc_auc": 0.8218975964616405,
+      "gates_passed": {
+        "t0": true,
+        "t1_correctness": true,
+        "t2": true,
+        "t3": true
+      },
+      "mean_abs_prob_diff": 0.001438708021694312,
+      "quantized_pr_auc": 0.34823939389983716,
+      "quantized_roc_auc": 0.8216983574827863,
+      "status": "passed",
+      "t3_decision_agreement": 0.9996859774665042,
+      "t3_pr_auc_drop": 0.00019879508531933654
+    },
+    "pre_fix": {
+      "ciphertext_size_bytes": {
+        "input": 480,
+        "output": 17656
+      },
+      "compile_seconds": 107.6657357690001,
+      "fhe_latency_mean_seconds": 0.013830887399944914,
+      "fhe_latency_std_seconds": 0.0030302745004765243,
+      "float_pr_auc": 0.3484381889851565,
+      "float_roc_auc": 0.8218975964616405,
+      "gates_passed": {
+        "t0": true,
+        "t1_correctness": true,
+        "t2": true,
+        "t3": false
+      },
+      "mean_abs_prob_diff": 0.3541349251501976,
+      "quantized_pr_auc": 0.058307925337254755,
+      "quantized_roc_auc": 0.5836001255150857,
+      "status": "failed_accuracy_gates",
+      "t3_decision_agreement": 0.9614418392204629,
+      "t3_pr_auc_drop": 0.29013026364790173
+    }
+  },
+  "lr_top20_bits8": {
+    "corrected": {
+      "ciphertext_size_bytes": {
+        "input": 480,
+        "output": 10192
+      },
+      "compile_seconds": 92.9019670480011,
+      "fhe_latency_mean_seconds": 0.0064772985992021855,
+      "fhe_latency_std_seconds": 0.0005850088566876916,
+      "float_pr_auc": 0.3484381889851565,
+      "float_roc_auc": 0.8218975964616405,
+      "gates_passed": {
+        "t0": true,
+        "t1_correctness": true,
+        "t2": true,
+        "t3": false
+      },
+      "mean_abs_prob_diff": 0.028278604958693936,
+      "quantized_pr_auc": 0.3218202330592772,
+      "quantized_roc_auc": 0.806853747521496,
+      "status": "failed_accuracy_gates",
+      "t3_decision_agreement": 0.9849744975639464,
+      "t3_pr_auc_drop": 0.02661795592587929
+    },
+    "pre_fix": {
+      "ciphertext_size_bytes": {
+        "input": 480,
+        "output": 10192
+      },
+      "compile_seconds": 107.73019614600003,
+      "fhe_latency_mean_seconds": 0.015699788400070247,
+      "fhe_latency_std_seconds": 0.008270849783137049,
+      "float_pr_auc": 0.3484381889851565,
+      "float_roc_auc": 0.8218975964616405,
+      "gates_passed": {
+        "t0": true,
+        "t1_correctness": true,
+        "t2": true,
+        "t3": false
+      },
+      "mean_abs_prob_diff": 0.351259963683393,
+      "quantized_pr_auc": 0.05539276514335778,
+      "quantized_roc_auc": 0.5701289141700789,
+      "status": "failed_accuracy_gates",
+      "t3_decision_agreement": 0.9576355054811205,
+      "t3_pr_auc_drop": 0.2930454238417987
+    }
+  },
+  "lr_top50_bits16": {
+    "corrected": {
+      "ciphertext_size_bytes": {
+        "input": 1200,
+        "output": 16928
+      },
+      "compile_seconds": 94.46872827499828,
+      "fhe_latency_mean_seconds": 0.015401105999626453,
+      "fhe_latency_std_seconds": 0.002741750378586827,
+      "float_pr_auc": 0.3888610406399093,
+      "float_roc_auc": 0.8448697173359021,
+      "gates_passed": {
+        "t0": true,
+        "t1_correctness": true,
+        "t2": true,
+        "t3": true
+      },
+      "mean_abs_prob_diff": 0.002023514727533187,
+      "quantized_pr_auc": 0.3886008050465755,
+      "quantized_roc_auc": 0.8446069522013822,
+      "status": "passed",
+      "t3_decision_agreement": 0.999676461632156,
+      "t3_pr_auc_drop": 0.00026023559333376856
+    },
+    "pre_fix": {
+      "ciphertext_size_bytes": {
+        "input": 1200,
+        "output": 16928
+      },
+      "compile_seconds": 122.44149073699964,
+      "fhe_latency_mean_seconds": 0.025841819400193346,
+      "fhe_latency_std_seconds": 0.007995111920495514,
+      "float_pr_auc": 0.3888610406399093,
+      "float_roc_auc": 0.8448697173359021,
+      "gates_passed": {
+        "t0": true,
+        "t1_correctness": true,
+        "t2": true,
+        "t3": false
+      },
+      "mean_abs_prob_diff": 0.33943912058060255,
+      "quantized_pr_auc": 0.039282854784286475,
+      "quantized_roc_auc": 0.503138103487585,
+      "status": "failed_accuracy_gates",
+      "t3_decision_agreement": 0.967170371498173,
+      "t3_pr_auc_drop": 0.34957818585562284
+    }
+  },
+  "lr_top50_bits8": {
+    "corrected": {
+      "ciphertext_size_bytes": {
+        "input": 1200,
+        "output": 9456
+      },
+      "compile_seconds": 97.08263215199986,
+      "fhe_latency_mean_seconds": 0.011596722199465148,
+      "fhe_latency_std_seconds": 0.0031689138407390515,
+      "float_pr_auc": 0.3888610406399093,
+      "float_roc_auc": 0.8448697173359021,
+      "gates_passed": {
+        "t0": true,
+        "t1_correctness": true,
+        "t2": true,
+        "t3": false
+      },
+      "mean_abs_prob_diff": 0.09515750042747537,
+      "quantized_pr_auc": 0.2495829757753253,
+      "quantized_roc_auc": 0.8083544998421861,
+      "status": "failed_accuracy_gates",
+      "t3_decision_agreement": 0.9750019031668696,
+      "t3_pr_auc_drop": 0.139278064864584
+    },
+    "pre_fix": {
+      "ciphertext_size_bytes": {
+        "input": 1200,
+        "output": 9456
+      },
+      "compile_seconds": 119.81436055700033,
+      "fhe_latency_mean_seconds": 0.04395384579993333,
+      "fhe_latency_std_seconds": 0.011350294728737777,
+      "float_pr_auc": 0.3888610406399093,
+      "float_roc_auc": 0.8448697173359021,
+      "gates_passed": {
+        "t0": true,
+        "t1_correctness": true,
+        "t2": true,
+        "t3": false
+      },
+      "mean_abs_prob_diff": 0.33936726427112085,
+      "quantized_pr_auc": 0.0390376046496438,
+      "quantized_roc_auc": 0.5018631054738745,
+      "status": "failed_accuracy_gates",
+      "t3_decision_agreement": 0.9672464981729598,
+      "t3_pr_auc_drop": 0.3498234359902655
+    }
+  }
+}
