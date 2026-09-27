@@ -136,6 +136,37 @@ def test_save_handoff_rejects_non_npz_suffix(fitted_pipeline, tmp_path):
         )
 
 
+def _tiny_handoff_kwargs(n_train=6, n_val=4):
+    rng = np.random.RandomState(0)
+    return dict(
+        X_train=rng.rand(n_train, 3), X_val=rng.rand(n_val, 3), y_val=np.array([0, 1] * (n_val // 2)),
+        val_transaction_ids=np.arange(n_val), columns=["a", "b", "c"], manifest_extra={"tier": "t"},
+    )
+
+
+def test_handoff_without_new_optional_arrays_has_the_pre_phase9_layout(tmp_path):
+    """Backward compatibility: existing callers (Phases 5-8) pass a reference and no y_train, and must get exactly the
+    array set they always got."""
+    kwargs = _tiny_handoff_kwargs()
+    save_handoff(tmp_path / "h.npz", tmp_path / "m.json", reference_val_prob=np.linspace(0, 1, 4), **kwargs)
+    _, arrays = load_handoff(tmp_path / "h.npz", tmp_path / "m.json")
+    assert set(arrays) == {"X_train", "X_val", "y_val", "val_transaction_ids", "reference_val_prob"}
+
+
+def test_handoff_accepts_labels_and_no_reference_for_the_mlp(tmp_path):
+    kwargs = _tiny_handoff_kwargs()
+    y_train = np.array([0, 1, 0, 0, 1, 0])
+    save_handoff(tmp_path / "h.npz", tmp_path / "m.json", reference_val_prob=None, y_train=y_train, **kwargs)
+    _, arrays = load_handoff(tmp_path / "h.npz", tmp_path / "m.json")
+    assert set(arrays) == {"X_train", "X_val", "y_val", "val_transaction_ids", "y_train"}
+    np.testing.assert_array_equal(arrays["y_train"], y_train)
+
+
+def test_handoff_rejects_mismatched_label_length(tmp_path):
+    with pytest.raises(HandoffError, match="y_train"):
+        save_handoff(tmp_path / "h.npz", tmp_path / "m.json", reference_val_prob=None, y_train=np.zeros(5, dtype=int), **_tiny_handoff_kwargs())
+
+
 def _sigmoid_score(params, X):
     coef = np.asarray(params["lr_coef"], dtype=np.float64).reshape(-1)
     intercept = float(np.asarray(params["lr_intercept"], dtype=np.float64).reshape(-1)[0])
