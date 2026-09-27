@@ -1,0 +1,904 @@
+{
+  "candidates": [
+    {
+      "circuit": {
+        "complexity": 20200004880.0,
+        "global_p_error": 8.408099774275013e-13,
+        "hidden_neurons": 160,
+        "key_switch_count": 480,
+        "layer_shapes": [
+          [
+            80,
+            20
+          ],
+          [
+            80,
+            80
+          ],
+          [
+            2,
+            80
+          ]
+        ],
+        "max_integer_bit_width": 6,
+        "n_a_bits": 2,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          2
+        ],
+        "n_bits_output": 5,
+        "n_layers": 3,
+        "n_w_bits": 2,
+        "p_error": 8.408099774275013e-13,
+        "programmable_bootstrap_count": 400,
+        "size_of_bootstrap_keys_bytes": 686903296,
+        "size_of_inputs_bytes": 480,
+        "size_of_keyswitch_keys_bytes": 143818752,
+        "size_of_outputs_bytes": 32784,
+        "size_of_secret_keys_bytes": 61416
+      },
+      "compile_seconds": 8.659004282999831,
+      "compiled": true,
+      "decrypt_seconds": 0.001809006999792473,
+      "decrypted_equals_simulate": true,
+      "encrypt_seconds": 0.01069296299965572,
+      "epochs": 2,
+      "keygen_attempted": true,
+      "keygen_seconds": 2.027657364999868,
+      "n_accum_bits": 16,
+      "n_bits": 2,
+      "peak_rss_mb_after_compile": 960.33984375,
+      "peak_rss_mb_after_run": 1387.46875,
+      "peak_rss_mb_after_training": 960.33984375,
+      "predicted_key_material_gb": 0.830783464,
+      "run_seconds": 7.280435090000083,
+      "simulate_seconds_per_row": 0.047653689399999165,
+      "tier": "top_20",
+      "train_rows": 20000,
+      "train_seconds": 9.64586763599982,
+      "val_pr_auc_clear_quantized_subsample": 0.0900384069410394,
+      "wall_seconds": 60.01045762700005
+    },
+    {
+      "circuit": {
+        "complexity": 52924851920.0,
+        "global_p_error": 7.62368615635282e-13,
+        "hidden_neurons": 160,
+        "key_switch_count": 640,
+        "layer_shapes": [
+          [
+            80,
+            20
+          ],
+          [
+            80,
+            80
+          ],
+          [
+            2,
+            80
+          ]
+        ],
+        "max_integer_bit_width": 7,
+        "n_a_bits": 3,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          3
+        ],
+        "n_bits_output": 5,
+        "n_layers": 3,
+        "n_w_bits": 3,
+        "p_error": 7.62368615635282e-13,
+        "programmable_bootstrap_count": 560,
+        "size_of_bootstrap_keys_bytes": 746700800,
+        "size_of_inputs_bytes": 480,
+        "size_of_keyswitch_keys_bytes": 261627904,
+        "size_of_outputs_bytes": 32784,
+        "size_of_secret_keys_bytes": 76376
+      },
+      "compile_seconds": 8.576447290000033,
+      "compiled": true,
+      "decrypt_seconds": 0.001518875999863667,
+      "decrypted_equals_simulate": true,
+      "encrypt_seconds": 0.006762460000118153,
+      "epochs": 2,
+      "keygen_attempted": true,
+      "keygen_seconds": 4.967747245000282,
+      "n_accum_bits": 16,
+      "n_bits": 3,
+      "peak_rss_mb_after_compile": 960.3984375,
+      "peak_rss_mb_after_run": 2018.109375,
+      "peak_rss_mb_after_training": 960.3984375,
+      "predicted_key_material_gb": 1.00840508,
+      "run_seconds": 19.772491209000236,
+      "simulate_seconds_per_row": 0.028660110700002406,
+      "tier": "top_20",
+      "train_rows": 20000,
+      "train_seconds": 12.930941116000213,
+      "val_pr_auc_clear_quantized_subsample": 0.13196514063038955,
+      "wall_seconds": 58.877103172999796
+    },
+    {
+      "circuit": {
+        "complexity": 101206826480.0,
+        "global_p_error": 8.11631844656952e-13,
+        "hidden_neurons": 160,
+        "key_switch_count": 720,
+        "layer_shapes": [
+          [
+            80,
+            20
+          ],
+          [
+            80,
+            80
+          ],
+          [
+            2,
+            80
+          ]
+        ],
+        "max_integer_bit_width": 10,
+        "n_a_bits": 4,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          4
+        ],
+        "n_bits_output": 5,
+        "n_layers": 3,
+        "n_w_bits": 4,
+        "p_error": 8.11631844656952e-13,
+        "programmable_bootstrap_count": 640,
+        "size_of_bootstrap_keys_bytes": 888045568,
+        "size_of_inputs_bytes": 480,
+        "size_of_keyswitch_keys_bytes": 376127488,
+        "size_of_outputs_bytes": 65552,
+        "size_of_secret_keys_bytes": 132440
+      },
+      "compile_seconds": 9.517315244000201,
+      "compiled": true,
+      "decrypt_seconds": 0.020446559999982128,
+      "decrypted_equals_simulate": true,
+      "encrypt_seconds": 0.005851804000030825,
+      "epochs": 2,
+      "keygen_attempted": true,
+      "keygen_seconds": 10.04057286599982,
+      "n_accum_bits": 16,
+      "n_bits": 4,
+      "peak_rss_mb_after_compile": 960.6953125,
+      "peak_rss_mb_after_run": 2890.34765625,
+      "peak_rss_mb_after_training": 960.6953125,
+      "predicted_key_material_gb": 1.264305496,
+      "run_seconds": 34.71846606899999,
+      "simulate_seconds_per_row": 0.023503540499996235,
+      "tier": "top_20",
+      "train_rows": 20000,
+      "train_seconds": 9.824175403000027,
+      "val_pr_auc_clear_quantized_subsample": 0.19752247897114747,
+      "wall_seconds": 82.63686263699992
+    },
+    {
+      "circuit": {
+        "complexity": 264121341040.0,
+        "global_p_error": 8.13779273607827e-13,
+        "hidden_neurons": 160,
+        "key_switch_count": 880,
+        "layer_shapes": [
+          [
+            80,
+            20
+          ],
+          [
+            80,
+            80
+          ],
+          [
+            2,
+            80
+          ]
+        ],
+        "max_integer_bit_width": 11,
+        "n_a_bits": 5,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          5
+        ],
+        "n_bits_output": 5,
+        "n_layers": 3,
+        "n_w_bits": 5,
+        "p_error": 8.13779273607827e-13,
+        "programmable_bootstrap_count": 800,
+        "size_of_bootstrap_keys_bytes": 2278293504,
+        "size_of_inputs_bytes": 480,
+        "size_of_keyswitch_keys_bytes": 805355520,
+        "size_of_outputs_bytes": 131088,
+        "size_of_secret_keys_bytes": 231592
+      },
+      "compile_seconds": 8.239258874999905,
+      "compiled": true,
+      "epochs": 2,
+      "keygen_attempted": false,
+      "keygen_skipped_reason": "predicted key material 3.08 GB exceeds the 2.4 GB safety limit for the 3.8 GiB WSL memory",
+      "n_accum_bits": 16,
+      "n_bits": 5,
+      "peak_rss_mb_after_compile": 960.6171875,
+      "peak_rss_mb_after_training": 960.6171875,
+      "predicted_key_material_gb": 3.083880616,
+      "tier": "top_20",
+      "train_rows": 20000,
+      "train_seconds": 10.527773803999935,
+      "val_pr_auc_clear_quantized_subsample": 0.26834965823829265,
+      "wall_seconds": 40.286101126000176
+    },
+    {
+      "circuit": {
+        "complexity": 774549698560.0,
+        "global_p_error": 8.806088955463639e-13,
+        "hidden_neurons": 160,
+        "key_switch_count": 1040,
+        "layer_shapes": [
+          [
+            80,
+            20
+          ],
+          [
+            80,
+            80
+          ],
+          [
+            2,
+            80
+          ]
+        ],
+        "max_integer_bit_width": 13,
+        "n_a_bits": 6,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          6
+        ],
+        "n_bits_output": 6,
+        "n_layers": 3,
+        "n_w_bits": 6,
+        "p_error": 8.806088955463639e-13,
+        "programmable_bootstrap_count": 960,
+        "size_of_bootstrap_keys_bytes": 7013564416,
+        "size_of_inputs_bytes": 480,
+        "size_of_keyswitch_keys_bytes": 1637859328,
+        "size_of_outputs_bytes": 262160,
+        "size_of_secret_keys_bytes": 428504
+      },
+      "compile_seconds": 8.872180227000172,
+      "compiled": true,
+      "epochs": 2,
+      "keygen_attempted": false,
+      "keygen_skipped_reason": "predicted key material 8.65 GB exceeds the 2.4 GB safety limit for the 3.8 GiB WSL memory",
+      "n_accum_bits": 16,
+      "n_bits": 6,
+      "peak_rss_mb_after_compile": 961.21875,
+      "peak_rss_mb_after_training": 961.21875,
+      "predicted_key_material_gb": 8.651852248,
+      "tier": "top_20",
+      "train_rows": 20000,
+      "train_seconds": 8.84238484100024,
+      "val_pr_auc_clear_quantized_subsample": 0.27539374551974694,
+      "wall_seconds": 27.568775568999627
+    },
+    {
+      "compiled": false,
+      "epochs": 2,
+      "error": "NoParametersFound",
+      "error_type": "RuntimeError",
+      "n_accum_bits": 16,
+      "n_bits": 8,
+      "peak_rss_mb_after_training": 961.09765625,
+      "stage": "compile",
+      "tier": "top_20",
+      "train_rows": 20000,
+      "train_seconds": 9.692004876999817,
+      "val_pr_auc_clear_quantized_subsample": 0.14664679007440612,
+      "wall_seconds": 30.4302744900001
+    },
+    {
+      "circuit": {
+        "complexity": 57621216400.0,
+        "global_p_error": 8.289262618427157e-13,
+        "hidden_neurons": 400,
+        "key_switch_count": 1400,
+        "layer_shapes": [
+          [
+            200,
+            50
+          ],
+          [
+            200,
+            200
+          ],
+          [
+            2,
+            200
+          ]
+        ],
+        "max_integer_bit_width": 7,
+        "n_a_bits": 2,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          2
+        ],
+        "n_bits_output": 5,
+        "n_layers": 3,
+        "n_w_bits": 2,
+        "p_error": 8.289262618427157e-13,
+        "programmable_bootstrap_count": 1200,
+        "size_of_bootstrap_keys_bytes": 488607744,
+        "size_of_inputs_bytes": 1200,
+        "size_of_keyswitch_keys_bytes": 117702656,
+        "size_of_outputs_bytes": 32784,
+        "size_of_secret_keys_bytes": 39616
+      },
+      "compile_seconds": 8.008608879000349,
+      "compiled": true,
+      "decrypt_seconds": 0.0012113140001019929,
+      "decrypted_equals_simulate": true,
+      "encrypt_seconds": 0.008224632999827008,
+      "epochs": 2,
+      "keygen_attempted": true,
+      "keygen_seconds": 1.3428053030002047,
+      "n_accum_bits": 16,
+      "n_bits": 2,
+      "peak_rss_mb_after_compile": 1319.9375,
+      "peak_rss_mb_after_run": 1319.9375,
+      "peak_rss_mb_after_training": 1319.9375,
+      "predicted_key_material_gb": 0.606350016,
+      "run_seconds": 14.75552065599959,
+      "simulate_seconds_per_row": 0.02777904175000003,
+      "tier": "top_50",
+      "train_rows": 20000,
+      "train_seconds": 15.559059064999929,
+      "val_pr_auc_clear_quantized_subsample": 0.13167014309344444,
+      "wall_seconds": 51.56340395799998
+    },
+    {
+      "circuit": {
+        "complexity": 179348062000.0,
+        "global_p_error": 6.633245374734201e-13,
+        "hidden_neurons": 400,
+        "key_switch_count": 1800,
+        "layer_shapes": [
+          [
+            200,
+            50
+          ],
+          [
+            200,
+            200
+          ],
+          [
+            2,
+            200
+          ]
+        ],
+        "max_integer_bit_width": 9,
+        "n_a_bits": 3,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          3
+        ],
+        "n_bits_output": 5,
+        "n_layers": 3,
+        "n_w_bits": 3,
+        "p_error": 6.633245374734201e-13,
+        "programmable_bootstrap_count": 1600,
+        "size_of_bootstrap_keys_bytes": 451248128,
+        "size_of_inputs_bytes": 1200,
+        "size_of_keyswitch_keys_bytes": 199868416,
+        "size_of_outputs_bytes": 65552,
+        "size_of_secret_keys_bytes": 60232
+      },
+      "compile_seconds": 8.582800665999912,
+      "compiled": true,
+      "decrypt_seconds": 0.001618654999674618,
+      "decrypted_equals_simulate": true,
+      "encrypt_seconds": 0.008062566999797127,
+      "epochs": 2,
+      "keygen_attempted": true,
+      "keygen_seconds": 3.4736007860001337,
+      "n_accum_bits": 16,
+      "n_bits": 3,
+      "peak_rss_mb_after_compile": 1320.0078125,
+      "peak_rss_mb_after_run": 1767.84765625,
+      "peak_rss_mb_after_training": 1320.0078125,
+      "predicted_key_material_gb": 0.651176776,
+      "run_seconds": 31.970742388999952,
+      "simulate_seconds_per_row": 0.01877831409999544,
+      "tier": "top_50",
+      "train_rows": 20000,
+      "train_seconds": 15.060317488000237,
+      "val_pr_auc_clear_quantized_subsample": 0.22252755613200673,
+      "wall_seconds": 69.321335094
+    },
+    {
+      "circuit": {
+        "complexity": 437528068000.0,
+        "global_p_error": 7.696448112110436e-13,
+        "hidden_neurons": 400,
+        "key_switch_count": 2200,
+        "layer_shapes": [
+          [
+            200,
+            50
+          ],
+          [
+            200,
+            200
+          ],
+          [
+            2,
+            200
+          ]
+        ],
+        "max_integer_bit_width": 11,
+        "n_a_bits": 4,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          4
+        ],
+        "n_bits_output": 5,
+        "n_layers": 3,
+        "n_w_bits": 4,
+        "p_error": 7.696448112110436e-13,
+        "programmable_bootstrap_count": 2000,
+        "size_of_bootstrap_keys_bytes": 907509760,
+        "size_of_inputs_bytes": 1200,
+        "size_of_keyswitch_keys_bytes": 408109056,
+        "size_of_outputs_bytes": 131088,
+        "size_of_secret_keys_bytes": 93536
+      },
+      "compile_seconds": 8.404087537000123,
+      "compiled": true,
+      "decrypt_seconds": 0.07977115800031243,
+      "decrypted_equals_simulate": true,
+      "encrypt_seconds": 0.010033821999968495,
+      "epochs": 2,
+      "keygen_attempted": true,
+      "keygen_seconds": 10.387656493000122,
+      "n_accum_bits": 16,
+      "n_bits": 4,
+      "peak_rss_mb_after_compile": 1320.5390625,
+      "peak_rss_mb_after_run": 3024.4296875,
+      "peak_rss_mb_after_training": 1320.5390625,
+      "predicted_key_material_gb": 1.315712352,
+      "run_seconds": 95.00354600699984,
+      "simulate_seconds_per_row": 0.0710651497499839,
+      "tier": "top_50",
+      "train_rows": 20000,
+      "train_seconds": 16.999785089999932,
+      "val_pr_auc_clear_quantized_subsample": 0.34588021335380725,
+      "wall_seconds": 152.12816165699996
+    },
+    {
+      "circuit": {
+        "complexity": 1126040032800.0,
+        "global_p_error": 8.812633245259599e-13,
+        "hidden_neurons": 400,
+        "key_switch_count": 2600,
+        "layer_shapes": [
+          [
+            200,
+            50
+          ],
+          [
+            200,
+            200
+          ],
+          [
+            2,
+            200
+          ]
+        ],
+        "max_integer_bit_width": 13,
+        "n_a_bits": 5,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          5
+        ],
+        "n_bits_output": 5,
+        "n_layers": 3,
+        "n_w_bits": 5,
+        "p_error": 8.812633245259599e-13,
+        "programmable_bootstrap_count": 2400,
+        "size_of_bootstrap_keys_bytes": 2300706816,
+        "size_of_inputs_bytes": 1200,
+        "size_of_keyswitch_keys_bytes": 820592640,
+        "size_of_outputs_bytes": 262160,
+        "size_of_secret_keys_bytes": 159216
+      },
+      "compile_seconds": 8.121939365999879,
+      "compiled": true,
+      "epochs": 2,
+      "keygen_attempted": false,
+      "keygen_skipped_reason": "predicted key material 3.12 GB exceeds the 2.4 GB safety limit for the 3.8 GiB WSL memory",
+      "n_accum_bits": 16,
+      "n_bits": 5,
+      "peak_rss_mb_after_compile": 1320.59765625,
+      "peak_rss_mb_after_training": 1320.59765625,
+      "predicted_key_material_gb": 3.121458672,
+      "tier": "top_50",
+      "train_rows": 20000,
+      "train_seconds": 18.311335595999935,
+      "val_pr_auc_clear_quantized_subsample": 0.3497199322477508,
+      "wall_seconds": 51.39316681599985
+    },
+    {
+      "circuit": {
+        "complexity": 2382453725200.0,
+        "global_p_error": 8.804915206531112e-13,
+        "hidden_neurons": 400,
+        "key_switch_count": 3000,
+        "layer_shapes": [
+          [
+            200,
+            50
+          ],
+          [
+            200,
+            200
+          ],
+          [
+            2,
+            200
+          ]
+        ],
+        "max_integer_bit_width": 15,
+        "n_a_bits": 6,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          6
+        ],
+        "n_bits_output": 6,
+        "n_layers": 3,
+        "n_w_bits": 6,
+        "p_error": 8.804915206531112e-13,
+        "programmable_bootstrap_count": 2800,
+        "size_of_bootstrap_keys_bytes": 8882356224,
+        "size_of_inputs_bytes": 1200,
+        "size_of_keyswitch_keys_bytes": 1649819648,
+        "size_of_outputs_bytes": 262160,
+        "size_of_secret_keys_bytes": 428752
+      },
+      "compile_seconds": 8.749283690000084,
+      "compiled": true,
+      "epochs": 2,
+      "keygen_attempted": false,
+      "keygen_skipped_reason": "predicted key material 10.53 GB exceeds the 2.4 GB safety limit for the 3.8 GiB WSL memory",
+      "n_accum_bits": 16,
+      "n_bits": 6,
+      "peak_rss_mb_after_compile": 1321.0703125,
+      "peak_rss_mb_after_training": 1321.0703125,
+      "predicted_key_material_gb": 10.532604624,
+      "tier": "top_50",
+      "train_rows": 20000,
+      "train_seconds": 14.93218911699978,
+      "val_pr_auc_clear_quantized_subsample": 0.32582035359711703,
+      "wall_seconds": 33.1769491910004
+    },
+    {
+      "compiled": false,
+      "epochs": 2,
+      "error": "NoParametersFound",
+      "error_type": "RuntimeError",
+      "n_accum_bits": 16,
+      "n_bits": 8,
+      "peak_rss_mb_after_training": 1320.9140625,
+      "stage": "compile",
+      "tier": "top_50",
+      "train_rows": 20000,
+      "train_seconds": 16.10250607299986,
+      "val_pr_auc_clear_quantized_subsample": 0.3229757627937087,
+      "wall_seconds": 36.191328928000075
+    },
+    {
+      "circuit": {
+        "complexity": 162714686400.0,
+        "global_p_error": 8.266618946537734e-13,
+        "hidden_neurons": 800,
+        "key_switch_count": 3200,
+        "layer_shapes": [
+          [
+            400,
+            100
+          ],
+          [
+            400,
+            400
+          ],
+          [
+            2,
+            400
+          ]
+        ],
+        "max_integer_bit_width": 7,
+        "n_a_bits": 2,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          2
+        ],
+        "n_bits_output": 5,
+        "n_layers": 3,
+        "n_w_bits": 2,
+        "p_error": 8.266618946537734e-13,
+        "programmable_bootstrap_count": 2800,
+        "size_of_bootstrap_keys_bytes": 656474112,
+        "size_of_inputs_bytes": 2400,
+        "size_of_keyswitch_keys_bytes": 111060992,
+        "size_of_outputs_bytes": 32784,
+        "size_of_secret_keys_bytes": 37208
+      },
+      "compile_seconds": 11.10824428900014,
+      "compiled": true,
+      "decrypt_seconds": 0.0028283399997235392,
+      "decrypted_equals_simulate": true,
+      "encrypt_seconds": 0.012585380000018631,
+      "epochs": 2,
+      "keygen_attempted": true,
+      "keygen_seconds": 1.652947511000093,
+      "n_accum_bits": 16,
+      "n_bits": 2,
+      "peak_rss_mb_after_compile": 1914.6015625,
+      "peak_rss_mb_after_run": 1914.6015625,
+      "peak_rss_mb_after_training": 1914.6015625,
+      "predicted_key_material_gb": 0.767572312,
+      "run_seconds": 41.45030739499998,
+      "simulate_seconds_per_row": 0.025409578500011777,
+      "tier": "top_100",
+      "train_rows": 20000,
+      "train_seconds": 35.20687412999996,
+      "val_pr_auc_clear_quantized_subsample": 0.17946979291996554,
+      "wall_seconds": 104.99126517700006
+    },
+    {
+      "circuit": {
+        "complexity": 358696124000.0,
+        "global_p_error": 6.637864280714852e-13,
+        "hidden_neurons": 800,
+        "key_switch_count": 3600,
+        "layer_shapes": [
+          [
+            400,
+            100
+          ],
+          [
+            400,
+            400
+          ],
+          [
+            2,
+            400
+          ]
+        ],
+        "max_integer_bit_width": 9,
+        "n_a_bits": 3,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          3
+        ],
+        "n_bits_output": 5,
+        "n_layers": 3,
+        "n_w_bits": 3,
+        "p_error": 6.637864280714852e-13,
+        "programmable_bootstrap_count": 3200,
+        "size_of_bootstrap_keys_bytes": 451248128,
+        "size_of_inputs_bytes": 2400,
+        "size_of_keyswitch_keys_bytes": 199868416,
+        "size_of_outputs_bytes": 65552,
+        "size_of_secret_keys_bytes": 60232
+      },
+      "compile_seconds": 19.872390572999848,
+      "compiled": true,
+      "decrypt_seconds": 0.05709900000010748,
+      "decrypted_equals_simulate": true,
+      "encrypt_seconds": 0.01653515999987576,
+      "epochs": 2,
+      "keygen_attempted": true,
+      "keygen_seconds": 3.176562052999998,
+      "n_accum_bits": 16,
+      "n_bits": 3,
+      "peak_rss_mb_after_compile": 1899.1484375,
+      "peak_rss_mb_after_run": 1899.1484375,
+      "peak_rss_mb_after_training": 1899.1484375,
+      "predicted_key_material_gb": 0.651176776,
+      "run_seconds": 73.09995795199984,
+      "simulate_seconds_per_row": 0.06850467690001097,
+      "tier": "top_100",
+      "train_rows": 20000,
+      "train_seconds": 37.674713754000095,
+      "val_pr_auc_clear_quantized_subsample": 0.30759612343270687,
+      "wall_seconds": 157.82260972599988
+    },
+    {
+      "circuit": {
+        "complexity": 667122054800.0,
+        "global_p_error": 7.592223852827753e-13,
+        "hidden_neurons": 800,
+        "key_switch_count": 4800,
+        "layer_shapes": [
+          [
+            400,
+            100
+          ],
+          [
+            400,
+            400
+          ],
+          [
+            2,
+            400
+          ]
+        ],
+        "max_integer_bit_width": 11,
+        "n_a_bits": 4,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          4
+        ],
+        "n_bits_output": 5,
+        "n_layers": 3,
+        "n_w_bits": 4,
+        "p_error": 7.592223852827753e-13,
+        "programmable_bootstrap_count": 4400,
+        "size_of_bootstrap_keys_bytes": 1113817088,
+        "size_of_inputs_bytes": 2400,
+        "size_of_keyswitch_keys_bytes": 511393792,
+        "size_of_outputs_bytes": 65552,
+        "size_of_secret_keys_bytes": 132600
+      },
+      "compile_seconds": 19.557578059000207,
+      "compiled": true,
+      "decrypt_seconds": 0.35596014499969897,
+      "decrypted_equals_simulate": true,
+      "encrypt_seconds": 0.0202996319999329,
+      "epochs": 2,
+      "keygen_attempted": true,
+      "keygen_seconds": 15.203408951000256,
+      "n_accum_bits": 16,
+      "n_bits": 4,
+      "peak_rss_mb_after_compile": 1896.8125,
+      "peak_rss_mb_after_run": 3424.77734375,
+      "peak_rss_mb_after_training": 1896.8125,
+      "predicted_key_material_gb": 1.62534348,
+      "run_seconds": 190.9809911829998,
+      "simulate_seconds_per_row": 0.10381490260001555,
+      "tier": "top_100",
+      "train_rows": 20000,
+      "train_seconds": 46.70900404599979,
+      "val_pr_auc_clear_quantized_subsample": 0.3674207983624388,
+      "wall_seconds": 335.44176966800023
+    },
+    {
+      "circuit": {
+        "complexity": 1666098726000.0,
+        "global_p_error": 8.982616255514534e-13,
+        "hidden_neurons": 800,
+        "key_switch_count": 5600,
+        "layer_shapes": [
+          [
+            400,
+            100
+          ],
+          [
+            400,
+            400
+          ],
+          [
+            2,
+            400
+          ]
+        ],
+        "max_integer_bit_width": 13,
+        "n_a_bits": 5,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          5
+        ],
+        "n_bits_output": 5,
+        "n_layers": 3,
+        "n_w_bits": 5,
+        "p_error": 8.982616255514534e-13,
+        "programmable_bootstrap_count": 5200,
+        "size_of_bootstrap_keys_bytes": 2947743744,
+        "size_of_inputs_bytes": 2400,
+        "size_of_keyswitch_keys_bytes": 929087488,
+        "size_of_outputs_bytes": 131088,
+        "size_of_secret_keys_bytes": 231336
+      },
+      "compile_seconds": 21.173497081000278,
+      "compiled": true,
+      "epochs": 2,
+      "keygen_attempted": false,
+      "keygen_skipped_reason": "predicted key material 3.88 GB exceeds the 2.4 GB safety limit for the 3.8 GiB WSL memory",
+      "n_accum_bits": 16,
+      "n_bits": 5,
+      "peak_rss_mb_after_compile": 1899.92578125,
+      "peak_rss_mb_after_training": 1899.92578125,
+      "predicted_key_material_gb": 3.877062568,
+      "tier": "top_100",
+      "train_rows": 20000,
+      "train_seconds": 54.36124340000015,
+      "val_pr_auc_clear_quantized_subsample": 0.33027299557076417,
+      "wall_seconds": 124.99620421200007
+    },
+    {
+      "circuit": {
+        "complexity": 5591952071200.0,
+        "global_p_error": 8.794251118338637e-13,
+        "hidden_neurons": 800,
+        "key_switch_count": 6000,
+        "layer_shapes": [
+          [
+            400,
+            100
+          ],
+          [
+            400,
+            400
+          ],
+          [
+            2,
+            400
+          ]
+        ],
+        "max_integer_bit_width": 16,
+        "n_a_bits": 6,
+        "n_accum_bits": 16,
+        "n_bits_inputs": [
+          6
+        ],
+        "n_bits_output": 6,
+        "n_layers": 3,
+        "n_w_bits": 6,
+        "p_error": 8.794251118338637e-13,
+        "programmable_bootstrap_count": 5600,
+        "size_of_bootstrap_keys_bytes": 10776346624,
+        "size_of_inputs_bytes": 2400,
+        "size_of_keyswitch_keys_bytes": 1381777408,
+        "size_of_outputs_bytes": 524304,
+        "size_of_secret_keys_bytes": 428816
+      },
+      "compile_seconds": 15.417861094999807,
+      "compiled": true,
+      "epochs": 2,
+      "keygen_attempted": false,
+      "keygen_skipped_reason": "predicted key material 12.16 GB exceeds the 2.4 GB safety limit for the 3.8 GiB WSL memory",
+      "n_accum_bits": 16,
+      "n_bits": 6,
+      "peak_rss_mb_after_compile": 1900.28515625,
+      "peak_rss_mb_after_training": 1900.28515625,
+      "predicted_key_material_gb": 12.158552848,
+      "tier": "top_100",
+      "train_rows": 20000,
+      "train_seconds": 45.66574031200025,
+      "val_pr_auc_clear_quantized_subsample": 0.18387554858590427,
+      "wall_seconds": 100.66629125400004
+    },
+    {
+      "compiled": false,
+      "epochs": 2,
+      "error": "NoParametersFound",
+      "error_type": "RuntimeError",
+      "n_accum_bits": 16,
+      "n_bits": 8,
+      "peak_rss_mb_after_training": 1900.7265625,
+      "stage": "compile",
+      "tier": "top_100",
+      "train_rows": 20000,
+      "train_seconds": 38.3490807850003,
+      "val_pr_auc_clear_quantized_subsample": 0.2534719252079647,
+      "wall_seconds": 73.85871638399976
+    }
+  ],
+  "machine": {
+    "cpu_cores": 6,
+    "wsl_ram_gib": 3.8
+  },
+  "max_predicted_key_material_gb_for_keygen": 2.4,
+  "note": "indicative feasibility from a short-trained network on a train subsample; the grid run re-verifies every chosen configuration"
+}

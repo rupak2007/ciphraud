@@ -1,0 +1,87 @@
+# Phase 9 quantized-MLP grid (`docs/plan.md` Phase 9; docs/fhe_mlp.md). Mirrors configs/phase8/research_grid.yaml.
+#
+# Decisions (approved 2026-09-26, recorded in docs/fhe_mlp.md):
+#   D1  one bit-width knob b = n_w_bits = n_a_bits; accumulator capped at 16 bits. Grid bit-widths = {4, largest b
+#       that is feasible for all three tiers}; 8 is probed and logged. The `configurations:` list below is filled in
+#       ONLY after the feasibility probe (results/phase9_mlp/feasibility.json), never guessed.
+#   D2  T3 = QAT clear-quantized model vs a FLOAT TWIN (same architecture/data/seed/class weights, no quantization),
+#       full validation, Phase 8's bars.
+#   D3  T0 = the checkpoint written after training reloads to EXACTLY the same clear-quantized outputs.
+#   D4  one fixed small architecture, full train split, class-weighted loss, early stopping + threshold on validation,
+#       NO hyperparameter search (the values below were fixed once, from a timing/convergence check on top_20:
+#       lr 0.003 with batch 2048 did not learn, val PR-AUC 0.13; lr 0.001 with batch 512 did, 0.34 after 3 epochs).
+phase: 9
+seed: 42
+
+latency_trials: 5
+
+correctness_sample:
+  n: 2
+  n_positive: 1
+
+# One fixed, seeded validation row for every latency measurement -- the SAME row Phase 8 used (position 32,148, a
+# legitimate transaction), so the MLP's latency is directly comparable to LR/XGBoost.
+row_selection:
+  n_positive: 0
+
+mlp:
+  n_layers: 3                          # input -> hidden -> hidden -> 2 (Concrete-ML SparseQuantNeuralNetwork)
+  n_hidden_neurons_multiplier: 4       # hidden width = 4 x input features (Concrete-ML default)
+  n_accum_bits: 16
+  lr: 0.001
+  batch_size: 512
+  max_epochs: 30
+  early_stopping_patience: 4
+  min_delta: 0.0
+
+# Quantization calibration / compile inputset: standardized TRAIN rows only, plus each feature's train min and max row so
+# every per-feature input range is covered (same convention as the XGBoost grid).
+compile_calibration:
+  rows: 3000
+  include_extremes: true
+
+# T2 simulation rows and chunking; the row count is pinned after R5 measures simulate cost per row.
+disable_chunk_size: 20000
+t2:
+  rows: 5000
+  chunk_size: 500
+
+tolerances:
+  t3_min_decision_agreement: 0.99
+  t3_max_pr_auc_drop: 0.01
+
+# Plaintext seed stability (decision D5): the QAT model trained with each seed, per tier, at the primary bit-width.
+seed_stability:
+  seeds: [42, 43, 44]
+  n_bits: 4          # the primary (largest feasible) bit-width; seed 42 reuses the grid configuration's own trained model
+
+# Compiled circuits whose key material exceeds this are not attempted under FHE (recorded as infeasible_key_memory): the
+# XGBoost 14-bit runs peaked at 3.47 GB with 2.1 GB of keys on this 3.8 GiB WSL VM (docs/research.md).
+max_key_material_gb: 2.4
+
+# R5 probe settings (src/fhe/probes/mlp_feasibility.py)
+feasibility_probe:
+  candidate_bits: [2, 3, 4, 5, 6, 8]
+  train_rows: 20000
+  val_rows: 20000
+  epochs: 2
+
+output:
+  dir: results/phase9_mlp
+  handoff_dir: data/fhe_handoff/phase9
+
+# Grid fixed by the R5 feasibility probe (results/phase9_mlp/feasibility.json, real tier data, real encrypted run per
+# feasible candidate) and decision D1's rule -- "the largest b that compiles for all three tiers, plus the next lower width
+# if that largest is 4":
+#   b = 2, 3, 4  compile AND run under FHE for every tier (real run 7-191 s, decrypted == simulated every time)
+#   b = 5        compiles, keys need 3.1-3.9 GB > the 3.8 GiB WSL memory: infeasible here (keygen not attempted)
+#   b = 6        compiles, keys need 8.7-12.2 GB: infeasible here
+#   b = 8        compile fails: NoParametersFound, for every tier
+# Hence b = 4 (largest feasible for all tiers) and b = 3 (next lower). 5, 6 and 8 are recorded findings, not silently dropped.
+configurations:
+  - {label: mlp_top20_bits3, tier: top_20, n_bits: 3}
+  - {label: mlp_top20_bits4, tier: top_20, n_bits: 4}
+  - {label: mlp_top50_bits3, tier: top_50, n_bits: 3}
+  - {label: mlp_top50_bits4, tier: top_50, n_bits: 4}
+  - {label: mlp_top100_bits3, tier: top_100, n_bits: 3}
+  - {label: mlp_top100_bits4, tier: top_100, n_bits: 4}

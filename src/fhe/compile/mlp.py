@@ -111,13 +111,30 @@ def restore_weights(model: Any, state: dict[str, Any], X_train: np.ndarray, y_tr
         model.sklearn_model.set_params(max_epochs=1)
 
 
+def qat_forward_logits(model: Any, X: np.ndarray, chunk: int = DEFAULT_CHUNK) -> np.ndarray:
+    """Logits of the torch QAT module (Brevitas fake-quantized forward). Fast, and it needs no ONNX export, so it is what
+    picks the stopping epoch; the model that is reported and compiled is always scored with `clear_quantized_logits`."""
+    import torch
+
+    module = model.base_module
+    module.eval()
+    with torch.no_grad():
+        return np.concatenate([module(torch.from_numpy(np.asarray(X[s : s + chunk], dtype=np.float32))).numpy() for s in range(0, X.shape[0], chunk)])
+
+
 def train_qat_mlp(
     mlp_cfg: dict[str, Any], n_bits: int, X_train: np.ndarray, y_train: np.ndarray, X_val: np.ndarray, y_val: np.ndarray, seed: int,
 ) -> tuple[Any, dict[str, Any]]:
-    """Train with class-weighted loss, early stopping on validation clear-quantized PR-AUC, best weights restored.
+    """Train with class-weighted loss, early stopping on validation PR-AUC, best weights restored.
 
-    Returns the fitted (NOT compiled) model and a history dict. The validation partition is used for the stopping
-    epoch (the same caveat as XGBoost's validation-based early stopping, `docs/research.md` Sec.7.7)."""
+    Speed (measured, `docs/fhe_mlp.md`): every Concrete-ML `fit` call re-exports the network to ONNX and re-quantizes it on
+    the whole training set, a fixed ~60-70 s that dwarfs a ~20 s epoch. So the first `fit` initializes and trains epoch 1,
+    later epochs run on the inner skorch net (`partial_fit`, no export), the stopping epoch is chosen from the validation
+    PR-AUC of the QAT forward, and ONE final zero-epoch `fit` exports the best weights. The reported clear-quantized
+    validation PR-AUC of the final model is recorded next to the epoch-selection curve.
+
+    Returns the fitted (NOT compiled) model and a history dict. The validation partition is used for the stopping epoch
+    (the same caveat as XGBoost's validation-based early stopping, `docs/research.md` Sec.7.7)."""
     weights = balanced_class_weights(y_train)
     seed_everything(seed)
     model = build_qat_mlp(mlp_cfg, n_bits, weights)
@@ -129,9 +146,12 @@ def train_qat_mlp(
     best_pr, best_epoch, best_state, bad = -1.0, 0, None, 0
     for epoch in range(1, int(mlp_cfg["max_epochs"]) + 1):
         t0 = time.perf_counter()
-        model.fit(X_train, y_train)  # exactly one warm-started epoch
-        pr = float(average_precision_score(y_val, fraud_probability(clear_quantized_logits(model, X_val))))
-        history.append({"epoch": epoch, "val_pr_auc_clear_quantized": pr, "seconds": time.perf_counter() - t0})
+        if epoch == 1:
+            model.fit(X_train, y_train)  # initializes the module (and exports once); trains exactly one epoch
+        else:
+            model.sklearn_model.partial_fit(X_train, y_train)  # one more epoch, no ONNX export
+        pr = float(average_precision_score(y_val, fraud_probability(qat_forward_logits(model, X_val))))
+        history.append({"epoch": epoch, "val_pr_auc_qat_forward": pr, "seconds": time.perf_counter() - t0})
         if pr > best_pr + float(mlp_cfg.get("min_delta", 0.0)):
             best_pr, best_epoch, best_state, bad = pr, epoch, copy.deepcopy(model.base_module.state_dict()), 0
         else:
@@ -139,12 +159,15 @@ def train_qat_mlp(
             if bad >= int(mlp_cfg["early_stopping_patience"]):
                 break
 
-    restored = best_epoch != history[-1]["epoch"]
-    if restored:
-        restore_weights(model, best_state, X_train, y_train)
+    t0 = time.perf_counter()
+    restore_weights(model, best_state, X_train, y_train)  # exports the BEST epoch's weights
+    export_seconds = time.perf_counter() - t0
+    final_pr = float(average_precision_score(y_val, fraud_probability(clear_quantized_logits(model, X_val))))
     return model, {
-        "epochs_run": len(history), "best_epoch": best_epoch, "best_val_pr_auc_clear_quantized": best_pr, "best_weights_restored": restored,
-        "stopped_early": len(history) < int(mlp_cfg["max_epochs"]), "class_weights": weights, "history": history,
+        "epochs_run": len(history), "best_epoch": best_epoch, "best_val_pr_auc_qat_forward": best_pr,
+        "final_val_pr_auc_clear_quantized": final_pr, "stopped_early": len(history) < int(mlp_cfg["max_epochs"]),
+        "final_export_seconds": export_seconds, "epoch_selection_metric": "validation PR-AUC of the QAT (fake-quantized) forward",
+        "class_weights": weights, "history": history,
     }
 
 
