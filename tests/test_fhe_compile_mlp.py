@@ -119,12 +119,19 @@ def test_restore_weights_rebuilds_the_quantized_module_from_the_saved_state(data
 
 
 @needs_concrete
-def test_the_returned_model_scores_its_recorded_best_validation_pr_auc(data):
-    """Whatever epoch was best, the model handed back must BE that epoch (restored when it was not the last)."""
+def test_the_returned_model_is_the_best_epoch_and_reports_its_clear_quantized_score(data):
+    """Whatever epoch was best, the model handed back must BE that epoch: its clear-quantized validation PR-AUC equals the
+    recorded final score exactly and tracks the best QAT-forward score that chose the epoch (a proxy, not bit-identical)."""
     cfg = {**MLP_CFG, "max_epochs": 6, "early_stopping_patience": 1, "lr": 0.05}
     model, info = mlp.train_qat_mlp(cfg, 4, data["X_train"], data["y_train"], data["X_val"], data["y_val"], seed=5)
     p = mlp.fraud_probability(mlp.clear_quantized_logits(model, data["X_val"]))
-    assert average_precision_score(data["y_val"], p) == pytest.approx(info["best_val_pr_auc_clear_quantized"], abs=1e-12)
+    assert average_precision_score(data["y_val"], p) == pytest.approx(info["final_val_pr_auc_clear_quantized"], abs=1e-12)
+    assert abs(info["final_val_pr_auc_clear_quantized"] - info["best_val_pr_auc_qat_forward"]) < 0.05
+    assert info["best_epoch"] == int(np.argmax([h["val_pr_auc_qat_forward"] for h in info["history"]])) + 1  # earliest maximum
+
+    # the QAT forward at the returned weights equals the QAT forward that was recorded at the best epoch
+    fwd = mlp.fraud_probability(mlp.qat_forward_logits(model, data["X_val"]))
+    assert average_precision_score(data["y_val"], fwd) == pytest.approx(info["best_val_pr_auc_qat_forward"], abs=1e-9)
 
 
 @needs_concrete
