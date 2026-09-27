@@ -1,0 +1,21 @@
+# Phase 9 (quantized MLP) Windows-side export (`docs/plan.md` Phase 9; docs/fhe_mlp.md).
+#
+# The MLP is trained INSIDE WSL (Brevitas quantization-aware training), so unlike Phases 5-8 the
+# handoff must carry the training labels (`y_train`) as well as the feature matrices, and there is
+# no Windows-side model to compare against (no `reference_val_prob`). Tier membership and column
+# order come from the same committed, hash-verified Phase 4 `tiers.json` every earlier phase used;
+# the train/validation matrices are therefore identical to the Phase 8 LR handoff of the same tier
+# (checked by tests/test_fhe_export_mlp.py).
+phase: 9
+seed: 42
+
+phase2_config: configs/phase2/pipeline.yaml
+phase4_config: configs/phase4/features.yaml
+
+tiers: [top_20, top_50, top_100]
+
+output:
+  # git-ignored (the /data/ rule); the committed record is the manifest + scaler JSON below
+  handoff_dir: data/fhe_handoff/phase9
+  # committed
+  dir: results/phase9_mlp/export

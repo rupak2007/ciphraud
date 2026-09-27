@@ -118,25 +118,39 @@ def save_handoff(
     X_val: np.ndarray,
     y_val: np.ndarray,
     val_transaction_ids: np.ndarray,
-    reference_val_prob: np.ndarray,
+    reference_val_prob: np.ndarray | None,
     columns: list[str],
     manifest_extra: dict[str, Any],
+    y_train: np.ndarray | None = None,
 ) -> None:
     """Write the `.npz` (numeric arrays only, no pickled objects) and the
     JSON manifest (hashes + shapes + provenance) that `load_handoff` (WSL
-    side) verifies before touching anything else."""
+    side) verifies before touching anything else.
+
+    `y_train` and `reference_val_prob` are optional and additive (Phase 9): the
+    Phase 5-8 handoffs hold neither training labels (their models were trained
+    on Windows) nor, for the MLP, a Windows-side reference (the MLP is trained
+    inside WSL). When either is omitted its array is simply absent from the
+    `.npz`, so a handoff written without them is byte-identical to the
+    pre-Phase-9 format and every existing caller behaves exactly as before."""
     if npz_path.suffix != ".npz":
         raise HandoffError(f"npz_path must end in '.npz', got {npz_path}")
     npz_path.parent.mkdir(parents=True, exist_ok=True)
+    arrays: dict[str, np.ndarray] = {
+        "X_train": np.asarray(X_train, dtype=np.float64),
+        "X_val": np.asarray(X_val, dtype=np.float64),
+        "y_val": np.asarray(y_val, dtype=np.int64),
+        "val_transaction_ids": np.asarray(val_transaction_ids, dtype=np.int64),
+    }
+    if reference_val_prob is not None:
+        arrays["reference_val_prob"] = np.asarray(reference_val_prob, dtype=np.float64)
+    if y_train is not None:
+        y_train = np.asarray(y_train, dtype=np.int64)
+        if y_train.shape[0] != arrays["X_train"].shape[0]:
+            raise HandoffError(f"y_train has {y_train.shape[0]} rows, X_train has {arrays['X_train'].shape[0]}")
+        arrays["y_train"] = y_train
     with open(npz_path, "wb") as f:
-        np.savez(
-            f,
-            X_train=np.asarray(X_train, dtype=np.float64),
-            X_val=np.asarray(X_val, dtype=np.float64),
-            y_val=np.asarray(y_val, dtype=np.int64),
-            val_transaction_ids=np.asarray(val_transaction_ids, dtype=np.int64),
-            reference_val_prob=np.asarray(reference_val_prob, dtype=np.float64),
-        )
+        np.savez(f, **arrays)
     manifest = {
         "npz_sha256": sha256_file(npz_path),
         "columns": list(columns),
@@ -180,5 +194,7 @@ def load_handoff(npz_path: Path, manifest_path: Path) -> tuple[dict[str, Any], d
         )
     if len(manifest["columns"]) != manifest["n_features"]:
         raise HandoffError("manifest 'columns' length does not match 'n_features'")
+    if "y_train" in arrays and arrays["y_train"].shape[0] != arrays["X_train"].shape[0]:
+        raise HandoffError("y_train and X_train row counts differ")
 
     return manifest, arrays

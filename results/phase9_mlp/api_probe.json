@@ -1,0 +1,162 @@
+{
+  "accumulator_sweep_n_accum_bits_16": [
+    {
+      "bootstrap_key_bytes": 743710720,
+      "compile_seconds": 7.237508690000027,
+      "compiled": true,
+      "hidden_width": 80,
+      "input_dim": 20,
+      "keyswitch_key_bytes": 116568064,
+      "max_integer_bit_width": 6,
+      "n_a_bits": 2,
+      "n_accum_bits": 16,
+      "n_w_bits": 2,
+      "programmable_bootstrap_count": 560
+    },
+    {
+      "bootstrap_key_bytes": 345178112,
+      "compile_seconds": 9.408728599000028,
+      "compiled": true,
+      "hidden_width": 80,
+      "input_dim": 20,
+      "keyswitch_key_bytes": 126156800,
+      "max_integer_bit_width": 10,
+      "n_a_bits": 4,
+      "n_accum_bits": 16,
+      "n_w_bits": 4,
+      "programmable_bootstrap_count": 880
+    },
+    {
+      "bootstrap_key_bytes": 3168337920,
+      "compile_seconds": 8.240919370000029,
+      "compiled": true,
+      "hidden_width": 80,
+      "input_dim": 20,
+      "keyswitch_key_bytes": 929284096,
+      "max_integer_bit_width": 14,
+      "n_a_bits": 6,
+      "n_accum_bits": 16,
+      "n_w_bits": 6,
+      "programmable_bootstrap_count": 1120
+    },
+    {
+      "bootstrap_key_bytes": 8062566400,
+      "compile_seconds": 8.464166405000014,
+      "compiled": true,
+      "hidden_width": 80,
+      "input_dim": 20,
+      "keyswitch_key_bytes": 1922695168,
+      "max_integer_bit_width": 15,
+      "n_a_bits": 8,
+      "n_accum_bits": 16,
+      "n_w_bits": 8,
+      "programmable_bootstrap_count": 1280
+    },
+    {
+      "bootstrap_key_bytes": 782983168,
+      "compile_seconds": 12.513605483999982,
+      "compiled": true,
+      "hidden_width": 400,
+      "input_dim": 100,
+      "keyswitch_key_bytes": 144355328,
+      "max_integer_bit_width": 7,
+      "n_a_bits": 2,
+      "n_accum_bits": 16,
+      "n_w_bits": 2,
+      "programmable_bootstrap_count": 2800
+    },
+    {
+      "bootstrap_key_bytes": 1377079296,
+      "compile_seconds": 13.007986958999993,
+      "compiled": true,
+      "hidden_width": 400,
+      "input_dim": 100,
+      "keyswitch_key_bytes": 299933696,
+      "max_integer_bit_width": 12,
+      "n_a_bits": 4,
+      "n_accum_bits": 16,
+      "n_w_bits": 4,
+      "programmable_bootstrap_count": 4800
+    },
+    {
+      "bootstrap_key_bytes": 3155230720,
+      "compile_seconds": 11.269005960000015,
+      "compiled": true,
+      "hidden_width": 400,
+      "input_dim": 100,
+      "keyswitch_key_bytes": 947994624,
+      "max_integer_bit_width": 13,
+      "n_a_bits": 6,
+      "n_accum_bits": 16,
+      "n_w_bits": 6,
+      "programmable_bootstrap_count": 5200
+    },
+    {
+      "bootstrap_key_bytes": 8055193600,
+      "compile_seconds": 11.215006692999964,
+      "compiled": true,
+      "hidden_width": 400,
+      "input_dim": 100,
+      "keyswitch_key_bytes": 1922252800,
+      "max_integer_bit_width": 15,
+      "n_a_bits": 8,
+      "n_accum_bits": 16,
+      "n_w_bits": 8,
+      "programmable_bootstrap_count": 6000
+    }
+  ],
+  "integer_outputs_and_serialization": {
+    "circuit_output_dtype": "int64",
+    "circuit_output_shape_per_row": [
+      2
+    ],
+    "clear_integer_outputs_equal_simulate": true,
+    "dumps_loads_reproduces_clear_quantized_proba_exactly": true,
+    "dumps_loads_with_callbacks_disable": "ok",
+    "dumps_with_default_callbacks": "NotImplementedError: Serializing a custom Callable object is not secure and is therefore disabled. Additionally, the serialization of skorch's different callback classes is not supported. Please set `callbacks` to 'disable'. Got None.",
+    "input_quantizer_n_bits": 4,
+    "output_quantizer_n_bits": 5,
+    "pickle_after_compile": "ValueError: ctypes objects containing pointers cannot be pickled",
+    "post_processing_of_dequantized_integers_equals_predict_proba_disable": true,
+    "predict_proba_disable_equals_simulate": true,
+    "quantize_input_dtype": "int64",
+    "reloaded_model_is_compiled_flag": true
+  },
+  "kwargs_and_architecture": {
+    "defaults_seen": {
+      "activation": "ReLU (as passed)",
+      "n_hidden_neurons_multiplier": 4,
+      "power_of_two_scaling": true
+    },
+    "manual_n_outputs_input_dim": "ValueError: Setting `module__n_outputs` manually is forbidden. The number of inputs and outputs of the neural network are determined automatically in .fit, based on the data-set.",
+    "n_layers_3_weight_shapes_dim20": [
+      [
+        80,
+        20
+      ],
+      [
+        80,
+        80
+      ],
+      [
+        2,
+        80
+      ]
+    ],
+    "random_state_kwarg": "TypeError: __init__() got unexpected argument(s) random_state. Either you made a typo, or you added new arguments in a subclass; if that is the case, the subclass should d",
+    "torch_manual_seed_makes_training_reproducible": true
+  },
+  "note": "synthetic data only; facts about Concrete-ML behaviour, not about the fraud models",
+  "real_fhe_round_trip": {
+    "config": "synthetic, 20 features, n_bits=4, n_accum_bits=16",
+    "decrypt_seconds": 0.007127443999934258,
+    "decrypted_equals_simulate": true,
+    "encrypt_seconds": 0.006054549000054976,
+    "keygen_seconds": 1.895101187000023,
+    "run_seconds": 15.666246512000043
+  },
+  "versions": {
+    "concrete-ml": "1.9.0",
+    "torch": "2.3.1+cu121"
+  }
+}
