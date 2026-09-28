@@ -14,7 +14,7 @@
 
 > How do feature count, quantization bit-width, and ML model complexity affect the predictive performance and computational cost of privacy-preserving fraud detection under FHE?
 
-Phase 8 answers it for the two model types built so far (Logistic Regression, XGBoost). The quantized MLP is Phase 9 and is not part of this document.
+Phase 8 answers it for the two model types built so far (Logistic Regression, XGBoost). The quantized MLP is Phase 9 and is documented separately, in `docs/fhe_mlp.md` (grid complete as of 2026-09-27) — its combined Pareto analysis with the two models on this page lives in `results/phase9_mlp/pareto/` and is not reproduced here.
 
 ## 2. Exact grid
 
@@ -207,7 +207,7 @@ Measured cost per programmable bootstrap (mean round-trip latency ÷ bootstrap c
 - The cost is explained arithmetically by the circuit, not by an anomaly: a Concrete-ML XGBoost circuit for these models has 152,000–384,000 programmable bootstraps, and the measured latency per bootstrap is 4.4–12.7 ms (§6.3). A latency of 6 ms is about **one** bootstrap on this machine.
 - The LR latencies (6.5–30.9 ms) are the same order as the cited figure, but LR has no bootstraps at all and is a different model; that coincidence must not be read as agreement.
 
-Candidate explanations for the gap — **none tested here, none asserted**: a much smaller model than ours (fewer or shallower trees), a different FHE scheme or library, a different tree-evaluation strategy, different hardware (more cores, a GPU), a different definition of what the reported latency covers, or a figure obtained without full-precision comparisons. Resolving this would need the cited setup itself. The neural-network figure (296 ms) has no counterpart yet; it belongs to Phase 9. For the final report the defensible statement is: *under Concrete-ML 1.9.0 on a 6-core CPU, XGBoost fraud models with 219–358 trees needed 15–68 minutes per encrypted request; the ~6 ms literature figure was not reproduced.*
+Candidate explanations for the gap — **none tested here, none asserted**: a much smaller model than ours (fewer or shallower trees), a different FHE scheme or library, a different tree-evaluation strategy, different hardware (more cores, a GPU), a different definition of what the reported latency covers, or a figure obtained without full-precision comparisons. Resolving this would need the cited setup itself. The neural-network figure (296 ms) is compared against the quantized MLP in Phase 9 (`docs/fhe_mlp.md` §7.6): measured MLP latency is 17–245× that figure across the three configurations that reached FHE execution, with the same caveat — the cited setup was not verified. For the final report the defensible statement is: *under Concrete-ML 1.9.0 on a 6-core CPU, XGBoost fraud models with 219–358 trees needed 15–68 minutes per encrypted request; the ~6 ms literature figure was not reproduced.*
 
 ## 7. Observations and caveats that affect how numbers may be used
 
@@ -259,4 +259,4 @@ Limits that a reader of the results must keep (none of these were worked around)
 - **The T3 bars (agreement ≥ 0.99, PR-AUC drop ≤ 0.01) are project-chosen**, not derived from a business cost model; no threshold/cost-sensitive analysis was done in Phase 8.
 - **No security or timing-side-channel measurement**; this phase measures cost and quantization accuracy only.
 
-Not part of this project stage (deliberately not started): the quantized MLP (Phase 9), the client/server implementation (Phase 10), test-partition evaluation, and any GPU or cloud FHE experiment.
+Not part of this project stage: the client/server implementation (Phase 10), test-partition evaluation, and any GPU or cloud FHE experiment. The quantized MLP (Phase 9) is complete and documented separately in `docs/fhe_mlp.md`; it is not part of *this* Phase 8 document, but is no longer "not started."

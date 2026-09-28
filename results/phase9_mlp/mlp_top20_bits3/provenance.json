@@ -1,0 +1,18 @@
+{
+  "config_hash": "d0f15813d7993f04",
+  "config_path": "configs/phase9/mlp_grid.yaml",
+  "git_commit": "c09cd1f2dcd4060ae868c74ac6b4f9b570a84e4e",
+  "library_versions": {
+    "PyYAML": "6.0.3",
+    "brevitas": "0.10.2",
+    "concrete-ml": "1.9.0",
+    "concrete-python": "2.10.0",
+    "numpy": "1.26.4",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.5.0",
+    "torch": "2.3.1"
+  },
+  "raw_file_sha256": {},
+  "seed": 42,
+  "timestamp_utc": "2026-09-27T11:34:13.051598+00:00"
+}
