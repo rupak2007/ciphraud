@@ -49,7 +49,18 @@ logger = get_logger(__name__)
 
 LIBRARY_NAMES = ["numpy", "pandas", "scikit-learn", "concrete-ml", "concrete-python", "torch", "brevitas", "PyYAML"]
 GATES = ("t0", "t3", "t2", "t1_correctness")
-TRAINER_VERSION = "phase9-v1"  # bump to invalidate every saved checkpoint if the training protocol changes
+TRAINER_VERSION = "phase9-v3"  # bump to invalidate every saved checkpoint if the training protocol changes
+# v2 (decision D7, docs/fhe_mlp.md): the QAT trainer's final re-export/re-quantize now calibrates on the same
+# `compile_calibration` subset already used to compile the FHE circuit, instead of the full training set -- a memory
+# fix for the WSL VM's ~3.8 GiB cap, verified calibration-set-size invariant beforehand (bit-identical quantizer
+# parameters and all validation-row integer outputs on the completed top_20_bits3/bits4 checkpoints). Training itself
+# (weights, seeds, epochs, data) is unchanged; this bump only forces a checkpoint refresh under the new fingerprint.
+# v3 (decision D8, docs/fhe_mlp.md, src/fhe/compile/mlp.py::_init_sklearn_model): epoch 1 no longer calls Concrete-
+# ML's own `.fit()` (which unconditionally re-exports/re-quantizes on the full training set, the same mechanism D7
+# removed from the final restore step) -- it is built via a manual skorch-level initialize()+fit() instead, verified
+# bit-identical (base_module.state_dict, qat_forward_logits) to the original epoch-1 path on real top_20 data before
+# implementation. Training itself (weights, seeds, epochs, data, order) is unchanged; this bump forces a fresh
+# checkpoint so the real pipeline is regression-tested end to end under the new fingerprint.
 EXPORT_CONFIG = "configs/phase9/mlp_export.yaml"
 
 
@@ -93,12 +104,20 @@ def train_qat_checkpointed(config: dict[str, Any], data: dict[str, Any], tier: s
     directory = _checkpoint_root(config) / "qat" / f"{tier}_bits{n_bits}_seed{seed}"
     directory.mkdir(parents=True, exist_ok=True)
     model_path, info_path, logits_path, meta_path = directory / "model.json", directory / "training.json", directory / "val_logits.npy", directory / "meta.json"
-    fingerprint = _fingerprint(config, data, kind="qat", tier=tier, n_bits=n_bits, seed=seed)
+    fingerprint = _fingerprint(config, data, kind="qat", tier=tier, n_bits=n_bits, seed=seed, calibration=config["compile_calibration"])
     if _fresh(meta_path, fingerprint, [model_path, info_path, logits_path]):
         logger.info("QAT checkpoint reused", extra={"extra_fields": {"tier": tier, "n_bits": n_bits, "seed": seed}})
         return {"model_path": model_path, "logits_path": logits_path, "info": json.loads(info_path.read_text()), "reused": True}
     meta_path.unlink(missing_ok=True)
-    model, info = mlp.train_qat_mlp(config["mlp"], n_bits, data["X_train"], data["y_train"], data["X_val"], data["y_val"], seed)
+    # decision D7 (docs/fhe_mlp.md): the final re-export/re-quantize calibrates on the SAME subset `compile_mlp` will
+    # use below, not the full training set -- verified calibration-set-size invariant; a memory fix, not a methodology
+    # change. `calibration_positions` is deterministic (seeded), so this is exactly the subset `run_configuration`
+    # passes to `compile_mlp` later.
+    cal_idx = calibration_positions(data["X_train"], config["compile_calibration"]["rows"], config["compile_calibration"]["include_extremes"], seed)
+    model, info = mlp.train_qat_mlp(
+        config["mlp"], n_bits, data["X_train"], data["y_train"], data["X_val"], data["y_val"], seed,
+        X_calibration=data["X_train"][cal_idx], y_calibration=data["y_train"][cal_idx],
+    )
     model_path.write_text(mlp.dump_model(model), encoding="utf-8")
     np.save(logits_path, mlp.clear_quantized_logits(model, data["X_val"]))
     info_path.write_text(json.dumps(info, indent=2, sort_keys=True, default=str), encoding="utf-8")
