@@ -97,16 +97,25 @@ def clear_quantized_logits(model: Any, X: np.ndarray, chunk: int = DEFAULT_CHUNK
     return np.asarray(model.dequantize_output(np.concatenate(integers)))
 
 
-def restore_weights(model: Any, state: dict[str, Any], X_train: np.ndarray, y_train: np.ndarray) -> None:
+def restore_weights(model: Any, state: dict[str, Any], X_calibration: np.ndarray, y_calibration: np.ndarray) -> None:
     """Put `state` back into the module and rebuild Concrete-ML's ONNX/quantized module from it: a zero-epoch `fit`
     (every `fit` re-exports and re-quantizes; with `max_epochs=0` and `warm_start` no training step runs).
+
+    `X_calibration`/`y_calibration` need not be the full training set (decision D7, `docs/fhe_mlp.md`): a calibration
+    diagnostic on the completed `top_20_bits3`/`bits4` checkpoints found this re-export calibration-set-size
+    INVARIANT for Brevitas QAT -- the quantizer scale/zero-point are fixed, learned power-of-two values, not
+    statistics derived from the calibration data's range, so a ~3,000-row subset (the same one already used to
+    compile the FHE circuit) reproduces every quantizer parameter and all validation-row integer outputs exactly
+    (`tests/test_fhe_compile_mlp.py::test_restore_weights_with_a_calibration_subset_matches_full_data_exactly`).
+    This is a memory fix for the WSL VM's ~3.8 GiB cap (the earlier full-380,815-row calibration was killed by the
+    kernel OOM killer for `top_50`/`top_100`), not a methodology change.
 
     Measured (docs/fhe_mlp.md): `model.set_params(max_epochs=...)` changes only the Concrete-ML wrapper and does NOT
     reach the inner skorch net that actually trains, so the epoch count must be set on `model.sklearn_model`."""
     model.base_module.load_state_dict(state)
     model.sklearn_model.set_params(max_epochs=0)
     try:
-        model.fit(X_train, y_train)
+        model.fit(X_calibration, y_calibration)
     finally:
         model.sklearn_model.set_params(max_epochs=1)
 
@@ -122,16 +131,66 @@ def qat_forward_logits(model: Any, X: np.ndarray, chunk: int = DEFAULT_CHUNK) ->
         return np.concatenate([module(torch.from_numpy(np.asarray(X[s : s + chunk], dtype=np.float32))).numpy() for s in range(0, X.shape[0], chunk)])
 
 
+def _init_sklearn_model(model: Any, X_train: np.ndarray, y_train: np.ndarray) -> None:
+    """Construct `model.sklearn_model` the same way Concrete-ML's OWN `NeuralNetClassifier.fit()` preamble does,
+    WITHOUT calling that `.fit()` -- so its unconditional full-data ONNX export + `PostTrainingQATImporter(...)
+    .quantize_module(X)` (decision D7 already removed it from the FINAL restore step; a memory probe measured it, not
+    the actual gradient training, as the sole driver of the WSL VM's OOM) never runs for epoch 1 either (decision D8,
+    `docs/fhe_mlp.md`).
+
+    *** PRIVATE CONCRETE-ML/SKORCH API DEPENDENCY -- READ BEFORE UPGRADING concrete-ml OR skorch ***
+    Traced from the installed library source (`concrete/ml/sklearn/qnn.py::NeuralNetClassifier.fit`,
+    `concrete/ml/sklearn/base.py::QuantizedTorchEstimatorMixin.fit`/`BaseEstimator._fit_sklearn_model`,
+    `skorch/net.py::NeuralNet.fit`), epoch 1's ORIGINAL `model.fit(X_train, y_train)` does exactly:
+      1. sets `module__n_outputs = len(numpy.unique(y))` and `module__input_dim = X.shape[1]` on the wrapper;
+      2. converts `criterion__weight` from a list to a `torch.Tensor` if needed;
+      3. constructs `model.sklearn_model = model.sklearn_model_class(**model.get_sklearn_params())` (first call only);
+      4. calls `model.sklearn_model.fit(X, y)` -- skorch's OWN `fit()`, whose entire body is
+         `if not initialized_: self.initialize()` (builds the torch module/criterion/optimizer; consumes the torch
+         RNG for weight init) `; self.partial_fit(X, y)` (runs ONE real mini-batched training epoch) -- NOTHING else;
+      5. THEN, back in Concrete-ML's own `.fit()` (one layer above skorch, never entered by this function): exports
+         the trained module to ONNX using a single probe row (cheap) and calls `quantize_module(X)` on the FULL `X`
+         (the expensive, row-count-scaling step this function avoids).
+    This function performs ONLY steps 1-3 above, replicating the exact formulas Concrete-ML's preamble uses. The
+    caller must then invoke step 4 itself, via `model.sklearn_model.fit(X_train, y_train)` (skorch-level, NOT
+    `model.fit`), to get the identical real training epoch without ever entering step 5.
+
+    It relies on three Concrete-ML/skorch internals that have no leading underscore (reachable) but are NOT
+    documented public API -- exactly what a `concrete-ml`/`skorch` version upgrade could change or remove:
+      - `model.sklearn_model_class`  (currently `skorch.classifier.NeuralNetClassifier`)
+      - `model.get_sklearn_params()` (Concrete-ML method; relies on skorch's own convention that EVERY plain
+        instance attribute not ending in "_" is a constructor parameter -- `skorch.net.NeuralNet._get_param_names`)
+      - the construction line itself, copied from `BaseEstimator._fit_sklearn_model`
+    Verified equivalent on the real `top_20` data before this was implemented (bit-identical `base_module.state_dict()`
+    and `qat_forward_logits` after one subsequent `model.sklearn_model.fit()` call vs. the original `model.fit()`
+    path) and covered by `tests/test_fhe_compile_mlp.py::test_d8_*`, which will fail loudly -- not silently diverge --
+    if a future upgrade changes any of the three items above."""
+    n_classes = int(len(np.unique(y_train)))
+    model.module__n_outputs = n_classes
+    model.module__input_dim = int(np.asarray(X_train).shape[1])
+    if isinstance(model.criterion__weight, list):
+        import torch
+
+        model.criterion__weight = torch.from_numpy(np.asarray(model.criterion__weight, dtype=np.float32)).float()
+    model.sklearn_model = model.sklearn_model_class(**model.get_sklearn_params())
+
+
 def train_qat_mlp(
     mlp_cfg: dict[str, Any], n_bits: int, X_train: np.ndarray, y_train: np.ndarray, X_val: np.ndarray, y_val: np.ndarray, seed: int,
+    X_calibration: np.ndarray | None = None, y_calibration: np.ndarray | None = None,
 ) -> tuple[Any, dict[str, Any]]:
     """Train with class-weighted loss, early stopping on validation PR-AUC, best weights restored.
 
     Speed (measured, `docs/fhe_mlp.md`): every Concrete-ML `fit` call re-exports the network to ONNX and re-quantizes it on
-    the whole training set, a fixed ~60-70 s that dwarfs a ~20 s epoch. So the first `fit` initializes and trains epoch 1,
-    later epochs run on the inner skorch net (`partial_fit`, no export), the stopping epoch is chosen from the validation
-    PR-AUC of the QAT forward, and ONE final zero-epoch `fit` exports the best weights. The reported clear-quantized
-    validation PR-AUC of the final model is recorded next to the epoch-selection curve.
+    whatever `X` it is given, a fixed ~60-70 s that dwarfs a ~20 s epoch. Epoch 1 needs no such export -- only the FINAL
+    restore does (decision D7) -- so epoch 1 is built via `_init_sklearn_model` + skorch's own `.fit()` (decision D8),
+    never entering Concrete-ML's `.fit()` at all; later epochs run on the inner skorch net (`partial_fit`, as before, no
+    export), the stopping epoch is chosen from the validation PR-AUC of the QAT forward, and ONE final zero-epoch `fit`
+    exports the best weights -- the only place `X_calibration`/`y_calibration` apply (decision D7, `docs/fhe_mlp.md`;
+    see `restore_weights`). Every epoch of actual gradient training always uses the full `X_train`/`y_train`, in the
+    same order, with the same seed, hyperparameters and early stopping as before D7/D8; omitting `X_calibration`
+    reproduces the exact original full-data-everywhere behavior. The reported clear-quantized validation PR-AUC of the
+    final model is recorded next to the epoch-selection curve.
 
     Returns the fitted (NOT compiled) model and a history dict. The validation partition is used for the stopping epoch
     (the same caveat as XGBoost's validation-based early stopping, `docs/research.md` Sec.7.7)."""
@@ -141,13 +200,16 @@ def train_qat_mlp(
     X_train = np.asarray(X_train, dtype=np.float32)
     X_val = np.asarray(X_val, dtype=np.float32)
     y_train = np.asarray(y_train, dtype=np.int64)
+    X_cal = X_train if X_calibration is None else np.asarray(X_calibration, dtype=np.float32)
+    y_cal = y_train if y_calibration is None else np.asarray(y_calibration, dtype=np.int64)
+    _init_sklearn_model(model, X_train, y_train)  # decision D8: build model.sklearn_model without the full-data export
 
     history: list[dict[str, float]] = []
     best_pr, best_epoch, best_state, bad = -1.0, 0, None, 0
     for epoch in range(1, int(mlp_cfg["max_epochs"]) + 1):
         t0 = time.perf_counter()
         if epoch == 1:
-            model.fit(X_train, y_train)  # initializes the module (and exports once); trains exactly one epoch
+            model.sklearn_model.fit(X_train, y_train)  # skorch's OWN fit: initialize() + exactly one real training epoch
         else:
             model.sklearn_model.partial_fit(X_train, y_train)  # one more epoch, no ONNX export
         pr = float(average_precision_score(y_val, fraud_probability(qat_forward_logits(model, X_val))))
@@ -160,7 +222,7 @@ def train_qat_mlp(
                 break
 
     t0 = time.perf_counter()
-    restore_weights(model, best_state, X_train, y_train)  # exports the BEST epoch's weights
+    restore_weights(model, best_state, X_cal, y_cal)  # exports the BEST epoch's weights (calibration set: see above)
     export_seconds = time.perf_counter() - t0
     final_pr = float(average_precision_score(y_val, fraud_probability(clear_quantized_logits(model, X_val))))
     return model, {
@@ -168,6 +230,7 @@ def train_qat_mlp(
         "final_val_pr_auc_clear_quantized": final_pr, "stopped_early": len(history) < int(mlp_cfg["max_epochs"]),
         "final_export_seconds": export_seconds, "epoch_selection_metric": "validation PR-AUC of the QAT (fake-quantized) forward",
         "class_weights": weights, "history": history,
+        "calibration_rows_used": int(X_cal.shape[0]), "calibration_is_full_train_set": bool(X_cal.shape[0] == X_train.shape[0]),
     }
 
 
