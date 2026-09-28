@@ -1,0 +1,535 @@
+{
+  "accuracy": {
+    "correctness_sample_positions": [
+      32148,
+      13560
+    ],
+    "float_full_metrics": {
+      "confusion_matrix": {
+        "fn": 2383,
+        "fp": 1250,
+        "tn": 99748,
+        "tp": 1707
+      },
+      "f1": 0.4844614729672201,
+      "f2": 0.44183879484391986,
+      "pr_auc": 0.4891828305207049,
+      "precision": 0.5772742644572202,
+      "recall": 0.41735941320293396,
+      "roc_auc": 0.8855947364132365,
+      "threshold": 0.9060934853382423
+    },
+    "gates": {
+      "t0": {
+        "max_abs_diff": 0.0,
+        "n_rows": 105088,
+        "passed": true,
+        "reload_reproduces_clear_quantized_logits_exactly": true
+      },
+      "t1_correctness": {
+        "decrypted_vs_disable_exact_integer_match": true,
+        "exact_integer_match": true,
+        "n_decision_flips": 0,
+        "n_integer_outputs_mismatched": 0,
+        "n_outputs_per_row": 2,
+        "n_rows": 2,
+        "n_rows_with_integer_mismatch": 0,
+        "passed": true,
+        "prob_max_abs_diff": 0.0,
+        "prob_n_not_bit_identical": 0,
+        "round_trip_timing": {
+          "keygen_seconds": 2.4102322949999575,
+          "max_run_seconds": 6.267969119999975,
+          "mean_decrypt_seconds": 0.0014004374999956326,
+          "mean_encrypt_seconds": 0.004849108000001934,
+          "mean_run_seconds": 5.616227693500008,
+          "min_run_seconds": 4.964486267000041
+        },
+        "threshold": 0.9060934853382423
+      },
+      "t2": {
+        "exact_integer_match": true,
+        "n_decision_flips": 0,
+        "n_integer_outputs_mismatched": 0,
+        "n_outputs_per_row": 2,
+        "n_rows": 5000,
+        "n_rows_with_integer_mismatch": 0,
+        "passed": true,
+        "prob_max_abs_diff": 0.0,
+        "prob_n_not_bit_identical": 0,
+        "simulate_seconds_per_row": 0.004025416150199999,
+        "threshold": 0.9060934853382423
+      },
+      "t3": {
+        "decision_agreement": 0.9787987210718636,
+        "float_confusion_matrix": {
+          "fn": 2383,
+          "fp": 1250,
+          "tn": 99748,
+          "tp": 1707
+        },
+        "float_pr_auc": 0.4891828305207049,
+        "float_roc_auc": 0.8855947364132365,
+        "max_abs_prob_diff": 0.9206440411402607,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.13353056993631754,
+        "min_decision_agreement": 0.99,
+        "passed": false,
+        "pr_auc_drop": 0.09677312919549069,
+        "quantized_confusion_matrix": {
+          "fn": 2728,
+          "fp": 1469,
+          "tn": 99529,
+          "tp": 1362
+        },
+        "quantized_pr_auc": 0.3924097013252142,
+        "quantized_roc_auc": 0.8389504287552524
+      }
+    },
+    "qat_own_f1_threshold": {
+      "confusion_matrix": {
+        "fn": 2810,
+        "fp": 1095,
+        "tn": 99903,
+        "tp": 1280
+      },
+      "f1": 0.39597834493426143,
+      "f2": 0.34160661862823594,
+      "metric_optimized": "f1",
+      "precision": 0.5389473684210526,
+      "recall": 0.31295843520782396,
+      "selected_threshold": 0.9241418199787564,
+      "threshold": 0.9241418199787564
+    },
+    "quantized_full_metrics": {
+      "confusion_matrix": {
+        "fn": 2728,
+        "fp": 1469,
+        "tn": 99529,
+        "tp": 1362
+      },
+      "f1": 0.39358474208929345,
+      "f2": 0.35485383773643897,
+      "pr_auc": 0.3924097013252142,
+      "precision": 0.4811020840692335,
+      "recall": 0.3330073349633252,
+      "roc_auc": 0.8389504287552524,
+      "threshold": 0.9060934853382423
+    }
+  },
+  "all_gates_passed": false,
+  "ciphertext_size_bytes": {
+    "input": 480,
+    "output": 65552
+  },
+  "circuit_stats": {
+    "complexity": 67996635760.0,
+    "global_p_error": 8.826809423309604e-13,
+    "hidden_neurons": 160,
+    "key_switch_count": 640,
+    "layer_shapes": [
+      [
+        80,
+        20
+      ],
+      [
+        80,
+        80
+      ],
+      [
+        2,
+        80
+      ]
+    ],
+    "max_integer_bit_width": 8,
+    "n_a_bits": 3,
+    "n_accum_bits": 16,
+    "n_bits_inputs": [
+      3
+    ],
+    "n_bits_output": 5,
+    "n_layers": 3,
+    "n_w_bits": 3,
+    "p_error": 8.826809423309604e-13,
+    "programmable_bootstrap_count": 560,
+    "size_of_bootstrap_keys_bytes": 450019328,
+    "size_of_inputs_bytes": 480,
+    "size_of_keyswitch_keys_bytes": 199720960,
+    "size_of_outputs_bytes": 65552,
+    "size_of_secret_keys_bytes": 60208
+  },
+  "compile_seconds": 5.177254733999973,
+  "fhe_latency": {
+    "decrypt": {
+      "max_seconds": 0.0010107169999855614,
+      "mean_seconds": 0.000946208400011983,
+      "min_seconds": 0.0008993420000251717,
+      "n_trials": 5,
+      "std_seconds": 4.82131039917996e-05,
+      "trials_seconds": [
+        0.0008993420000251717,
+        0.0009176749999824096,
+        0.0010107169999855614,
+        0.0009838000000286229,
+        0.0009195080000381495
+      ]
+    },
+    "encrypt": {
+      "max_seconds": 0.004933899999969071,
+      "mean_seconds": 0.004529018199991697,
+      "min_seconds": 0.004258833999983835,
+      "n_trials": 5,
+      "std_seconds": 0.0003090136547084435,
+      "trials_seconds": [
+        0.004258833999983835,
+        0.004779407999990326,
+        0.004400458000020535,
+        0.004272490999994716,
+        0.004933899999969071
+      ]
+    },
+    "keygen_seconds": 1.090799997882641e-05,
+    "outputs_reproducible": true,
+    "run": {
+      "max_seconds": 6.208810192000044,
+      "mean_seconds": 5.167387435400019,
+      "min_seconds": 4.7108568830000195,
+      "n_trials": 5,
+      "std_seconds": 0.5940786852197459,
+      "trials_seconds": [
+        6.208810192000044,
+        5.009002441000007,
+        4.7108568830000195,
+        4.917415801999994,
+        4.990851859000031
+      ]
+    },
+    "throughput_requests_per_second": 0.19331646014867526,
+    "total": {
+      "max_seconds": 6.213970932999985,
+      "mean_seconds": 5.172865255399995,
+      "min_seconds": 4.716270532999999,
+      "n_trials": 5,
+      "std_seconds": 0.5939322699147502,
+      "trials_seconds": [
+        6.213970932999985,
+        5.0147030079999695,
+        4.716270532999999,
+        4.922674110000003,
+        4.996707693000019
+      ]
+    }
+  },
+  "gates_passed": {
+    "t0": true,
+    "t1_correctness": true,
+    "t2": true,
+    "t3": false
+  },
+  "key_material_gb": 0.649800496,
+  "key_size_bytes": {
+    "bootstrap": 450019328,
+    "keyswitch": 199720960,
+    "secret": 60208
+  },
+  "label": "mlp_top20_bits3",
+  "model_type": "mlp",
+  "n_bits": 3,
+  "n_features": 20,
+  "peak_rss_mb": 1671.4296875,
+  "peak_rss_mb_after_compile": 970.69140625,
+  "plaintext_latency": {
+    "max_seconds": 0.013484715999993568,
+    "mean_seconds": 0.008266078000008292,
+    "min_seconds": 0.00591589200001863,
+    "n_trials": 5,
+    "outputs_reproducible": true,
+    "std_seconds": 0.003287210668846101,
+    "throughput_requests_per_second": 120.976356622693,
+    "trials_seconds": [
+      0.013484715999993568,
+      0.00957311600001276,
+      0.006037350000042352,
+      0.006319315999974151,
+      0.00591589200001863
+    ]
+  },
+  "row_selection": {
+    "n_positive": 0,
+    "position": 32148,
+    "seed": 42,
+    "y_true": 0
+  },
+  "seed": 42,
+  "source_config_hash": "80192cbdc0434f65",
+  "status": "failed_accuracy_gates",
+  "test_partition_touched": false,
+  "tier": "top_20",
+  "training": {
+    "float_twin": {
+      "best_epoch": 21,
+      "best_val_pr_auc_float": 0.4891828305207049,
+      "class_weights": [
+        0.5176874095985906,
+        14.634347859503498
+      ],
+      "epochs_run": 25,
+      "history": [
+        {
+          "epoch": 1,
+          "seconds": 1.003256374999978,
+          "val_pr_auc_float": 0.39890822472238596
+        },
+        {
+          "epoch": 2,
+          "seconds": 1.3357222079999929,
+          "val_pr_auc_float": 0.416762986713068
+        },
+        {
+          "epoch": 3,
+          "seconds": 1.0521358830000054,
+          "val_pr_auc_float": 0.43547372707271437
+        },
+        {
+          "epoch": 4,
+          "seconds": 0.9807520250000152,
+          "val_pr_auc_float": 0.44666371313795217
+        },
+        {
+          "epoch": 5,
+          "seconds": 1.0130015500000127,
+          "val_pr_auc_float": 0.4440496159778701
+        },
+        {
+          "epoch": 6,
+          "seconds": 0.9948441580000349,
+          "val_pr_auc_float": 0.451252189806814
+        },
+        {
+          "epoch": 7,
+          "seconds": 0.9839122329999554,
+          "val_pr_auc_float": 0.44549441671369233
+        },
+        {
+          "epoch": 8,
+          "seconds": 0.9791100909999955,
+          "val_pr_auc_float": 0.4606829093085109
+        },
+        {
+          "epoch": 9,
+          "seconds": 0.9767047580000394,
+          "val_pr_auc_float": 0.45045416672261407
+        },
+        {
+          "epoch": 10,
+          "seconds": 1.1399453999999878,
+          "val_pr_auc_float": 0.45918307918376
+        },
+        {
+          "epoch": 11,
+          "seconds": 0.9979059749999806,
+          "val_pr_auc_float": 0.46609138788890236
+        },
+        {
+          "epoch": 12,
+          "seconds": 1.2623629340000093,
+          "val_pr_auc_float": 0.46908873903210424
+        },
+        {
+          "epoch": 13,
+          "seconds": 0.9905324000000064,
+          "val_pr_auc_float": 0.4686388370537568
+        },
+        {
+          "epoch": 14,
+          "seconds": 0.9889279579999766,
+          "val_pr_auc_float": 0.47598941825450514
+        },
+        {
+          "epoch": 15,
+          "seconds": 1.3889131669999983,
+          "val_pr_auc_float": 0.4741751075839856
+        },
+        {
+          "epoch": 16,
+          "seconds": 1.0925067079999735,
+          "val_pr_auc_float": 0.47385173375289535
+        },
+        {
+          "epoch": 17,
+          "seconds": 1.0986924670000349,
+          "val_pr_auc_float": 0.4814705168678161
+        },
+        {
+          "epoch": 18,
+          "seconds": 1.0573056079999787,
+          "val_pr_auc_float": 0.46819155245161526
+        },
+        {
+          "epoch": 19,
+          "seconds": 1.0202570579999701,
+          "val_pr_auc_float": 0.46900821957608824
+        },
+        {
+          "epoch": 20,
+          "seconds": 0.9662269830000128,
+          "val_pr_auc_float": 0.4783245074768661
+        },
+        {
+          "epoch": 21,
+          "seconds": 1.5642157070000167,
+          "val_pr_auc_float": 0.4891828305207049
+        },
+        {
+          "epoch": 22,
+          "seconds": 1.0099156820000417,
+          "val_pr_auc_float": 0.4849055282851886
+        },
+        {
+          "epoch": 23,
+          "seconds": 1.0982361559999845,
+          "val_pr_auc_float": 0.4691674262880636
+        },
+        {
+          "epoch": 24,
+          "seconds": 1.0202648920000001,
+          "val_pr_auc_float": 0.48660384563447495
+        },
+        {
+          "epoch": 25,
+          "seconds": 1.0514529999999809,
+          "val_pr_auc_float": 0.47397119962245704
+        }
+      ]
+    },
+    "float_twin_checkpoint_reused": false,
+    "qat": {
+      "best_epoch": 18,
+      "best_val_pr_auc_qat_forward": 0.39177323411961923,
+      "calibration_is_full_train_set": false,
+      "calibration_rows_used": 3027,
+      "class_weights": [
+        0.5176874095985906,
+        14.634347859503498
+      ],
+      "epoch_selection_metric": "validation PR-AUC of the QAT (fake-quantized) forward",
+      "epochs_run": 22,
+      "final_export_seconds": 0.22609474600000112,
+      "final_val_pr_auc_clear_quantized": 0.3924097013252142,
+      "history": [
+        {
+          "epoch": 1,
+          "seconds": 9.420528797999992,
+          "val_pr_auc_qat_forward": 0.13187988214212368
+        },
+        {
+          "epoch": 2,
+          "seconds": 10.058604680999991,
+          "val_pr_auc_qat_forward": 0.13008184595432
+        },
+        {
+          "epoch": 3,
+          "seconds": 8.082724858999995,
+          "val_pr_auc_qat_forward": 0.19326383663652402
+        },
+        {
+          "epoch": 4,
+          "seconds": 8.49127777199999,
+          "val_pr_auc_qat_forward": 0.1834070063646136
+        },
+        {
+          "epoch": 5,
+          "seconds": 7.92556297500002,
+          "val_pr_auc_qat_forward": 0.19958539000771264
+        },
+        {
+          "epoch": 6,
+          "seconds": 8.050061577000008,
+          "val_pr_auc_qat_forward": 0.32274417975569275
+        },
+        {
+          "epoch": 7,
+          "seconds": 8.430984050999996,
+          "val_pr_auc_qat_forward": 0.33471251327999496
+        },
+        {
+          "epoch": 8,
+          "seconds": 7.874139442000001,
+          "val_pr_auc_qat_forward": 0.33404713718563733
+        },
+        {
+          "epoch": 9,
+          "seconds": 8.003691849999996,
+          "val_pr_auc_qat_forward": 0.3395665825701001
+        },
+        {
+          "epoch": 10,
+          "seconds": 7.891091356999993,
+          "val_pr_auc_qat_forward": 0.3455489431020044
+        },
+        {
+          "epoch": 11,
+          "seconds": 8.397030609999945,
+          "val_pr_auc_qat_forward": 0.3634506676452503
+        },
+        {
+          "epoch": 12,
+          "seconds": 7.841442227000016,
+          "val_pr_auc_qat_forward": 0.36427999190576565
+        },
+        {
+          "epoch": 13,
+          "seconds": 7.7664960999999835,
+          "val_pr_auc_qat_forward": 0.36181176959750905
+        },
+        {
+          "epoch": 14,
+          "seconds": 8.564980183999978,
+          "val_pr_auc_qat_forward": 0.3725923541579966
+        },
+        {
+          "epoch": 15,
+          "seconds": 7.958469133999984,
+          "val_pr_auc_qat_forward": 0.37005426089833593
+        },
+        {
+          "epoch": 16,
+          "seconds": 8.028240274999973,
+          "val_pr_auc_qat_forward": 0.36718048490337446
+        },
+        {
+          "epoch": 17,
+          "seconds": 7.643890008000028,
+          "val_pr_auc_qat_forward": 0.38380673751286987
+        },
+        {
+          "epoch": 18,
+          "seconds": 8.510893930000009,
+          "val_pr_auc_qat_forward": 0.39177323411961923
+        },
+        {
+          "epoch": 19,
+          "seconds": 8.119006778000028,
+          "val_pr_auc_qat_forward": 0.3818672576618074
+        },
+        {
+          "epoch": 20,
+          "seconds": 7.789263084999959,
+          "val_pr_auc_qat_forward": 0.38062753614590256
+        },
+        {
+          "epoch": 21,
+          "seconds": 8.13959373299997,
+          "val_pr_auc_qat_forward": 0.3778721801317436
+        },
+        {
+          "epoch": 22,
+          "seconds": 8.136513732000026,
+          "val_pr_auc_qat_forward": 0.37860341101081935
+        }
+      ],
+      "stopped_early": true
+    },
+    "qat_checkpoint_reused": false
+  }
+}

@@ -1,0 +1,301 @@
+{
+  "accuracy": {
+    "float_full_metrics": {
+      "confusion_matrix": {
+        "fn": 2320,
+        "fp": 1288,
+        "tn": 99710,
+        "tp": 1770
+      },
+      "f1": 0.49524342473419136,
+      "f2": 0.455762694407251,
+      "pr_auc": 0.49078405024328187,
+      "precision": 0.578809679529104,
+      "recall": 0.43276283618581907,
+      "roc_auc": 0.8511882367517408,
+      "threshold": 0.9168166745048371
+    },
+    "gates": {
+      "t0": {
+        "max_abs_diff": 0.0,
+        "n_rows": 105088,
+        "passed": true,
+        "reload_reproduces_clear_quantized_logits_exactly": true
+      },
+      "t3": {
+        "decision_agreement": 0.970596071863581,
+        "float_confusion_matrix": {
+          "fn": 2320,
+          "fp": 1288,
+          "tn": 99710,
+          "tp": 1770
+        },
+        "float_pr_auc": 0.49078405024328187,
+        "float_roc_auc": 0.8511882367517408,
+        "max_abs_prob_diff": 0.9996665756683942,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.21008935323116756,
+        "min_decision_agreement": 0.99,
+        "passed": false,
+        "pr_auc_drop": 0.051578878288426444,
+        "quantized_confusion_matrix": {
+          "fn": 2343,
+          "fp": 1951,
+          "tn": 99047,
+          "tp": 1747
+        },
+        "quantized_pr_auc": 0.4392051719548554,
+        "quantized_roc_auc": 0.85976259013287
+      }
+    },
+    "qat_own_f1_threshold": {
+      "confusion_matrix": {
+        "fn": 2462,
+        "fp": 1470,
+        "tn": 99528,
+        "tp": 1628
+      },
+      "f1": 0.452977184195882,
+      "f2": 0.41833693082536744,
+      "metric_optimized": "f1",
+      "precision": 0.525500322788896,
+      "recall": 0.3980440097799511,
+      "selected_threshold": 0.935346511643776,
+      "threshold": 0.935346511643776
+    },
+    "quantized_full_metrics": {
+      "confusion_matrix": {
+        "fn": 2343,
+        "fp": 1951,
+        "tn": 99047,
+        "tp": 1747
+      },
+      "f1": 0.44863893168977914,
+      "f2": 0.4354870874464054,
+      "pr_auc": 0.4392051719548554,
+      "precision": 0.4724175229853975,
+      "recall": 0.4271393643031785,
+      "roc_auc": 0.85976259013287,
+      "threshold": 0.9168166745048371
+    }
+  },
+  "all_gates_passed": false,
+  "ciphertext_size_bytes": {
+    "input": 2400,
+    "output": 524304
+  },
+  "circuit_stats": {
+    "complexity": 2152590251200.0,
+    "global_p_error": 8.606496461029507e-13,
+    "hidden_neurons": 800,
+    "key_switch_count": 3600,
+    "layer_shapes": [
+      [
+        400,
+        100
+      ],
+      [
+        400,
+        400
+      ],
+      [
+        2,
+        400
+      ]
+    ],
+    "max_integer_bit_width": 11,
+    "n_a_bits": 4,
+    "n_accum_bits": 16,
+    "n_bits_inputs": [
+      4
+    ],
+    "n_bits_output": 5,
+    "n_layers": 3,
+    "n_w_bits": 4,
+    "p_error": 8.606496461029507e-13,
+    "programmable_bootstrap_count": 3200,
+    "size_of_bootstrap_keys_bytes": 4183302144,
+    "size_of_inputs_bytes": 2400,
+    "size_of_keyswitch_keys_bytes": 614117376,
+    "size_of_outputs_bytes": 524304,
+    "size_of_secret_keys_bytes": 358504
+  },
+  "compile_seconds": 8.13271365,
+  "gates_passed": {
+    "t0": true,
+    "t1_correctness": null,
+    "t2": null,
+    "t3": false
+  },
+  "infeasible_reason": "key material 4.80 GB exceeds the 2.4 GB limit for the 3.8 GiB WSL memory; T2/T1/latency not run",
+  "key_material_gb": 4.797778024,
+  "key_memory_limit_gb": 2.4,
+  "key_size_bytes": {
+    "bootstrap": 4183302144,
+    "keyswitch": 614117376,
+    "secret": 358504
+  },
+  "label": "mlp_top100_bits4",
+  "model_type": "mlp",
+  "n_bits": 4,
+  "n_features": 100,
+  "peak_rss_mb": 1888.60546875,
+  "peak_rss_mb_after_compile": 1888.60546875,
+  "seed": 42,
+  "source_config_hash": "80192cbdc0434f65",
+  "status": "infeasible_key_memory",
+  "test_partition_touched": false,
+  "tier": "top_100",
+  "training": {
+    "float_twin": {
+      "best_epoch": 11,
+      "best_val_pr_auc_float": 0.49078405024328187,
+      "class_weights": [
+        0.5176874095985906,
+        14.634347859503498
+      ],
+      "epochs_run": 15,
+      "history": [
+        {
+          "epoch": 1,
+          "seconds": 11.986106191000033,
+          "val_pr_auc_float": 0.45776405994978175
+        },
+        {
+          "epoch": 2,
+          "seconds": 9.308849708000025,
+          "val_pr_auc_float": 0.47620416205949223
+        },
+        {
+          "epoch": 3,
+          "seconds": 7.862764916999993,
+          "val_pr_auc_float": 0.44489526744301744
+        },
+        {
+          "epoch": 4,
+          "seconds": 9.650056715999995,
+          "val_pr_auc_float": 0.4871039639891928
+        },
+        {
+          "epoch": 5,
+          "seconds": 11.539836459000014,
+          "val_pr_auc_float": 0.4825005474036302
+        },
+        {
+          "epoch": 6,
+          "seconds": 6.084121358000004,
+          "val_pr_auc_float": 0.48329343073982534
+        },
+        {
+          "epoch": 7,
+          "seconds": 4.07030438299995,
+          "val_pr_auc_float": 0.4886715662830161
+        },
+        {
+          "epoch": 8,
+          "seconds": 4.021616133000009,
+          "val_pr_auc_float": 0.4727955001774342
+        },
+        {
+          "epoch": 9,
+          "seconds": 4.848433311000008,
+          "val_pr_auc_float": 0.47567695606653226
+        },
+        {
+          "epoch": 10,
+          "seconds": 6.168291984000007,
+          "val_pr_auc_float": 0.46767149586217677
+        },
+        {
+          "epoch": 11,
+          "seconds": 9.890315806999979,
+          "val_pr_auc_float": 0.49078405024328187
+        },
+        {
+          "epoch": 12,
+          "seconds": 7.798085985,
+          "val_pr_auc_float": 0.47803474727675255
+        },
+        {
+          "epoch": 13,
+          "seconds": 6.085394150000013,
+          "val_pr_auc_float": 0.449802720111382
+        },
+        {
+          "epoch": 14,
+          "seconds": 4.331683308999914,
+          "val_pr_auc_float": 0.43464394360047093
+        },
+        {
+          "epoch": 15,
+          "seconds": 8.931610599999999,
+          "val_pr_auc_float": 0.43699038933654333
+        }
+      ]
+    },
+    "float_twin_checkpoint_reused": true,
+    "qat": {
+      "best_epoch": 5,
+      "best_val_pr_auc_qat_forward": 0.4390693517264339,
+      "calibration_is_full_train_set": false,
+      "calibration_rows_used": 3109,
+      "class_weights": [
+        0.5176874095985906,
+        14.634347859503498
+      ],
+      "epoch_selection_metric": "validation PR-AUC of the QAT (fake-quantized) forward",
+      "epochs_run": 9,
+      "final_export_seconds": 0.9315347250000059,
+      "final_val_pr_auc_clear_quantized": 0.4392051719548554,
+      "history": [
+        {
+          "epoch": 1,
+          "seconds": 23.568869733,
+          "val_pr_auc_qat_forward": 0.3519877809609677
+        },
+        {
+          "epoch": 2,
+          "seconds": 16.72053689199999,
+          "val_pr_auc_qat_forward": 0.3725613234071192
+        },
+        {
+          "epoch": 3,
+          "seconds": 15.503020844999995,
+          "val_pr_auc_qat_forward": 0.42899004309824834
+        },
+        {
+          "epoch": 4,
+          "seconds": 15.187049625,
+          "val_pr_auc_qat_forward": 0.4359954668025555
+        },
+        {
+          "epoch": 5,
+          "seconds": 15.89078295200001,
+          "val_pr_auc_qat_forward": 0.4390693517264339
+        },
+        {
+          "epoch": 6,
+          "seconds": 14.900615033999998,
+          "val_pr_auc_qat_forward": 0.4261497921084897
+        },
+        {
+          "epoch": 7,
+          "seconds": 16.81994825000001,
+          "val_pr_auc_qat_forward": 0.4258432443646537
+        },
+        {
+          "epoch": 8,
+          "seconds": 15.729021337000006,
+          "val_pr_auc_qat_forward": 0.4266519229546765
+        },
+        {
+          "epoch": 9,
+          "seconds": 16.724067289000004,
+          "val_pr_auc_qat_forward": 0.4331696519046899
+        }
+      ],
+      "stopped_early": true
+    },
+    "qat_checkpoint_reused": false
+  }
+}

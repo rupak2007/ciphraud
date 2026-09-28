@@ -1,0 +1,207 @@
+{
+  "effects": {
+    "mlp_bit_width": [
+      {
+        "bootstraps_x": 1.1428571428571428,
+        "high_bits": 4,
+        "key_x": 3.1275857567212446,
+        "latency_x": 14.037630623105217,
+        "low_bits": 3,
+        "n_features": 20,
+        "peak_rss_x": 2.1120976147852466,
+        "pr_auc_high": 0.40697029219832703,
+        "pr_auc_low": 0.3924097013252142,
+        "t3_high": false,
+        "t3_low": false
+      }
+    ],
+    "model": [
+      {
+        "lr16_latency_s": 0.008570871200208784,
+        "lr16_pr_auc": 0.34823939389983716,
+        "mlp_bits": 3,
+        "mlp_bootstraps": 560,
+        "mlp_ciphertext_bytes": 66032,
+        "mlp_key_gb": 0.649800496,
+        "mlp_latency_s": 5.172865255399995,
+        "mlp_latency_x_lr16": 603.5401926555594,
+        "mlp_peak_rss_mb": 1671.4296875,
+        "mlp_pr_auc": 0.3924097013252142,
+        "mlp_t3_passed": false,
+        "n_features": 20,
+        "xgboost14_latency_s": 4098.6717416556,
+        "xgboost14_latency_x_mlp": 792.3407124082662,
+        "xgboost14_pr_auc": 0.5217607097177945
+      },
+      {
+        "lr16_latency_s": 0.008570871200208784,
+        "lr16_pr_auc": 0.34823939389983716,
+        "mlp_bits": 4,
+        "mlp_bootstraps": 640,
+        "mlp_ciphertext_bytes": 262640,
+        "mlp_key_gb": 2.032306776,
+        "mlp_latency_s": 72.61477171839996,
+        "mlp_latency_x_lr16": 8472.274290696503,
+        "mlp_peak_rss_mb": 3530.22265625,
+        "mlp_pr_auc": 0.40697029219832703,
+        "mlp_t3_passed": false,
+        "n_features": 20,
+        "xgboost14_latency_s": 4098.6717416556,
+        "xgboost14_latency_x_mlp": 56.444049119237704,
+        "xgboost14_pr_auc": 0.5217607097177945
+      },
+      {
+        "lr16_latency_s": 0.015401105999626453,
+        "lr16_pr_auc": 0.3886008050465755,
+        "mlp_bits": 3,
+        "mlp_bootstraps": 1200,
+        "mlp_ciphertext_bytes": 132288,
+        "mlp_key_gb": 1.194411304,
+        "mlp_latency_s": 17.12923646319996,
+        "mlp_latency_x_lr16": 1112.2082052818428,
+        "mlp_peak_rss_mb": 2855.796875,
+        "mlp_pr_auc": 0.41728841628104807,
+        "mlp_t3_passed": false,
+        "n_features": 50,
+        "xgboost14_latency_s": 2650.5631336608008,
+        "xgboost14_latency_x_mlp": 154.7391291698966,
+        "xgboost14_pr_auc": 0.54287966025791
+      }
+    ],
+    "prior_art_296ms": [
+      {
+        "label": "mlp_top20_bits3",
+        "latency_s": 5.172865255399995,
+        "x_vs_296ms": 17.475896133108094
+      },
+      {
+        "label": "mlp_top20_bits4",
+        "latency_s": 72.61477171839996,
+        "x_vs_296ms": 245.3201747243242
+      },
+      {
+        "label": "mlp_top50_bits3",
+        "latency_s": 17.12923646319996,
+        "x_vs_296ms": 57.86904210540527
+      }
+    ]
+  },
+  "frontiers": {
+    "ciphertext": {
+      "all_configurations": [
+        "lr_top50_bits8",
+        "lr_top20_bits8",
+        "lr_top50_bits16",
+        "lr_top100_bits16",
+        "xgboost_top50_bits14",
+        "xgboost_top100_bits14"
+      ],
+      "t3_passing_only": [
+        "lr_top50_bits16",
+        "lr_top100_bits16",
+        "xgboost_top50_bits14",
+        "xgboost_top100_bits14"
+      ]
+    },
+    "latency": {
+      "all_configurations": [
+        "lr_top20_bits8",
+        "lr_top20_bits16",
+        "lr_top50_bits16",
+        "lr_top100_bits16",
+        "xgboost_top50_bits14",
+        "xgboost_top100_bits14"
+      ],
+      "t3_passing_only": [
+        "lr_top20_bits16",
+        "lr_top50_bits16",
+        "lr_top100_bits16",
+        "xgboost_top50_bits14",
+        "xgboost_top100_bits14"
+      ]
+    },
+    "memory": {
+      "all_configurations": [
+        "lr_top20_bits16",
+        "lr_top50_bits16",
+        "mlp_top20_bits3",
+        "lr_top100_bits16",
+        "xgboost_top50_bits14",
+        "xgboost_top100_bits14"
+      ],
+      "t3_passing_only": [
+        "lr_top20_bits16",
+        "lr_top50_bits16",
+        "lr_top100_bits16",
+        "xgboost_top50_bits14",
+        "xgboost_top100_bits14"
+      ]
+    }
+  },
+  "latency_dominance_within_noise": [
+    {
+      "dominated": "lr_top50_bits8",
+      "dominator": "lr_top20_bits16"
+    },
+    {
+      "dominated": "lr_top100_bits8",
+      "dominator": "lr_top50_bits16"
+    },
+    {
+      "dominated": "xgboost_top100_bits8",
+      "dominator": "xgboost_top50_bits8"
+    },
+    {
+      "dominated": "xgboost_top20_bits14",
+      "dominator": "xgboost_top50_bits14"
+    },
+    {
+      "dominated": "xgboost_top20_bits14",
+      "dominator": "xgboost_top100_bits14"
+    }
+  ],
+  "mlp_without_latency": [
+    {
+      "float_pr_auc": 0.46956821353735456,
+      "key_material_gb": 4.444899752,
+      "label": "mlp_top50_bits4",
+      "max_integer_bit_width": 11,
+      "n_bits": 4,
+      "n_features": 50,
+      "programmable_bootstraps": 1800,
+      "quantized_pr_auc": 0.43238566538551154,
+      "reason": "key material 4.44 GB exceeds the 2.4 GB limit for the 3.8 GiB WSL memory; T2/T1/latency not run",
+      "status": "infeasible_key_memory",
+      "t3_decision_agreement": 0.9656383221680876,
+      "t3_passed": false
+    },
+    {
+      "float_pr_auc": 0.49078405024328187,
+      "key_material_gb": 3.23827884,
+      "label": "mlp_top100_bits3",
+      "max_integer_bit_width": 10,
+      "n_bits": 3,
+      "n_features": 100,
+      "programmable_bootstraps": 2400,
+      "quantized_pr_auc": 0.4494084243676107,
+      "reason": "key material 3.24 GB exceeds the 2.4 GB limit for the 3.8 GiB WSL memory; T2/T1/latency not run",
+      "status": "infeasible_key_memory",
+      "t3_decision_agreement": 0.9764102466504263,
+      "t3_passed": false
+    },
+    {
+      "float_pr_auc": 0.49078405024328187,
+      "key_material_gb": 4.797778024,
+      "label": "mlp_top100_bits4",
+      "max_integer_bit_width": 11,
+      "n_bits": 4,
+      "n_features": 100,
+      "programmable_bootstraps": 3200,
+      "quantized_pr_auc": 0.4392051719548554,
+      "reason": "key material 4.80 GB exceeds the 2.4 GB limit for the 3.8 GiB WSL memory; T2/T1/latency not run",
+      "status": "infeasible_key_memory",
+      "t3_decision_agreement": 0.970596071863581,
+      "t3_passed": false
+    }
+  ]
+}

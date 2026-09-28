@@ -1,0 +1,341 @@
+{
+  "accuracy": {
+    "float_full_metrics": {
+      "confusion_matrix": {
+        "fn": 2401,
+        "fp": 1553,
+        "tn": 99445,
+        "tp": 1689
+      },
+      "f1": 0.4607201309328969,
+      "f2": 0.4308233853688399,
+      "pr_auc": 0.46956821353735456,
+      "precision": 0.5209747069710056,
+      "recall": 0.41295843520782394,
+      "roc_auc": 0.8707314074001127,
+      "threshold": 0.8800875931401826
+    },
+    "gates": {
+      "t0": {
+        "max_abs_diff": 0.0,
+        "n_rows": 105088,
+        "passed": true,
+        "reload_reproduces_clear_quantized_logits_exactly": true
+      },
+      "t3": {
+        "decision_agreement": 0.9656383221680876,
+        "float_confusion_matrix": {
+          "fn": 2401,
+          "fp": 1553,
+          "tn": 99445,
+          "tp": 1689
+        },
+        "float_pr_auc": 0.46956821353735456,
+        "float_roc_auc": 0.8707314074001127,
+        "max_abs_prob_diff": 0.9845541908091284,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.12076291812541094,
+        "min_decision_agreement": 0.99,
+        "passed": false,
+        "pr_auc_drop": 0.03718254815184302,
+        "quantized_confusion_matrix": {
+          "fn": 2186,
+          "fp": 3161,
+          "tn": 97837,
+          "tp": 1904
+        },
+        "quantized_pr_auc": 0.43238566538551154,
+        "quantized_roc_auc": 0.8647641779538978
+      }
+    },
+    "qat_own_f1_threshold": {
+      "confusion_matrix": {
+        "fn": 2504,
+        "fp": 1630,
+        "tn": 99368,
+        "tp": 1586
+      },
+      "f1": 0.43416370106761565,
+      "f2": 0.40508786268900693,
+      "metric_optimized": "f1",
+      "precision": 0.4931592039800995,
+      "recall": 0.3877750611246944,
+      "selected_threshold": 0.9334308110294983,
+      "threshold": 0.9334308110294983
+    },
+    "quantized_full_metrics": {
+      "confusion_matrix": {
+        "fn": 2186,
+        "fp": 3161,
+        "tn": 97837,
+        "tp": 1904
+      },
+      "f1": 0.41594756963407975,
+      "f2": 0.44434072345390896,
+      "pr_auc": 0.43238566538551154,
+      "precision": 0.3759131293188549,
+      "recall": 0.46552567237163817,
+      "roc_auc": 0.8647641779538978,
+      "threshold": 0.8800875931401826
+    }
+  },
+  "all_gates_passed": false,
+  "ciphertext_size_bytes": {
+    "input": 1200,
+    "output": 524304
+  },
+  "circuit_stats": {
+    "complexity": 1098411428600.0,
+    "global_p_error": 8.834868342390249e-13,
+    "hidden_neurons": 400,
+    "key_switch_count": 2000,
+    "layer_shapes": [
+      [
+        200,
+        50
+      ],
+      [
+        200,
+        200
+      ],
+      [
+        2,
+        200
+      ]
+    ],
+    "max_integer_bit_width": 11,
+    "n_a_bits": 4,
+    "n_accum_bits": 16,
+    "n_bits_inputs": [
+      4
+    ],
+    "n_bits_output": 5,
+    "n_layers": 3,
+    "n_w_bits": 4,
+    "p_error": 8.834868342390249e-13,
+    "programmable_bootstrap_count": 1800,
+    "size_of_bootstrap_keys_bytes": 3754393600,
+    "size_of_inputs_bytes": 1200,
+    "size_of_keyswitch_keys_bytes": 690143232,
+    "size_of_outputs_bytes": 524304,
+    "size_of_secret_keys_bytes": 362920
+  },
+  "compile_seconds": 5.964391337000052,
+  "gates_passed": {
+    "t0": true,
+    "t1_correctness": null,
+    "t2": null,
+    "t3": false
+  },
+  "infeasible_reason": "key material 4.44 GB exceeds the 2.4 GB limit for the 3.8 GiB WSL memory; T2/T1/latency not run",
+  "key_material_gb": 4.444899752,
+  "key_memory_limit_gb": 2.4,
+  "key_size_bytes": {
+    "bootstrap": 3754393600,
+    "keyswitch": 690143232,
+    "secret": 362920
+  },
+  "label": "mlp_top50_bits4",
+  "model_type": "mlp",
+  "n_bits": 4,
+  "n_features": 50,
+  "peak_rss_mb": 1312.07421875,
+  "peak_rss_mb_after_compile": 1312.07421875,
+  "seed": 42,
+  "source_config_hash": "80192cbdc0434f65",
+  "status": "infeasible_key_memory",
+  "test_partition_touched": false,
+  "tier": "top_50",
+  "training": {
+    "float_twin": {
+      "best_epoch": 7,
+      "best_val_pr_auc_float": 0.46956821353735456,
+      "class_weights": [
+        0.5176874095985906,
+        14.634347859503498
+      ],
+      "epochs_run": 11,
+      "history": [
+        {
+          "epoch": 1,
+          "seconds": 2.1652009370000087,
+          "val_pr_auc_float": 0.43293307562109273
+        },
+        {
+          "epoch": 2,
+          "seconds": 1.9402287670000078,
+          "val_pr_auc_float": 0.4554468303049859
+        },
+        {
+          "epoch": 3,
+          "seconds": 2.225858607999953,
+          "val_pr_auc_float": 0.45247604647157313
+        },
+        {
+          "epoch": 4,
+          "seconds": 1.9383849999999825,
+          "val_pr_auc_float": 0.4655805727179947
+        },
+        {
+          "epoch": 5,
+          "seconds": 2.340416292000043,
+          "val_pr_auc_float": 0.46376594996987763
+        },
+        {
+          "epoch": 6,
+          "seconds": 4.0363250579999885,
+          "val_pr_auc_float": 0.463504348928916
+        },
+        {
+          "epoch": 7,
+          "seconds": 1.8224461749999818,
+          "val_pr_auc_float": 0.46956821353735456
+        },
+        {
+          "epoch": 8,
+          "seconds": 1.7355009249999966,
+          "val_pr_auc_float": 0.46928848891252717
+        },
+        {
+          "epoch": 9,
+          "seconds": 1.7441309410000372,
+          "val_pr_auc_float": 0.46540719289450405
+        },
+        {
+          "epoch": 10,
+          "seconds": 1.697509642,
+          "val_pr_auc_float": 0.4682663386069263
+        },
+        {
+          "epoch": 11,
+          "seconds": 1.6881543249999709,
+          "val_pr_auc_float": 0.45947277410322784
+        }
+      ]
+    },
+    "float_twin_checkpoint_reused": false,
+    "qat": {
+      "best_epoch": 17,
+      "best_val_pr_auc_qat_forward": 0.4303012523445881,
+      "calibration_is_full_train_set": false,
+      "calibration_rows_used": 3063,
+      "class_weights": [
+        0.5176874095985906,
+        14.634347859503498
+      ],
+      "epoch_selection_metric": "validation PR-AUC of the QAT (fake-quantized) forward",
+      "epochs_run": 21,
+      "final_export_seconds": 0.42189225800001395,
+      "final_val_pr_auc_clear_quantized": 0.43238566538551154,
+      "history": [
+        {
+          "epoch": 1,
+          "seconds": 13.8045373,
+          "val_pr_auc_qat_forward": 0.3197556022849354
+        },
+        {
+          "epoch": 2,
+          "seconds": 11.527123150000001,
+          "val_pr_auc_qat_forward": 0.38834776347747463
+        },
+        {
+          "epoch": 3,
+          "seconds": 11.341560634000004,
+          "val_pr_auc_qat_forward": 0.3979473445539278
+        },
+        {
+          "epoch": 4,
+          "seconds": 10.276368942000005,
+          "val_pr_auc_qat_forward": 0.39494844922382466
+        },
+        {
+          "epoch": 5,
+          "seconds": 10.205652799000006,
+          "val_pr_auc_qat_forward": 0.3942680499678026
+        },
+        {
+          "epoch": 6,
+          "seconds": 10.594690045999997,
+          "val_pr_auc_qat_forward": 0.4005790475753975
+        },
+        {
+          "epoch": 7,
+          "seconds": 10.189782534000003,
+          "val_pr_auc_qat_forward": 0.36969029511539786
+        },
+        {
+          "epoch": 8,
+          "seconds": 10.883978818999992,
+          "val_pr_auc_qat_forward": 0.34742778216375203
+        },
+        {
+          "epoch": 9,
+          "seconds": 10.236695241999996,
+          "val_pr_auc_qat_forward": 0.40259565585205054
+        },
+        {
+          "epoch": 10,
+          "seconds": 10.27674028300001,
+          "val_pr_auc_qat_forward": 0.4146752867723936
+        },
+        {
+          "epoch": 11,
+          "seconds": 10.394495549999988,
+          "val_pr_auc_qat_forward": 0.41842391976057963
+        },
+        {
+          "epoch": 12,
+          "seconds": 9.979693870000006,
+          "val_pr_auc_qat_forward": 0.4217560770667588
+        },
+        {
+          "epoch": 13,
+          "seconds": 10.049510999999995,
+          "val_pr_auc_qat_forward": 0.41288027234521624
+        },
+        {
+          "epoch": 14,
+          "seconds": 11.602599017000017,
+          "val_pr_auc_qat_forward": 0.40930389050342
+        },
+        {
+          "epoch": 15,
+          "seconds": 10.27341173100001,
+          "val_pr_auc_qat_forward": 0.4218195243968301
+        },
+        {
+          "epoch": 16,
+          "seconds": 10.11076669099998,
+          "val_pr_auc_qat_forward": 0.4240067811120214
+        },
+        {
+          "epoch": 17,
+          "seconds": 10.520524713000015,
+          "val_pr_auc_qat_forward": 0.4303012523445881
+        },
+        {
+          "epoch": 18,
+          "seconds": 9.983646947000011,
+          "val_pr_auc_qat_forward": 0.42541109229733093
+        },
+        {
+          "epoch": 19,
+          "seconds": 9.930719333000013,
+          "val_pr_auc_qat_forward": 0.4194346477429972
+        },
+        {
+          "epoch": 20,
+          "seconds": 10.728381164000012,
+          "val_pr_auc_qat_forward": 0.4233602538188228
+        },
+        {
+          "epoch": 21,
+          "seconds": 9.884336855000015,
+          "val_pr_auc_qat_forward": 0.42589166831407427
+        }
+      ],
+      "stopped_early": true
+    },
+    "qat_checkpoint_reused": false
+  }
+}

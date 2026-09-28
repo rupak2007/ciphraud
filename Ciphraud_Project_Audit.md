@@ -1,7 +1,7 @@
 # Ciphraud — Complete Technical Audit and Historical Reconstruction
 
 **Project:** Ciphraud — Latency-Bounded Privacy-Preserving Fraud Detection Under FHE
-**Audit snapshot:** 2026-09-25, ~00:20 IST (repository at commit `e85d16a`, working tree dirty — see §13). **The body reflects this snapshot; later developments (LR scaler defect fixed and verified; Phase 8 completed with Pareto analysis and prior-art comparison) are in Addenda A and B at the end, which supersede the body where they differ (Addendum B is the newest).**
+**Audit snapshot:** 2026-09-25, ~00:20 IST (repository at commit `e85d16a`, working tree dirty — see §13). **The body reflects this snapshot; later developments (LR scaler defect fixed and verified; Phase 8 completed with Pareto analysis and prior-art comparison; Phase 9 quantized MLP grid completed) are in Addenda A, B and C at the end, which supersede the body where they differ (Addendum C is the newest).**
 **Method:** read-only inspection of source, configs, docs, results, git history, and file timestamps; a few small read-only numerical checks (listed in Appendix A). Nothing in the project was modified by this audit except the addition of this report (`Ciphraud_Project_Audit.md`, `Ciphraud_Project_Audit.docx`).
 
 ---
@@ -1108,3 +1108,64 @@ The 8-bit XGBoost numbers reproduce the committed Phase 6 results exactly. So th
 ### B.6 What remains outside Phase 8 (unchanged from the body)
 
 No client, server or API (Phase 10); no quantized MLP (Phase 9); no test-partition evaluation; no threat-model or TEE/MPC write-up beyond `docs/architecture.md`; no README or report (Phases 12–13); the security claim is still not demonstrated by any two-party run. A GPU-accelerated FHE experiment was discussed and deliberately deferred as separate, documented future work.
+
+## Addendum C — Phase 9 complete (2026-09-28, closeout)
+
+**Where Addendum B, the body and this addendum disagree, this addendum is newest.** Full write-up: `docs/fhe_mlp.md`.
+
+### C.1 The grid is complete: 6 of 6 configurations attempted
+
+All six approved `mlp_top{20,50,100}_bits{3,4}` configurations ran to a recorded outcome. T0 passes in all 6. **T3 fails in all 6** — decision agreement stays in a 0.966–0.979 band, never reaching the ≥0.99 bar, regardless of tier or bit-width. Three (`mlp_top20_bits3`, `mlp_top20_bits4`, `mlp_top50_bits3`) ran to full completion through T2/T1/latency; three (`mlp_top50_bits4`, `mlp_top100_bits3`, `mlp_top100_bits4`) are `infeasible_key_memory` (4.44/3.24/4.80 GB against the unchanged 2.4 GB gate) — recorded with the exact key sizes and circuit statistics that explain each, never dropped.
+
+| Config | Status | T3 agreement | Quantized / float PR-AUC | Key material | FHE latency |
+|---|---|---|---|---|---|
+| `mlp_top20_bits3` | `failed_accuracy_gates` | 0.9788 | 0.3924 / 0.4892 | 0.65 GB | 5.17 ± 0.59 s |
+| `mlp_top20_bits4`* | `failed_accuracy_gates` | 0.9789 | 0.4070 / 0.4892 | 2.03 GB | 72.61 ± 5.67 s |
+| `mlp_top50_bits3` | `failed_accuracy_gates` | 0.9703 | 0.4173 / 0.4696 | 1.19 GB | 17.13 ± 1.14 s |
+| `mlp_top50_bits4` | `infeasible_key_memory` | 0.9656 | 0.4324 / 0.4696 | 4.44 GB | not attempted |
+| `mlp_top100_bits3` | `infeasible_key_memory` | 0.9764 | 0.4494 / 0.4908 | 3.24 GB | not attempted |
+| `mlp_top100_bits4` | `infeasible_key_memory` | 0.9706 | 0.4392 / 0.4908 | 4.80 GB | not attempted |
+
+\*`mlp_top20_bits4`'s checkpoint predates decisions D7/D8 below and was never re-run under them — see C.5.
+
+### C.2 A real OOM was found and fixed before the grid could complete (decisions D7, D8)
+
+Every early `mlp_top50_bits4` attempt was killed by the WSL VM's own Linux OOM killer (confirmed via `journalctl -k`), not by the accumulator-bit-width ceiling this project's risk register anticipated. Root cause: Concrete-ML's `NeuralNetClassifier.fit()` unconditionally re-exports and re-quantizes on the **full 380,815-row training set** in one unbatched pass, triggered both at epoch 1 and at the final best-weight restore. Fixed in two steps, each verified calibration/training-invariant *before* being applied and regression-proven bit-identical *after*:
+- **D7**: the final restore now calibrates on the existing ~3,000-row `compile_calibration` subset instead of all 380,815 rows.
+- **D8**: epoch 1 is now built via a manual skorch-level `initialize()` + `fit()` (`src/fhe/compile/mlp.py::_init_sklearn_model`), which never enters Concrete-ML's own `.fit()` (and therefore never triggers its full-data export) for epoch 1. This depends on three Concrete-ML/skorch internals that have no leading underscore but are not documented public API — flagged in the function's own docstring and covered by dedicated bit-identity tests that will fail loudly, not silently diverge, if a future library upgrade changes that plumbing.
+
+Neither change touches architecture, data, seed, epochs, hyperparameters, or evaluation methodology. Net effect on `mlp_top20_bits3` (the regression-proof configuration for both fixes): epoch-1 time 20.6 s → 9.4 s, peak RSS 3,530 MB → 1,671 MB (−53%), every accuracy/correctness number unchanged to the last reported digit.
+
+### C.3 T2 correctness finding: one isolated, fully-diagnosed mismatch (`mlp_top50_bits3`)
+
+T2 (`circuit.simulate` vs. clear integers, 5,000 seeded validation rows) recorded exactly 1 mismatch, zero decision flips. Reproduced deterministically from saved artifacts (no retraining) and localized to a specific layer using Concrete-ML's own `debug=True` forward pass: the second hidden layer's accumulator reaches 139 for this one out-of-calibration-range validation row (7 of 50 features saturated at the quantizer's clip boundary, up to 12.5 standard deviations from the mean), exceeding the compiled circuit's `max_integer_bit_width` of 8 (representable range ≈ ±127). The exact/clear path (unbounded integers) computes 139 correctly; the compiled circuit, sized from the calibration set rather than this validation row, cannot. **Preserved as `FAIL`** — the gate and its tolerance were not changed. T1's real-hardware sample rows do not include the affected row, and T1's own independent exact-match check already passed; `mlp_top50_bits3`'s recorded result required no correction. Full derivation: `docs/fhe_mlp.md` §5c.
+
+### C.4 Integrity checks run on 2026-09-27/28
+
+- **Reported statistics vs raw trial data, and result-schema validation** (`python -m src.analysis.phase9_results`, reusing Phase 8's `verify_means_against_raw`): **6/6 configurations found, 0 problems** — gate-consistency, T3 pass/fail arithmetic, T0/T2/T1 boolean agreement with their `exact_integer_match` fields, circuit-statistic sanity, and `summary.json` consistency all checked.
+- **Combined Pareto analysis** (`python -m src.analysis.phase9_pareto`, LR + XGBoost + MLP): validates both Phase 8 and Phase 9 results before analyzing; uses only `passed`/`failed_accuracy_gates` rows for the frontiers, lists all 3 infeasible MLP configurations in a separate table. Outputs in `results/phase9_mlp/pareto/`. No MLP configuration sits on the T3-passing frontier on any cost axis (latency, memory, ciphertext) — every T3-passing point at every cost level is LR-16-bit or XGBoost-14-bit.
+- **Tests, run fresh on 2026-09-27/28 (correctness runs, not timing measurements):** Windows `.venv`, complete suite: **383 passed, 79 skipped, 0 failed** in 2 h 14 min (skips are the Concrete-ML tests that need WSL2 — the same pattern as Addendum B.4). WSL2 venv, all Concrete-ML tests (the real-data FHE tests deliberately excluded, same practice as B.4): **415 passed, 0 failed** in 16 min. New this phase: 4 tests in `tests/test_fhe_compile_mlp.py` proving D8's epoch-1 path bit-identical to the original (deterministic init, matching state_dict/logits, no Concrete-ML export triggered, full multi-epoch trajectory against an independently-kept pre-D8 reference); `tests/test_phase9_pareto.py`, 8 tests including the regeneration check against the now-committed combined outputs.
+- **A dependency near-miss, caught and fixed within the same session:** generating the Pareto figures needed `matplotlib` (already declared, pinned `==3.11.1` in `requirements.txt`, just not installed in the WSL venv). Installing it pulled in an incompatible `numpy==2.5.3`, breaking Concrete-ML (`numpy==1.26.4` required). Caught immediately via `pip check`; fixed by reinstalling `numpy==1.26.4` and `contourpy<1.2` (the numpy-2.x-only transitive dependency matplotlib had pulled in); verified both `concrete.ml` and `matplotlib` import and function correctly afterward, and the WSL test suite (415/415) re-confirms the environment.
+- **Phase 1–8 committed artifacts:** every tracked Phase 1–7 and Phase 8 result file and config remains byte-identical to `HEAD`. The Windows real-data tests again regenerated the `git_commit`/`timestamp_utc` stamps in the four Phase 1–4 `provenance.json` files (the exact, already-documented B.5 behavior) — restored to `HEAD` afterward; no other field in any of the four changed.
+
+### C.5 Provenance caveats (for the record)
+
+- **`mlp_top20_bits4` predates D7/D8.** Its checkpoint was produced by the code as committed at `8a256b5` (before this closeout session's local changes) and was never re-run under D7/D8. Its accuracy and correctness numbers are unaffected — D7/D8 were proven bit-identical to the pre-fix training path on `mlp_top20_bits3` — but its `peak_rss_mb` (3,530 MB) reflects the old, pre-fix memory profile, not the ~1,300–2,900 MB range every other cell in this grid shows.
+- **5 of the 6 results were produced by locally-modified, uncommitted code** — `mlp_top20_bits3`, `mlp_top50_bits3`, `mlp_top50_bits4`, `mlp_top100_bits3` and `mlp_top100_bits4` all ran under D7/D8 and the `compile_calibration`-based QAT fingerprint fix, none of which were committed before these runs, per this session's explicit instruction not to commit until final review — but this is now **repaired**, not left open; see below. `mlp_top20_bits4` was never affected: it ran at `8a256b5` exactly as committed, so its provenance was already accurate and was left untouched by the repair.
+- **Provenance repair (2026-09-28, post-experiment, no results changed).** This gap was closed rather than left as a known weakness. Verified first, not assumed: neither `src/fhe/compile/mlp.py` nor `src/benchmark/phase9_grid.py` had been modified since 2026-09-27 16:54 IST — before the last of the five affected results was written (22:01 IST) and before the FR5/D5 run (2026-09-28) — and no other file `run_configuration`/`train_qat_checkpointed` depends on differed from `8a256b5` either. The FR5/D5 run itself was independent runtime proof the code matched: it reused the `mlp_top50_bits4`/`mlp_top100_bits4` seed-42 checkpoints by exact fingerprint match, and correctly identified `mlp_top20_bits4`'s checkpoint as stale (predating these changes) and retrained it, reproducing its original PR-AUC bit-for-bit. Only after this verification was commit `c09cd1f2dcd4060ae868c74ac6b4f9b570a84e4e` created — containing only those same two already-verified-unchanged files, on top of `8a256b5` — and the five affected `provenance.json` files' `git_commit` field repointed at it. **This commit did not produce new results and was not run against**: it is a record of the code state that already produced the five results, created and dated after the fact so that state has a real, checked-out-able identity; it must not be read as implying the experiments ran after `c09cd1f`. `mlp_top20_bits4`'s provenance was left at `8a256b5`, unchanged, since it is already correct.
+
+### C.6 What remains outside Phase 9
+
+No client, server or API (Phase 10); no test-partition evaluation; no threat-model or TEE/MPC write-up beyond `docs/architecture.md`; no README or report (Phases 12–13); the security claim is still not demonstrated by any two-party run. Whether `mlp_top50_bits3` (the sole feasible-but-T2-imperfect configuration) would remain T2-clean on a different or larger correctness sample was not tested. No bigger-memory-machine result exists for the three infeasible cells. A GPU-accelerated FHE experiment remains deliberately deferred, unchanged from Addendum B.
+
+### C.7 FR5/D5: plaintext seed-stability evaluation, run 2026-09-28
+
+The FR5/D5 plaintext-only seed-stability evaluation (`phase9_grid.py --plaintext`, 3 seeds × 3 tiers, primary bit-width 4, no FHE) ran after the rest of this closeout, on the same D7/D8 code (now committed as `c09cd1f`, C.5) as the five non-`mlp_top20_bits4` grid cells. Output: `results/phase9_mlp/plaintext/{top_20,top_50,top_100}/metrics.json` and `summary.json`. This path writes no `provenance.json` of its own (`run_plaintext` in `src/benchmark/phase9_grid.py`, pre-existing behavior, unchanged by this closeout). Seed 42 shares its checkpoint fingerprint with the grid cells in C.1: for `top_50`/`top_100` this reused the grid's own already-D7/D8-fixed checkpoint directly; for `top_20`, whose grid checkpoint predates D7/D8 (C.5), it instead **retrained the model from scratch under the current D7/D8 code**, and that retrain reproduced the original `mlp_top20_bits4` PR-AUC exactly — quantized `0.40697029219832703`, float `0.4891828305207049`, bit-for-bit identical to the original — a live, unplanned confirmation of D7/D8's bit-identical claim on the one grid cell it had not previously been checked against directly.
+
+| Tier | QAT PR-AUC (mean ± std, seeds 42/43/44) | Float-twin PR-AUC (mean ± std) |
+|---|---|---|
+| `top_20` | 0.4049 ± 0.0045 | 0.4852 ± 0.0045 |
+| `top_50` | 0.4318 ± 0.0038 | 0.4761 ± 0.0057 |
+| `top_100` | 0.4455 ± 0.0111 | 0.4868 ± 0.0083 |
+
+**Finding:** the QAT-vs-float PR-AUC gap (0.034–0.086 across the 9 runs) is 4–20× larger than the seed-to-seed spread within any tier (std 0.004–0.011) and has the same sign in every run. This independently corroborates C.1's T3 finding (decision agreement 0.966–0.979, never reaching ≥0.99): the 4-bit QAT accuracy shortfall is systematic to the quantization, not an artifact a different training seed would remove. Full write-up: `docs/fhe_mlp.md` §7.7.

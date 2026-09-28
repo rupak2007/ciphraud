@@ -118,6 +118,194 @@ def test_restore_weights_rebuilds_the_quantized_module_from_the_saved_state(data
     np.testing.assert_array_equal(mlp.clear_quantized_logits(model, data["X_val"]), after_epoch_1)
 
 
+def _quantizer_snapshot(quantized_module) -> list[tuple]:
+    def qz(q):
+        return (np.asarray(q.scale).tolist(), np.asarray(q.zero_point).tolist(), int(np.asarray(q.n_bits)), int(q.offset), bool(q.is_narrow), bool(q.no_clipping))
+
+    return [qz(q) for q in list(quantized_module.input_quantizers) + list(quantized_module.output_quantizers)]
+
+
+@needs_concrete
+def test_restore_weights_with_a_calibration_subset_matches_full_data_exactly(data):
+    """Decision D7 (docs/fhe_mlp.md): a calibration diagnostic on the real top_20_bits3/bits4 checkpoints found this
+    re-export calibration-set-size INVARIANT -- Brevitas QAT's quantizer scale/zero-point are fixed, learned
+    power-of-two values, not statistics derived from the calibration data's range. Reproduced here on the synthetic
+    problem: a ~19% calibration subset gives BIT-IDENTICAL quantizer parameters and clear-quantized outputs to the
+    full 2,000-row training set, from the SAME trained weights."""
+    import copy
+
+    mlp.seed_everything(1)
+    model = mlp.build_qat_mlp(MLP_CFG, 4, mlp.balanced_class_weights(data["y_train"]))
+    model.fit(data["X_train"], data["y_train"])
+    state = copy.deepcopy(model.base_module.state_dict())
+
+    mlp.restore_weights(model, state, data["X_train"], data["y_train"])
+    full_logits = mlp.clear_quantized_logits(model, data["X_val"])
+    full_snapshot = _quantizer_snapshot(model.quantized_module_)
+
+    pos = np.where(data["y_train"] == 1)[0][:150]
+    neg = np.where(data["y_train"] == 0)[0][:230]
+    subset_idx = np.concatenate([pos, neg])
+    assert subset_idx.shape[0] < data["X_train"].shape[0]  # a genuine subset, not the full set in disguise
+    mlp.restore_weights(model, state, data["X_train"][subset_idx], data["y_train"][subset_idx])
+    subset_logits = mlp.clear_quantized_logits(model, data["X_val"])
+    subset_snapshot = _quantizer_snapshot(model.quantized_module_)
+
+    assert full_snapshot == subset_snapshot
+    np.testing.assert_array_equal(full_logits, subset_logits)
+
+
+@needs_concrete
+def test_train_qat_mlp_calibration_subset_matches_full_data_and_default_is_unchanged(data):
+    """The optional X_calibration/y_calibration args (D7) change ONLY the final re-export's data; every epoch of
+    actual gradient training (weights, seeds, history) is untouched, and omitting them reproduces the exact original
+    full-data-everywhere behavior."""
+    cfg = {**MLP_CFG, "max_epochs": 3}
+    model_full, info_full = mlp.train_qat_mlp(cfg, 4, data["X_train"], data["y_train"], data["X_val"], data["y_val"], seed=11)
+
+    pos = np.where(data["y_train"] == 1)[0][:150]
+    neg = np.where(data["y_train"] == 0)[0][:400]
+    cal_idx = np.concatenate([pos, neg])
+    model_subset, info_subset = mlp.train_qat_mlp(
+        cfg, 4, data["X_train"], data["y_train"], data["X_val"], data["y_val"], seed=11,
+        X_calibration=data["X_train"][cal_idx], y_calibration=data["y_train"][cal_idx],
+    )
+
+    # identical training trajectory (same seed): X_calibration cannot affect any epoch of actual training (wall-clock
+    # "seconds" is excluded -- it is timing noise, not a training outcome)
+    history_full = [{k: v for k, v in h.items() if k != "seconds"} for h in info_full["history"]]
+    history_subset = [{k: v for k, v in h.items() if k != "seconds"} for h in info_subset["history"]]
+    assert history_full == history_subset and info_full["best_epoch"] == info_subset["best_epoch"]
+    # the only place a calibration subset can matter -- the final clear-quantized function -- is bit-identical too
+    np.testing.assert_array_equal(mlp.clear_quantized_logits(model_full, data["X_val"]), mlp.clear_quantized_logits(model_subset, data["X_val"]))
+    assert info_full["calibration_rows_used"] == data["X_train"].shape[0] and info_full["calibration_is_full_train_set"] is True
+    assert info_subset["calibration_rows_used"] == cal_idx.shape[0] and info_subset["calibration_is_full_train_set"] is False
+
+
+# ---- decision D8: epoch 1 built via a manual skorch initialize()+fit(), bypassing Concrete-ML's own .fit() --------
+#
+# `_init_sklearn_model` depends on private Concrete-ML/skorch internals (documented in its own docstring in
+# src/fhe/compile/mlp.py); these tests are also the tripwire for a future concrete-ml/skorch upgrade silently
+# changing that plumbing -- a divergence here means "PRIVATE_API_DEPENDENCY_CHANGED", not a training-logic bug.
+
+
+def _train_via_pre_d8_reference(mlp_cfg, n_bits, X_train, y_train, X_val, y_val, seed):
+    """Reference re-implementation of the PRE-D8 trainer (epoch 1 via Concrete-ML's own `model.fit()`, which also
+    performs the full-data export D8 removes), kept ONLY to prove `train_qat_mlp` (now using D8) produces an
+    identical training trajectory. Deliberately does NOT reuse the (already D8-changed) production code, so a bug
+    that broke both paths identically could not hide behind shared code."""
+    import copy
+
+    weights = mlp.balanced_class_weights(y_train)
+    mlp.seed_everything(seed)
+    model = mlp.build_qat_mlp(mlp_cfg, n_bits, weights)
+    X_train = np.asarray(X_train, dtype=np.float32)
+    X_val = np.asarray(X_val, dtype=np.float32)
+    y_train = np.asarray(y_train, dtype=np.int64)
+
+    history: list[float] = []
+    best_pr, best_epoch, best_state, bad = -1.0, 0, None, 0
+    for epoch in range(1, int(mlp_cfg["max_epochs"]) + 1):
+        if epoch == 1:
+            model.fit(X_train, y_train)  # the ORIGINAL, pre-D8 epoch-1 path (Concrete-ML's full wrapper)
+        else:
+            model.sklearn_model.partial_fit(X_train, y_train)
+        pr = float(average_precision_score(y_val, mlp.fraud_probability(mlp.qat_forward_logits(model, X_val))))
+        history.append(pr)
+        if pr > best_pr + float(mlp_cfg.get("min_delta", 0.0)):
+            best_pr, best_epoch, best_state, bad = pr, epoch, copy.deepcopy(model.base_module.state_dict()), 0
+        else:
+            bad += 1
+            if bad >= int(mlp_cfg["early_stopping_patience"]):
+                break
+    return model, history, best_epoch, best_state
+
+
+@needs_concrete
+def test_d8_init_sklearn_model_is_deterministic_given_the_same_seed(data):
+    """Prerequisite for everything below: `_init_sklearn_model` + skorch's own `.initialize()` (no training at all)
+    must draw the SAME initial weights every time for the same seed."""
+    import torch
+
+    weights = mlp.balanced_class_weights(data["y_train"])
+
+    def build():
+        mlp.seed_everything(21)
+        model = mlp.build_qat_mlp(MLP_CFG, 4, weights)
+        mlp._init_sklearn_model(model, data["X_train"], data["y_train"])
+        model.sklearn_model.initialize()  # builds module_/criterion_/optimizer_; consumes the RNG for weight init
+        return model
+
+    model_a, model_b = build(), build()
+    sa, sb = model_a.base_module.state_dict(), model_b.base_module.state_dict()
+    assert sa.keys() == sb.keys() and all(torch.equal(sa[k], sb[k]) for k in sa)
+
+
+@needs_concrete
+def test_d8_epoch1_state_dict_and_logits_match_the_pre_d8_reference_exactly(data):
+    """The core D8 equivalence claim: with the SAME seed, epoch 1 built via `_init_sklearn_model` +
+    `model.sklearn_model.fit()` (D8) ends at BIT-IDENTICAL weights and validation logits to the ORIGINAL epoch-1
+    path (`model.fit()`, Concrete-ML's full wrapper, which also runs the expensive full-data export D8 bypasses)."""
+    import torch
+
+    weights = mlp.balanced_class_weights(data["y_train"])
+
+    mlp.seed_everything(9)
+    ref_model = mlp.build_qat_mlp(MLP_CFG, 4, weights)
+    ref_model.fit(data["X_train"], data["y_train"])  # ORIGINAL, pre-D8 epoch 1
+
+    mlp.seed_everything(9)
+    new_model = mlp.build_qat_mlp(MLP_CFG, 4, weights)
+    mlp._init_sklearn_model(new_model, data["X_train"], data["y_train"])
+    new_model.sklearn_model.fit(data["X_train"], data["y_train"])  # D8 epoch 1
+
+    sr, sn = ref_model.base_module.state_dict(), new_model.base_module.state_dict()
+    assert sr.keys() == sn.keys() and all(torch.equal(sr[k], sn[k]) for k in sr)
+    np.testing.assert_array_equal(mlp.qat_forward_logits(ref_model, data["X_val"]), mlp.qat_forward_logits(new_model, data["X_val"]))
+
+
+@needs_concrete
+def test_d8_epoch1_does_not_trigger_concrete_mls_full_data_export(data):
+    """The whole point of D8: after `_init_sklearn_model` + `model.sklearn_model.fit()`, Concrete-ML's OWN `.fit()`
+    (and therefore its unconditional full-data `quantize_module`, the operation a memory probe measured as the sole
+    driver of the WSL VM's OOM) must never have run."""
+    weights = mlp.balanced_class_weights(data["y_train"])
+    mlp.seed_everything(4)
+    model = mlp.build_qat_mlp(MLP_CFG, 4, weights)
+    mlp._init_sklearn_model(model, data["X_train"], data["y_train"])
+    model.sklearn_model.fit(data["X_train"], data["y_train"])
+
+    assert model._is_fitted is False  # Concrete-ML's own .fit() sets this True; it never ran here
+    assert len(model.quantized_module_.input_quantizers) == 0  # never quantized -- quantize_module(X) never called
+
+
+@needs_concrete
+def test_d8_full_multi_epoch_trajectory_and_restored_model_match_the_pre_d8_reference_exactly(data):
+    """End-to-end equivalence: the full trainer (`train_qat_mlp`, now using D8's epoch-1 path) must reproduce the
+    SAME epoch-by-epoch training trajectory, the SAME best epoch, and -- after `restore_weights` -- BIT-IDENTICAL
+    quantizer parameters and clear-quantized outputs as the original pre-D8 trainer. `early_stopping_patience` is
+    set to never trigger, for the strictest possible trajectory comparison (the full epoch budget, every epoch)."""
+    cfg = {**MLP_CFG, "max_epochs": 6, "early_stopping_patience": 6}
+    seed = 23
+
+    ref_model, ref_history, ref_best_epoch, ref_best_state = _train_via_pre_d8_reference(
+        cfg, 4, data["X_train"], data["y_train"], data["X_val"], data["y_val"], seed
+    )
+    mlp.restore_weights(ref_model, ref_best_state, data["X_train"], data["y_train"])  # pre-D7/D8 style: full-data restore
+
+    new_model, info = mlp.train_qat_mlp(cfg, 4, data["X_train"], data["y_train"], data["X_val"], data["y_val"], seed)
+    # X_calibration omitted -> defaults to the full training set (D7's default), matching ref_model's restore above
+    # exactly, so this test isolates D8's effect only.
+
+    new_history = [h["val_pr_auc_qat_forward"] for h in info["history"]]
+    assert ref_history == new_history and ref_best_epoch == info["best_epoch"]  # identical trajectory, identical best epoch
+
+    assert _quantizer_snapshot(ref_model.quantized_module_) == _quantizer_snapshot(new_model.quantized_module_)
+    np.testing.assert_array_equal(
+        mlp.clear_quantized_logits(ref_model, data["X_val"]), mlp.clear_quantized_logits(new_model, data["X_val"])
+    )
+
+
 @needs_concrete
 def test_the_returned_model_is_the_best_epoch_and_reports_its_clear_quantized_score(data):
     """Whatever epoch was best, the model handed back must BE that epoch: its clear-quantized validation PR-AUC equals the
