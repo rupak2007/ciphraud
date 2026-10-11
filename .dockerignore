@@ -1,0 +1,9 @@
+*
+!Dockerfile
+!requirements-fhe.txt
+!src/
+!configs/phase10/
+**/__pycache__
+**/*.pyc
+**/*.key
+**/*keyset*
