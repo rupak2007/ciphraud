@@ -26,6 +26,11 @@
 # for later phases (plaintext models destined for FHE compilation should
 # be trained/serialized under this environment's package versions).
 
+# Phase 10 (client/server demo, docs/client_server.md): fastapi + uvicorn and their six transitive dependencies, installed on
+# 2026-09-29 after `pip install --dry-run` showed they add ONLY these eight packages and move no existing pin (numpy, torch, Concrete-ML
+# unchanged); `pip check` afterwards reports only the pre-existing "xgboost 1.6.2 is not supported on this platform" notice.
+annotated-doc==0.0.5
+annotated-types==0.8.0
 anyio==4.15.1
 brevitas==0.10.2
 certifi==2026.7.22
@@ -37,6 +42,7 @@ concrete-ml-extensions==0.1.9
 concrete-python==2.10.0
 dependencies==2.0.1
 dill==0.4.1
+fastapi==0.141.1
 filelock==3.32.6
 flatbuffers==25.12.19
 fsspec==2026.7.0
@@ -79,6 +85,8 @@ pandas==3.0.5
 pluggy==1.6.0
 protobuf==5.29.6
 psutil==7.2.2
+pydantic==2.13.5
+pydantic_core==2.46.5
 Pygments==2.21.0
 pytest==9.1.1
 python-dateutil==2.9.0.post0
@@ -90,12 +98,15 @@ six==1.17.0
 skl2onnx==1.20.0
 skops==0.5.0
 skorch==0.11.0
+starlette==1.7.0
 sympy==1.14.0
 tabulate==0.10.0
 threadpoolctl==3.6.0
 torch==2.3.1
 tqdm==4.70.0
 typing_extensions==4.16.0
+typing-inspection==0.4.4
 unfoldNd==0.2.3
+uvicorn==0.54.0
 xgboost==1.6.2
 z3-solver==4.13.0.0

@@ -1,0 +1,14 @@
+{
+  "client_zip_sha256_matches": true,
+  "id": "xgboost_top50_bits14",
+  "loaded_server_sizes": {
+    "size_of_bootstrap_keys_bytes": 1795547136,
+    "size_of_keyswitch_keys_bytes": 135073792,
+    "size_of_secret_keys_bytes": 60872
+  },
+  "loaded_server_sizes_match_manifest": true,
+  "passed": true,
+  "run_fhe": false,
+  "server_load_seconds": 0.06096979200000874,
+  "server_zip_sha256_matches": true
+}

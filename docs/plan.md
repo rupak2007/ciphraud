@@ -428,6 +428,8 @@ than treating it as a project failure.
 
 ## Phase 10 — Client/Server Implementation
 
+**Status (2026-10-11): complete; the exit criterion is satisfied, with caveats.** Full write-up: `docs/client_server.md`. FastAPI server + client library, real two-process HTTP encrypted round trips for all three model types: LR 7/7 and MLP 7/7 exact matches (the MLP uses `mlp_top20_bits3`, which passed execution/integrity checks but failed the Phase 9 quantization-accuracy gate), and XGBoost `xgboost_top50_bits14` 1/1 exact (all 219 decrypted integers equal the clear-quantized, simulated and Phase 8 recorded values; one cold request, evaluation 2,445 s, server RSS peak 3,112 MB). XGBoost took three supervised local attempts: attempts 1 and 2 ended `aborted_memory` under the unchanged pre-registered guard on the default ~3.9 GiB WSL limit, and attempt 3 passed after the WSL memory limit was raised to 5GB (`.wslconfig`) on the same computer; guards, model, bit-width, circuit, protocol and the 2.4 GB gate were unchanged, and the aborted attempts remain archived. The pass is one request (n=1), not a benchmark latency. No TLS/authentication.
+
 **Objective**: build the real encrypt→send→infer→return→decrypt demo.
 
 **Tasks**: implement client (key gen, quantize, encrypt, decrypt) and

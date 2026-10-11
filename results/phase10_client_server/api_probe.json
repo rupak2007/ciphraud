@@ -1,0 +1,123 @@
+{
+  "encrypt_without_keys": {
+    "encrypt_succeeded_without_keygen": true,
+    "keys_generated_afterwards": true
+  },
+  "exit_behavior": {
+    "control_no_concrete": {
+      "exit_status_observed": 3,
+      "exit_status_requested": 3,
+      "unflushed_stdout_kept": true
+    },
+    "encrypt": {
+      "exit_status_observed": 3,
+      "exit_status_requested": 3,
+      "unflushed_stdout_kept": true
+    },
+    "load_client_and_keygen": {
+      "exit_status_observed": 3,
+      "exit_status_requested": 3,
+      "unflushed_stdout_kept": true
+    },
+    "load_server": {
+      "exit_status_observed": 3,
+      "exit_status_requested": 3,
+      "unflushed_stdout_kept": true
+    },
+    "server_run": {
+      "exit_status_observed": 0,
+      "exit_status_requested": 3,
+      "unflushed_stdout_kept": false
+    },
+    "status_and_stdout_lost_only_after_running_a_circuit": true
+  },
+  "keygen_determinism": {
+    "default_keygen_differs_across_processes": true,
+    "fixed_seed_identical_across_processes": true,
+    "keyset_sha256_prefix_by_mode": {
+      "default": [
+        "c2b05762b00a98af",
+        "cb3eb0fc7ce71ae7"
+      ],
+      "fixed": [
+        "9a4cac99184ddeb1",
+        "9a4cac99184ddeb1"
+      ],
+      "random": [
+        "bb83823aafa7cdd9",
+        "cdda64fc1e7aad68"
+      ]
+    },
+    "random_seed_differs_across_processes": true
+  },
+  "note": "measured facts behind docs/client_server.md; regenerate with `python -m src.fhe.probes.phase10_probe`",
+  "run_time_ab": {
+    "cpu_count": 6,
+    "deserialized_evaluation_keys_seconds": [
+      12.114186448000055,
+      7.871516276999955,
+      9.12786320400005,
+      8.206076622999944
+    ],
+    "in_process_circuit_run_seconds": [
+      16.613535612000078,
+      8.01207066500001,
+      6.057738534000009,
+      5.905162733999987
+    ],
+    "model": "mlp_top20_bits3",
+    "n_runs_each": 4,
+    "native_evaluation_keys_seconds": [
+      9.378103156999941,
+      8.59504954099998,
+      10.1136315440001,
+      10.290083847000005
+    ],
+    "phase9_recorded_fhe_latency_total_mean_seconds": 5.172865255399995,
+    "steady_state_mean_seconds": {
+      "deserialized_keys": 8.401818701333317,
+      "in_process_circuit_run": 6.658323977666669,
+      "native_keys": 9.666254977333361
+    }
+  },
+  "wire_and_run": {
+    "lr_top20_bits16": {
+      "bytes_and_object_results_both_decrypt_to_the_reference": true,
+      "circuit_stats_sizes": {
+        "size_of_bootstrap_keys_bytes": 0,
+        "size_of_inputs_bytes": 480,
+        "size_of_keyswitch_keys_bytes": 0,
+        "size_of_outputs_bytes": 17656,
+        "size_of_secret_keys_bytes": 17648
+      },
+      "client_keygen_seconds": 0.00032566499999120424,
+      "evaluation_keys_bytes": 64,
+      "input_ciphertext_bytes": 744,
+      "preserialized_run_accepts_value_and_evaluation_keys": true,
+      "response_bytes": 17920,
+      "run_with_bytes_seconds": 0.07314854499986723,
+      "run_with_deserialized_objects_seconds": 0.01626030800002809,
+      "saved_keyset_file_bytes": 17824,
+      "server_load_seconds": 0.020349790999944162
+    },
+    "mlp_top20_bits3": {
+      "bytes_and_object_results_both_decrypt_to_the_reference": true,
+      "circuit_stats_sizes": {
+        "size_of_bootstrap_keys_bytes": 450019328,
+        "size_of_inputs_bytes": 480,
+        "size_of_keyswitch_keys_bytes": 199720960,
+        "size_of_outputs_bytes": 65552,
+        "size_of_secret_keys_bytes": 60208
+      },
+      "client_keygen_seconds": 3.021838839000111,
+      "evaluation_keys_bytes": 115553032,
+      "input_ciphertext_bytes": 744,
+      "preserialized_run_accepts_value_and_evaluation_keys": true,
+      "response_bytes": 65816,
+      "run_with_bytes_seconds": 15.292595178000056,
+      "run_with_deserialized_objects_seconds": 12.71097008200013,
+      "saved_keyset_file_bytes": 115613552,
+      "server_load_seconds": 0.040546417000086876
+    }
+  }
+}

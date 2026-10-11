@@ -1,0 +1,712 @@
+{
+  "all_decisions_match_reference": true,
+  "all_requests_exact_match": true,
+  "artifact_compatibility": {
+    "client_zip_sha256": "eae1b30fac08495eac38eed2201acca1d1add33957be5624924869f7c1a26513",
+    "match": true,
+    "server_reports_client_zip_sha256": "eae1b30fac08495eac38eed2201acca1d1add33957be5624924869f7c1a26513",
+    "server_zip_sha256": "d257f4e91b70ecf489d2ace633513be95fbc8fa253caaf9ca18a700b88205843",
+    "versions": {
+      "concrete-ml": "1.9.0",
+      "concrete-python": "2.10.0",
+      "numpy": "1.26.4",
+      "python": "3.12.3"
+    }
+  },
+  "client_load_seconds": 0.04387353600009192,
+  "id": "mlp_top20_bits3",
+  "keys_resident_after_delete": false,
+  "memory": {
+    "abort_reason": null,
+    "aborted": false,
+    "client_process_peak_rss_mb": 1104.88671875,
+    "guards": {
+      "abort_max_swap_used_mb": 700.0,
+      "abort_min_mem_available_mb": 250.0
+    },
+    "max_swap_used_mb": 2.3984375,
+    "min_mem_available_mb": 1549.60546875,
+    "n_samples": 552,
+    "per_process": {
+      "client": {
+        "max_rss_mb": 897.55859375,
+        "max_swap_mb": 0.0,
+        "peak_rss_mb": 1104.88671875
+      },
+      "server": {
+        "max_rss_mb": 1468.765625,
+        "max_swap_mb": 0.0,
+        "peak_rss_mb": 1468.765625
+      }
+    },
+    "watchdog_error": null
+  },
+  "mode": "in_process_client",
+  "model_type": "mlp",
+  "one_time": {
+    "client_keygen_seconds": 2.3107962629999292,
+    "evaluation_keys_bytes": 115553032,
+    "evaluation_keys_serialize_seconds": 0.6088860859999841,
+    "key_delete_seconds": 0.5425755910000589,
+    "key_upload_http_seconds": 1.2604977940000026,
+    "secret_key_sent": false,
+    "server_key_deserialize_seconds": 0.4957429270000375
+  },
+  "request_positions": [
+    32148,
+    13560,
+    32148,
+    32148,
+    32148,
+    32148,
+    32148
+  ],
+  "requests": [
+    {
+      "bytes": {
+        "request_body": 744,
+        "response_body": 65816
+      },
+      "client_timings": {
+        "decrypt_seconds": 0.0065273660000002565,
+        "deserialize_seconds": 0.0016437269998732518,
+        "encrypt_seconds": 0.00484592399993744,
+        "postprocess_seconds": 0.03359115800003565,
+        "preprocess_seconds": 0.00011451399996076361,
+        "quantize_seconds": 0.0004364639999039355,
+        "serialize_seconds": 3.402599986657151e-05
+      },
+      "correctness": {
+        "equals_clear_quantized": true,
+        "equals_recorded_source_phase": true,
+        "equals_simulate": true,
+        "exact_match": true
+      },
+      "decision": false,
+      "decrypted_ints": [
+        35,
+        -31
+      ],
+      "http_roundtrip_seconds": 9.57174927899996,
+      "index": 0,
+      "position": 32148,
+      "probability": 0.09268777863937605,
+      "probability_abs_diff": 0.0,
+      "reference_decision": false,
+      "reference_probability": 0.09268777863937605,
+      "role": "fixed",
+      "server_memory_after_request": {
+        "peak_rss_mb": 1467.71484375,
+        "rss_mb": 1213.26171875,
+        "swap_mb": 0.0
+      },
+      "server_timings": {
+        "fhe_run_s": 9.547823591999986,
+        "handler_total_s": 9.548085033000007,
+        "input_deserialize_s": 0.00010313999996469647,
+        "output_serialize_s": 0.00015570300001854775
+      },
+      "sum_of_measured_components_seconds": 9.618942457999538,
+      "threshold": 0.9060934853382423,
+      "transport_and_framework_seconds": 0.023664245999952982,
+      "y_true": 0
+    },
+    {
+      "bytes": {
+        "request_body": 744,
+        "response_body": 65816
+      },
+      "client_timings": {
+        "decrypt_seconds": 0.0013564559999394987,
+        "deserialize_seconds": 0.0002026539998496446,
+        "encrypt_seconds": 0.006537085999980263,
+        "postprocess_seconds": 0.0002450339998176787,
+        "preprocess_seconds": 0.00014867699997012096,
+        "quantize_seconds": 0.0014218169999367092,
+        "serialize_seconds": 1.3472000091496739e-05
+      },
+      "correctness": {
+        "equals_clear_quantized": true,
+        "equals_recorded_source_phase": true,
+        "equals_simulate": true,
+        "exact_match": true
+      },
+      "decision": false,
+      "decrypted_ints": [
+        -37,
+        26
+      ],
+      "http_roundtrip_seconds": 6.591401399000006,
+      "index": 1,
+      "position": 13560,
+      "probability": 0.8519528019683105,
+      "probability_abs_diff": 0.0,
+      "reference_decision": false,
+      "reference_probability": 0.8519528019683105,
+      "role": "t1",
+      "server_memory_after_request": {
+        "peak_rss_mb": 1468.23046875,
+        "rss_mb": 1213.84765625,
+        "swap_mb": 0.0
+      },
+      "server_timings": {
+        "fhe_run_s": 6.581127496000136,
+        "handler_total_s": 6.5813714809999055,
+        "input_deserialize_s": 0.00019987199993920512,
+        "output_serialize_s": 4.209100006846711e-05
+      },
+      "sum_of_measured_components_seconds": 6.601326594999591,
+      "threshold": 0.9060934853382423,
+      "transport_and_framework_seconds": 0.010029918000100224,
+      "y_true": 1
+    },
+    {
+      "bytes": {
+        "request_body": 744,
+        "response_body": 65816
+      },
+      "client_timings": {
+        "decrypt_seconds": 0.0023732829999971727,
+        "deserialize_seconds": 0.0002750539999851753,
+        "encrypt_seconds": 0.004354375000048094,
+        "postprocess_seconds": 0.00011139000002913235,
+        "preprocess_seconds": 0.00011914600008822163,
+        "quantize_seconds": 0.0001402400000642956,
+        "serialize_seconds": 1.2907000154882553e-05
+      },
+      "correctness": {
+        "equals_clear_quantized": true,
+        "equals_recorded_source_phase": true,
+        "equals_simulate": true,
+        "exact_match": true
+      },
+      "decision": false,
+      "decrypted_ints": [
+        35,
+        -31
+      ],
+      "http_roundtrip_seconds": 6.643792960999917,
+      "index": 2,
+      "position": 32148,
+      "probability": 0.09268777863937605,
+      "probability_abs_diff": 0.0,
+      "reference_decision": false,
+      "reference_probability": 0.09268777863937605,
+      "role": "repeat",
+      "server_memory_after_request": {
+        "peak_rss_mb": 1468.23046875,
+        "rss_mb": 1213.84765625,
+        "swap_mb": 0.0
+      },
+      "server_timings": {
+        "fhe_run_s": 6.639359140000124,
+        "handler_total_s": 6.639506071999904,
+        "input_deserialize_s": 0.00010960999998133047,
+        "output_serialize_s": 3.566400005183823e-05
+      },
+      "sum_of_measured_components_seconds": 6.651179356000284,
+      "threshold": 0.9060934853382423,
+      "transport_and_framework_seconds": 0.004286889000013616,
+      "y_true": 0
+    },
+    {
+      "bytes": {
+        "request_body": 744,
+        "response_body": 65816
+      },
+      "client_timings": {
+        "decrypt_seconds": 0.0016340920001312043,
+        "deserialize_seconds": 0.00013400300008470367,
+        "encrypt_seconds": 0.004613482999957341,
+        "postprocess_seconds": 7.6450000051409e-05,
+        "preprocess_seconds": 3.7716000178988907e-05,
+        "quantize_seconds": 0.00017030900016834494,
+        "serialize_seconds": 1.348399996459193e-05
+      },
+      "correctness": {
+        "equals_clear_quantized": true,
+        "equals_recorded_source_phase": true,
+        "equals_simulate": true,
+        "exact_match": true
+      },
+      "decision": false,
+      "decrypted_ints": [
+        35,
+        -31
+      ],
+      "http_roundtrip_seconds": 7.24314491999985,
+      "index": 3,
+      "position": 32148,
+      "probability": 0.09268777863937605,
+      "probability_abs_diff": 0.0,
+      "reference_decision": false,
+      "reference_probability": 0.09268777863937605,
+      "role": "repeat",
+      "server_memory_after_request": {
+        "peak_rss_mb": 1468.23046875,
+        "rss_mb": 1213.8515625,
+        "swap_mb": 0.0
+      },
+      "server_timings": {
+        "fhe_run_s": 7.239605698999867,
+        "handler_total_s": 7.239728824999929,
+        "input_deserialize_s": 8.637500013719546e-05,
+        "output_serialize_s": 3.5695999940799084e-05
+      },
+      "sum_of_measured_components_seconds": 7.249824457000386,
+      "threshold": 0.9060934853382423,
+      "transport_and_framework_seconds": 0.0034160949999204604,
+      "y_true": 0
+    },
+    {
+      "bytes": {
+        "request_body": 744,
+        "response_body": 65816
+      },
+      "client_timings": {
+        "decrypt_seconds": 0.0014350730000387557,
+        "deserialize_seconds": 0.00012871900003119663,
+        "encrypt_seconds": 0.011860409999826516,
+        "postprocess_seconds": 0.00010371600001235493,
+        "preprocess_seconds": 6.327999994937272e-05,
+        "quantize_seconds": 0.00010947400005534291,
+        "serialize_seconds": 1.4125999996394967e-05
+      },
+      "correctness": {
+        "equals_clear_quantized": true,
+        "equals_recorded_source_phase": true,
+        "equals_simulate": true,
+        "exact_match": true
+      },
+      "decision": false,
+      "decrypted_ints": [
+        35,
+        -31
+      ],
+      "http_roundtrip_seconds": 6.776384224999902,
+      "index": 4,
+      "position": 32148,
+      "probability": 0.09268777863937605,
+      "probability_abs_diff": 0.0,
+      "reference_decision": false,
+      "reference_probability": 0.09268777863937605,
+      "role": "repeat",
+      "server_memory_after_request": {
+        "peak_rss_mb": 1468.23046875,
+        "rss_mb": 1213.8515625,
+        "swap_mb": 0.0
+      },
+      "server_timings": {
+        "fhe_run_s": 6.770933888999934,
+        "handler_total_s": 6.7710819680000895,
+        "input_deserialize_s": 0.00010565699994913302,
+        "output_serialize_s": 4.1209000073649804e-05
+      },
+      "sum_of_measured_components_seconds": 6.7900990229998115,
+      "threshold": 0.9060934853382423,
+      "transport_and_framework_seconds": 0.005302256999812016,
+      "y_true": 0
+    },
+    {
+      "bytes": {
+        "request_body": 744,
+        "response_body": 65816
+      },
+      "client_timings": {
+        "decrypt_seconds": 0.00221137199991972,
+        "deserialize_seconds": 0.00017833899983088486,
+        "encrypt_seconds": 0.004143905000091763,
+        "postprocess_seconds": 8.324499981426925e-05,
+        "preprocess_seconds": 2.4911000082283863e-05,
+        "quantize_seconds": 8.677000005263835e-05,
+        "serialize_seconds": 1.0648999932527659e-05
+      },
+      "correctness": {
+        "equals_clear_quantized": true,
+        "equals_recorded_source_phase": true,
+        "equals_simulate": true,
+        "exact_match": true
+      },
+      "decision": false,
+      "decrypted_ints": [
+        35,
+        -31
+      ],
+      "http_roundtrip_seconds": 6.852454564000027,
+      "index": 5,
+      "position": 32148,
+      "probability": 0.09268777863937605,
+      "probability_abs_diff": 0.0,
+      "reference_decision": false,
+      "reference_probability": 0.09268777863937605,
+      "role": "repeat",
+      "server_memory_after_request": {
+        "peak_rss_mb": 1468.23046875,
+        "rss_mb": 1213.8515625,
+        "swap_mb": 0.0
+      },
+      "server_timings": {
+        "fhe_run_s": 6.849076141000069,
+        "handler_total_s": 6.84920139399992,
+        "input_deserialize_s": 8.797300006335718e-05,
+        "output_serialize_s": 3.6322999903859454e-05
+      },
+      "sum_of_measured_components_seconds": 6.859193754999751,
+      "threshold": 0.9060934853382423,
+      "transport_and_framework_seconds": 0.003253170000107275,
+      "y_true": 0
+    },
+    {
+      "bytes": {
+        "request_body": 744,
+        "response_body": 65816
+      },
+      "client_timings": {
+        "decrypt_seconds": 0.0015788289999818517,
+        "deserialize_seconds": 0.00012169299998276983,
+        "encrypt_seconds": 0.006296900000052119,
+        "postprocess_seconds": 6.889200017212715e-05,
+        "preprocess_seconds": 7.967900000949157e-05,
+        "quantize_seconds": 0.00022689899992656137,
+        "serialize_seconds": 1.3680999927601079e-05
+      },
+      "correctness": {
+        "equals_clear_quantized": true,
+        "equals_recorded_source_phase": true,
+        "equals_simulate": true,
+        "exact_match": true
+      },
+      "decision": false,
+      "decrypted_ints": [
+        35,
+        -31
+      ],
+      "http_roundtrip_seconds": 6.150402721000091,
+      "index": 6,
+      "position": 32148,
+      "probability": 0.09268777863937605,
+      "probability_abs_diff": 0.0,
+      "reference_decision": false,
+      "reference_probability": 0.09268777863937605,
+      "role": "repeat",
+      "server_memory_after_request": {
+        "peak_rss_mb": 1468.23046875,
+        "rss_mb": 1213.8515625,
+        "swap_mb": 0.0
+      },
+      "server_timings": {
+        "fhe_run_s": 6.1477792939999745,
+        "handler_total_s": 6.147900887000105,
+        "input_deserialize_s": 8.594199994149676e-05,
+        "output_serialize_s": 3.430200013099238e-05
+      },
+      "sum_of_measured_components_seconds": 6.158789294000144,
+      "threshold": 0.9060934853382423,
+      "transport_and_framework_seconds": 0.0025018339999860473,
+      "y_true": 0
+    }
+  ],
+  "server_exit_code": -15,
+  "server_startup": {
+    "model_load_seconds": 0.020018783999830703,
+    "ready_seconds": 5.028095695000047,
+    "server_pid_matches_child": true
+  },
+  "status": "passed",
+  "summary": {
+    "n_requests": 6,
+    "note": "repeated requests on ONE fixed row (an integration check, not independent samples); request 0 is reported separately because it pays one-time warm-up costs",
+    "position": 32148,
+    "request_0": {
+      "client_decrypt_seconds": 0.0065273660000002565,
+      "client_deserialize_seconds": 0.0016437269998732518,
+      "client_encrypt_seconds": 0.00484592399993744,
+      "client_postprocess_seconds": 0.03359115800003565,
+      "client_preprocess_seconds": 0.00011451399996076361,
+      "client_quantize_seconds": 0.0004364639999039355,
+      "client_serialize_seconds": 3.402599986657151e-05,
+      "http_roundtrip_seconds": 9.57174927899996,
+      "server_fhe_run_s": 9.547823591999986,
+      "server_handler_total_s": 9.548085033000007,
+      "server_input_deserialize_s": 0.00010313999996469647,
+      "server_output_serialize_s": 0.00015570300001854775,
+      "transport_and_framework_seconds": 0.023664245999952982
+    },
+    "stats": {
+      "client_decrypt_seconds": {
+        "max_seconds": 0.0065273660000002565,
+        "mean_seconds": 0.0026266691666781603,
+        "min_seconds": 0.0014350730000387557,
+        "n_trials": 6,
+        "std_seconds": 0.0019470589073016852,
+        "trials_seconds": [
+          0.0065273660000002565,
+          0.0023732829999971727,
+          0.0016340920001312043,
+          0.0014350730000387557,
+          0.00221137199991972,
+          0.0015788289999818517
+        ]
+      },
+      "client_deserialize_seconds": {
+        "max_seconds": 0.0016437269998732518,
+        "mean_seconds": 0.00041358916663133033,
+        "min_seconds": 0.00012169299998276983,
+        "n_trials": 6,
+        "std_seconds": 0.0006053588242683169,
+        "trials_seconds": [
+          0.0016437269998732518,
+          0.0002750539999851753,
+          0.00013400300008470367,
+          0.00012871900003119663,
+          0.00017833899983088486,
+          0.00012169299998276983
+        ]
+      },
+      "client_encrypt_seconds": {
+        "max_seconds": 0.011860409999826516,
+        "mean_seconds": 0.006019166166652212,
+        "min_seconds": 0.004143905000091763,
+        "n_trials": 6,
+        "std_seconds": 0.002961008004680551,
+        "trials_seconds": [
+          0.00484592399993744,
+          0.004354375000048094,
+          0.004613482999957341,
+          0.011860409999826516,
+          0.004143905000091763,
+          0.006296900000052119
+        ]
+      },
+      "client_postprocess_seconds": {
+        "max_seconds": 0.03359115800003565,
+        "mean_seconds": 0.005672475166685824,
+        "min_seconds": 6.889200017212715e-05,
+        "n_trials": 6,
+        "std_seconds": 0.013677315042538937,
+        "trials_seconds": [
+          0.03359115800003565,
+          0.00011139000002913235,
+          7.6450000051409e-05,
+          0.00010371600001235493,
+          8.324499981426925e-05,
+          6.889200017212715e-05
+        ]
+      },
+      "client_preprocess_seconds": {
+        "max_seconds": 0.00011914600008822163,
+        "mean_seconds": 7.320766671152039e-05,
+        "min_seconds": 2.4911000082283863e-05,
+        "n_trials": 6,
+        "std_seconds": 3.885667706500952e-05,
+        "trials_seconds": [
+          0.00011451399996076361,
+          0.00011914600008822163,
+          3.7716000178988907e-05,
+          6.327999994937272e-05,
+          2.4911000082283863e-05,
+          7.967900000949157e-05
+        ]
+      },
+      "client_quantize_seconds": {
+        "max_seconds": 0.0004364639999039355,
+        "mean_seconds": 0.00019502600002851977,
+        "min_seconds": 8.677000005263835e-05,
+        "n_trials": 6,
+        "std_seconds": 0.0001280305729196727,
+        "trials_seconds": [
+          0.0004364639999039355,
+          0.0001402400000642956,
+          0.00017030900016834494,
+          0.00010947400005534291,
+          8.677000005263835e-05,
+          0.00022689899992656137
+        ]
+      },
+      "client_serialize_seconds": {
+        "max_seconds": 3.402599986657151e-05,
+        "mean_seconds": 1.647883330709495e-05,
+        "min_seconds": 1.0648999932527659e-05,
+        "n_trials": 6,
+        "std_seconds": 8.68309537509743e-06,
+        "trials_seconds": [
+          3.402599986657151e-05,
+          1.2907000154882553e-05,
+          1.348399996459193e-05,
+          1.4125999996394967e-05,
+          1.0648999932527659e-05,
+          1.3680999927601079e-05
+        ]
+      },
+      "http_roundtrip_seconds": {
+        "max_seconds": 9.57174927899996,
+        "mean_seconds": 7.206321444999958,
+        "min_seconds": 6.150402721000091,
+        "n_trials": 6,
+        "std_seconds": 1.2114516280717027,
+        "trials_seconds": [
+          9.57174927899996,
+          6.643792960999917,
+          7.24314491999985,
+          6.776384224999902,
+          6.852454564000027,
+          6.150402721000091
+        ]
+      },
+      "server_fhe_run_s": {
+        "max_seconds": 9.547823591999986,
+        "mean_seconds": 7.199096292499992,
+        "min_seconds": 6.1477792939999745,
+        "n_trials": 6,
+        "std_seconds": 1.2035423715750293,
+        "trials_seconds": [
+          9.547823591999986,
+          6.639359140000124,
+          7.239605698999867,
+          6.770933888999934,
+          6.849076141000069,
+          6.1477792939999745
+        ]
+      },
+      "server_handler_total_s": {
+        "max_seconds": 9.548085033000007,
+        "mean_seconds": 7.199250696499992,
+        "min_seconds": 6.147900887000105,
+        "n_trials": 6,
+        "std_seconds": 1.2035925107814958,
+        "trials_seconds": [
+          9.548085033000007,
+          6.639506071999904,
+          7.239728824999929,
+          6.7710819680000895,
+          6.84920139399992,
+          6.147900887000105
+        ]
+      },
+      "server_input_deserialize_s": {
+        "max_seconds": 0.00010960999998133047,
+        "mean_seconds": 9.644950000620156e-05,
+        "min_seconds": 8.594199994149676e-05,
+        "n_trials": 6,
+        "std_seconds": 1.0830454847239682e-05,
+        "trials_seconds": [
+          0.00010313999996469647,
+          0.00010960999998133047,
+          8.637500013719546e-05,
+          0.00010565699994913302,
+          8.797300006335718e-05,
+          8.594199994149676e-05
+        ]
+      },
+      "server_output_serialize_s": {
+        "max_seconds": 0.00015570300001854775,
+        "mean_seconds": 5.6482833353281116e-05,
+        "min_seconds": 3.430200013099238e-05,
+        "n_trials": 6,
+        "std_seconds": 4.866591408086818e-05,
+        "trials_seconds": [
+          0.00015570300001854775,
+          3.566400005183823e-05,
+          3.5695999940799084e-05,
+          4.1209000073649804e-05,
+          3.6322999903859454e-05,
+          3.430200013099238e-05
+        ]
+      },
+      "transport_and_framework_seconds": {
+        "max_seconds": 0.023664245999952982,
+        "mean_seconds": 0.0070707484999654,
+        "min_seconds": 0.0025018339999860473,
+        "n_trials": 6,
+        "std_seconds": 0.008185682289214163,
+        "trials_seconds": [
+          0.023664245999952982,
+          0.004286889000013616,
+          0.0034160949999204604,
+          0.005302256999812016,
+          0.003253170000107275,
+          0.0025018339999860473
+        ]
+      }
+    }
+  },
+  "t3_disclosure": "The client/server FHE deployment was demonstrated using mlp_top20_bits3, which passed the relevant execution/integrity checks but failed the Phase 9 quantization-accuracy gate.",
+  "test_partition_touched": false,
+  "wire_audit": {
+    "all_bodies_are_evaluation_keys_or_ciphertexts": true,
+    "classes": [
+      "evaluation_keys",
+      "input_ciphertext",
+      "input_ciphertext",
+      "input_ciphertext",
+      "input_ciphertext",
+      "input_ciphertext",
+      "input_ciphertext",
+      "input_ciphertext",
+      "no_body",
+      "no_body"
+    ],
+    "requests": [
+      {
+        "method": "POST",
+        "n_bytes": 115553032,
+        "path": "/v1/keys",
+        "sha256": "deaeb9ccd948a3f99a5915007561506eb393ddd71b3886e29c5933379079a552"
+      },
+      {
+        "method": "POST",
+        "n_bytes": 744,
+        "path": "/v1/infer",
+        "sha256": "78164dabf9ed0e11620cdc99faa8525c4198f6f70e3bb80c275d7b48f21bb2ae"
+      },
+      {
+        "method": "POST",
+        "n_bytes": 744,
+        "path": "/v1/infer",
+        "sha256": "c33c6b2652523a65cf65e6248c168597ffc18ef8ec323ed0436f470734c1144e"
+      },
+      {
+        "method": "POST",
+        "n_bytes": 744,
+        "path": "/v1/infer",
+        "sha256": "399aec6c2213992f74621bf95e4d5b3d055c25361b8f453150118b81d9d90792"
+      },
+      {
+        "method": "POST",
+        "n_bytes": 744,
+        "path": "/v1/infer",
+        "sha256": "8d07cc3f3dae4a83bec84cfade9776f419c9c8848090416e492190da86220839"
+      },
+      {
+        "method": "POST",
+        "n_bytes": 744,
+        "path": "/v1/infer",
+        "sha256": "45e75569085ef8719676f5be4693217210f4fbc46b7e91a8b725278d84151e64"
+      },
+      {
+        "method": "POST",
+        "n_bytes": 744,
+        "path": "/v1/infer",
+        "sha256": "5fe2a9f462e99ef1b3c7596335a5ba6bb7249ea7e7d645564e93715efa4b3a5f"
+      },
+      {
+        "method": "POST",
+        "n_bytes": 744,
+        "path": "/v1/infer",
+        "sha256": "fd287d33fe8988c0258ddc6e268a2e965852d072976d5f7eb13deb279b1a13d4"
+      },
+      {
+        "method": "DELETE",
+        "n_bytes": 0,
+        "path": "/v1/keys",
+        "sha256": null
+      },
+      {
+        "method": "GET",
+        "n_bytes": 0,
+        "path": "/v1/models",
+        "sha256": null
+      }
+    ]
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "client_keyset_file_deleted": true,
+  "failure": {
+    "exit_code": -9,
+    "fhe_execution_started": false,
+    "fhe_execution_started_corrected": true,
+    "reason": "MemAvailable 249 MB < 250 MB",
+    "secret_key_sent": false,
+    "secret_key_stayed_local": true,
+    "server_started": false,
+    "server_started_corrected": true,
+    "stage": "serve",
+    "stage_status": "aborted_memory"
+  },
+  "id": "xgboost_top50_bits14",
+  "memory_after_keys": {
+    "mem_available_mb": 3313.0546875,
+    "mem_total_mb": 3886.1171875,
+    "swap_used_mb": 0.05859375
+  },
+  "memory_after_serve": {
+    "mem_available_mb": 1569.9375,
+    "mem_total_mb": 3886.1171875,
+    "swap_used_mb": 3.1484375
+  },
+  "memory_at_start": {
+    "mem_available_mb": 3368.1328125,
+    "mem_total_mb": 3886.1171875,
+    "swap_used_mb": 0.0390625
+  },
+  "memory_guards": {
+    "abort_max_swap_used_mb": 700,
+    "abort_min_mem_available_mb": 250,
+    "go_max_swap_used_mb": 256,
+    "go_min_mem_available_mb": 900,
+    "run_timeout_seconds": 10800,
+    "sample_interval_seconds": 0.1
+  },
+  "mode": "staged_client",
+  "model_type": "xgboost",
+  "post_run_corrections": [
+    {
+      "basis": "observed",
+      "corrected_value": true,
+      "evidence": {
+        "evaluation_keys_registered_bytes": 308396952,
+        "evaluation_keys_registered_line": {
+          "key_id": "1cac9a7c6f68b06b",
+          "level": "INFO",
+          "logger": "src.server.app",
+          "message": "Evaluation keys registered",
+          "model": "xgboost_top50_bits14",
+          "n_bytes": 308396952,
+          "timestamp": "2026-09-29T17:03:10.681141+00:00"
+        },
+        "raw_evidence_files": {
+          "location": "data/phase10/logs/<model>/ (local, gitignored)",
+          "memwatch_serve_sha256": "9df153c4745223a9d6149597d1acd5d605d0953d08cc7f9fcc78e17fe1fdb2e9",
+          "server_log_sha256": "3d9666119dac0de78cf9bd62fff6f94bcdcf7e99ad846c2d6f7887f657d6e995"
+        },
+        "server_ready_event": true,
+        "server_ready_line": {
+          "event": "server_ready",
+          "host": "127.0.0.1",
+          "models": {
+            "xgboost_top50_bits14": 0.05698373400002765
+          },
+          "pid": 440,
+          "port": 60755
+        }
+      },
+      "field": "failure.server_started",
+      "reason": "The recorded boolean was derived from the presence of a completed serve-stage state record (`server_startup`). The stage was killed by the outside memory watchdog before writing that record, so the derivation defaulted to False. The raw server log shows the server reached server_ready and registered all evaluation-key bytes.",
+      "recorded_value": false
+    },
+    {
+      "basis": "inferred",
+      "corrected_value": true,
+      "evidence": {
+        "last_sample_utc": "2026-09-29T17:28:59.366736+00:00",
+        "mem_available_mb": {
+          "at_last_sample": 248.7109375,
+          "five_seconds_before_last_sample": 468.796875,
+          "min_sampled": 248.7109375
+        },
+        "raw_evidence_files": {
+          "location": "data/phase10/logs/<model>/ (local, gitignored)",
+          "memwatch_serve_sha256": "9df153c4745223a9d6149597d1acd5d605d0953d08cc7f9fcc78e17fe1fdb2e9",
+          "server_log_sha256": "3d9666119dac0de78cf9bd62fff6f94bcdcf7e99ad846c2d6f7887f657d6e995"
+        },
+        "samples_in_run": 13055,
+        "scope_note": "In the recorded stages.serve.parent_watch, per_process.stage_serve is the sender/stage process (its 923 MB peak equals the sender's peak here), not the server; the server was watched by the stage's own memory watch (memwatch_serve.jsonl).",
+        "seconds_from_key_registration_to_last_sample": 1548.686,
+        "sender_rss_mb": {
+          "at_last_sample": 337.625,
+          "max_sampled": 346.60546875,
+          "peak_reported_by_watch": 346.60546875
+        },
+        "server_rss_mb": {
+          "at_last_sample": 2975.03125,
+          "at_last_sample_minus_min_after_registration": 1919.0,
+          "five_seconds_before_last_sample": 2759.34765625,
+          "max_before_registration_line": 2108.80078125,
+          "max_sampled": 3007.22265625,
+          "min_after_registration_plus_1s": 1056.00390625,
+          "peak_reported_by_watch": 3008.7578125
+        },
+        "swap_used_mb": {
+          "max_sampled": 5.23046875
+        }
+      },
+      "field": "failure.fhe_execution_started",
+      "reason": "Same derivation defect (the flag is read from the state record that was never written), so False is a default, not an observation. It is INFERRED, not directly observed, that the encrypted request had been sent: the last watchdog sample, at which the stage was killed, is 1548.686 s after keys were registered, whereas a go/no-go refusal or a preflight-only run ends the stage within a few seconds of registration (by the stage_serve code path: a 0.2 s pause, then key deletion or the request), and the server's RSS at the last sample was 1919.0 MB above its lowest value from one second after registration onward, with no other client action recorded. No response, decryption or result exists, so nothing was evaluated to completion.",
+      "recorded_value": false
+    }
+  ],
+  "post_run_corrections_note": "All fields outside `post_run_corrections` and the `*_corrected` flags are the raw record exactly as written by the run. Corrections were added after the run from the raw server log and memory samples; the experiment was not re-run.",
+  "preflight_only": false,
+  "request_positions": [
+    32148
+  ],
+  "stages": {
+    "keys": {
+      "client_load_seconds": 0.09687717299999576,
+      "client_zip_sha256": "0b3540f647f1106650cb840eb857239fd2466ab0a6f2933c6f845c11e16e1821",
+      "evaluation_keys_bytes": 308396952,
+      "evaluation_keys_serialize_seconds": 12.021404669999981,
+      "evaluation_keys_sha256": "1cac9a7c6f68b06b609789dae8525b3182e79699da366d29910c7b0c5c61af83",
+      "exit_code": 0,
+      "id": "xgboost_top50_bits14",
+      "keygen_seconds": 8.157905115000005,
+      "keyset_bytes": 308458280,
+      "memory": {
+        "process_peak_rss_mb": 1871.32421875
+      },
+      "parent_watch": {
+        "abort_reason": null,
+        "aborted": false,
+        "guards": {
+          "abort_max_swap_used_mb": 700.0,
+          "abort_min_mem_available_mb": 250.0
+        },
+        "max_swap_used_mb": 0.05859375,
+        "min_mem_available_mb": 1800.5859375,
+        "n_samples": 507,
+        "per_process": {
+          "stage_keys": {
+            "max_rss_mb": 1867.890625,
+            "max_swap_mb": 0.0,
+            "peak_rss_mb": 1871.32421875
+          }
+        },
+        "watchdog_error": null
+      },
+      "position": 32148,
+      "request": {
+        "ciphertext_bytes": 1464,
+        "ciphertext_sha256": "92afc73ad1ca09733973ce3482c8dde4acb2d9e51cdf1f315e2a7b6633939670",
+        "timings": {
+          "encrypt_seconds": 0.030394634999993286,
+          "preprocess_seconds": 0.00041222099997639816,
+          "quantize_seconds": 0.009245254999996178,
+          "serialize_seconds": 7.568700004867424e-05
+        }
+      },
+      "save_keys_seconds": 4.795318595000026,
+      "stage": "keys",
+      "status": "ok",
+      "wall_seconds": 55.599006075000034
+    },
+    "serve": {
+      "exit_code": -9,
+      "parent_watch": {
+        "abort_reason": "MemAvailable 249 MB < 250 MB",
+        "aborted": true,
+        "guards": {
+          "abort_max_swap_used_mb": 700.0,
+          "abort_min_mem_available_mb": 250.0
+        },
+        "max_swap_used_mb": 5.23046875,
+        "min_mem_available_mb": 248.7109375,
+        "n_samples": 13136,
+        "per_process": {
+          "stage_serve": {
+            "max_rss_mb": 346.60546875,
+            "max_swap_mb": 2.0,
+            "peak_rss_mb": 346.60546875
+          }
+        },
+        "watchdog_error": null
+      },
+      "reason": "MemAvailable 249 MB < 250 MB",
+      "status": "aborted_memory",
+      "wall_seconds": 1507.570566419
+    }
+  },
+  "status": "aborted_memory",
+  "t3_disclosure": null,
+  "test_partition_touched": false
+}

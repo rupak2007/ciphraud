@@ -1,0 +1,45 @@
+{
+  "models": [
+    {
+      "all_requests_exact_match": true,
+      "circuit_key_material_gb": 1.7648e-05,
+      "current_record": ".",
+      "fhe_run_mean_s": 0.07538992416666208,
+      "http_roundtrip_mean_s": 0.08826487916668195,
+      "id": "lr_top20_bits16",
+      "mode": "in_process_client",
+      "model_type": "lr",
+      "n_requests": 7,
+      "server_peak_rss_mb": 643.9375,
+      "status": "passed",
+      "transport_mean_s": 0.012670684000018658
+    },
+    {
+      "all_requests_exact_match": true,
+      "circuit_key_material_gb": 0.649800496,
+      "current_record": ".",
+      "fhe_run_mean_s": 16.172992693500003,
+      "http_roundtrip_mean_s": 16.189063004333338,
+      "id": "mlp_top20_bits3",
+      "mode": "in_process_client",
+      "model_type": "mlp",
+      "n_requests": 7,
+      "server_peak_rss_mb": 1467.73046875,
+      "status": "passed",
+      "transport_mean_s": 0.01571273133335656
+    },
+    {
+      "all_requests_exact_match": true,
+      "circuit_key_material_gb": 1.9306818,
+      "current_record": ".",
+      "fhe_run_mean_s": 2445.058203475,
+      "http_roundtrip_mean_s": 2445.180887935,
+      "id": "xgboost_top50_bits14",
+      "mode": "staged_client",
+      "model_type": "xgboost",
+      "n_requests": 1,
+      "status": "passed",
+      "transport_mean_s": 0.1086060800002997
+    }
+  ]
+}

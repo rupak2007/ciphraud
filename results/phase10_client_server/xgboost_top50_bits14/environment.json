@@ -1,0 +1,103 @@
+{
+  "attempt": 3,
+  "clock_note": {
+    "evidence": {
+      "difference_percent_of_monotonic": 8.3,
+      "difference_seconds": 202.5,
+      "monotonic_seconds_infer_plus_key_delete_recorded": 2447.2,
+      "realtime_seconds_from_registration_to_last_sample": 2649.8,
+      "sampler_gaps_over_1s": 78,
+      "total_seconds_in_those_gaps": 216.6,
+      "typical_gap_seconds": 2.79
+    },
+    "how_to_read": "Quote server_fhe_run_s = 2,445.06 s as 'monotonic guest clock', and add that real elapsed time was about 2,650 s. Neither is a benchmark latency (n=1).",
+    "same_effect_in_other_recorded_runs": "present in every recorded run (gaps over 1 s were 10% of the MLP run's span, 19% of the very short LR run, 22% of XGBoost attempt 2); LR/MLP/attempt-1/attempt-2 durations are therefore also on the lagging clock. Cause not investigated (VM clock behaviour under host load is the leading suspect; the Phase 8/9 timings were taken in the same kind of WSL VM and were not re-examined).",
+    "summary": "The guest VM's monotonic clock (perf_counter, used for every recorded duration such as server_fhe_run_s and wall_seconds) ran about 8% slower than real time during this run. Real elapsed time from key registration to the end of the serve stage was about 2,650 s against 2,447 s measured monotonically; the guest real-time clock also agrees with the host's clock (launched about 18:05 IST, finished about 18:50 IST)."
+  },
+  "command": "python -m src.benchmark.phase10_roundtrip --config configs/phase10/client_server.yaml --model xgboost_top50_bits14 --staged",
+  "comparability_note": "single cold request (n=1) on this computer with WSL limited to 5GB; Phase 8's recorded 2,650.6 s is a mean of 5 trials from one in-process run. Same CPU, different protocol: report side by side, not as a speed-up.",
+  "config_sha256": "2d37f348e59f519962e1afb3d9c610d6c22991a3e17f37371b96ed0ea74bd7cc",
+  "git_head_base": "afb09da6b526d88369d85f24e4606313485b6be5",
+  "hardware": {
+    "cpu": "Intel(R) Core(TM) i5-9500 @ 3.00GHz",
+    "host_os": "Windows 11 Pro N 10.0.22621",
+    "host_ram_gb": 7.95,
+    "logical_processors": 6,
+    "wsl_distro": "Ubuntu 24.04 (python 3.12.3)",
+    "wsl_kernel": "6.18.40.1-microsoft-standard-WSL2"
+  },
+  "known_concurrent_activity": [
+    "a Windows background download (BackgroundDownload.exe under svchost; purpose not verified, probably an update) started at about 18:38 IST and caused a burst of host paging (about 12-14k pages/s for roughly 3 minutes); the VM's own MemAvailable was unaffected and the run completed",
+    "one short host paging burst at about 18:27 IST (2,309 pages/s)"
+  ],
+  "memory_guards": {
+    "abort_max_swap_used_mb": 700,
+    "abort_min_mem_available_mb": 250,
+    "go_max_swap_used_mb": 256,
+    "go_min_mem_available_mb": 900,
+    "run_timeout_seconds": 10800,
+    "sample_interval_seconds": 0.1
+  },
+  "preflight": {
+    "all_checks_passed": true,
+    "note": "an earlier version of the preflight script called git inside WSL, where core.autocrlf is unset, and falsely reported ~50 CRLF-only differences; it was corrected to use Windows Git, which reports Phase 1-9 results identical to HEAD",
+    "snapshot_file_local": "data/phase10/logs/attempt3_preflight_snapshot.json"
+  },
+  "purpose": "third and final local XGBoost client/server attempt; run on the SAME computer as attempts 1-2, after raising the WSL memory limit",
+  "raw_logs_local_only": {
+    "memwatch_parent_decrypt.jsonl": {
+      "bytes": 23522,
+      "sha256": "db8062fb0807695d66542f13d65985aef529e1fd536a092abb0dac83b84ccc69"
+    },
+    "memwatch_parent_keys.jsonl": {
+      "bytes": 45084,
+      "sha256": "2175cb2f74cd6671b25c6003ef8e49cc16aeb065dcaa9c242cb53d416929c313"
+    },
+    "memwatch_parent_serve.jsonl": {
+      "bytes": 5091063,
+      "sha256": "db135a3ae62757ce30fe05fd11f83617a444522434e86e6c94aa33b9666570e8"
+    },
+    "memwatch_serve.jsonl": {
+      "bytes": 6923147,
+      "sha256": "77123f041ecf996924cf5dc89a762fbcec45692afe8d904f499dd95ccb6bdd6d"
+    },
+    "server.log": {
+      "bytes": 730,
+      "sha256": "05c3e8a83de06ab1551f0d1c9860ca1aa078d8cce68b71abd74609fa10c35493"
+    }
+  },
+  "run_window_utc": {
+    "end": "2026-10-11T13:20:39",
+    "note": "from the launcher log; the end time is when the whole three-stage run finished",
+    "start": "2026-10-11T12:35:37"
+  },
+  "secret_keyset_file": "deleted by the decrypt stage (client_keyset_file_deleted: true in metrics.json); no keyset file existed when checked after the run",
+  "staged_artifacts_hashes": {
+    "eval_keys.bin": {
+      "bytes": 308396952,
+      "sha256": "7d9dbdec1c0e7d80c16d3c44eaea421b5dccc73de1ca1ececefd0b43fb5b8008"
+    },
+    "request_000.ct": {
+      "bytes": 1464,
+      "sha256": "ff837009e21576f83cefa19f4793de584361d5b096893f52dfe279625d1b5c95"
+    },
+    "response_000.bin": {
+      "bytes": 3590120,
+      "sha256": "34b9c6d4ffbde5d24ecfbe74fc3f7cd01d75833a65fa3434acbe231bd1975de4"
+    }
+  },
+  "what_changed_vs_attempt_2": [
+    "WSL memory limit raised from the default (about 3.9 GiB) to 5GB via C:\\Users\\Rupak\\.wslconfig (swap=1GB)",
+    "unneeded Windows applications closed first: Chrome, Roblox client, Lively video-wallpaper renderer; the OpenSky training job had finished by itself",
+    "no source code, model, bit-width, guard, gate or configuration change since attempt 2 (recorded code and config hashes validate)"
+  ],
+  "wsl_settings": {
+    "meminfo_kb_before_run": {
+      "MemAvailable": 4549376,
+      "MemTotal": 5038912,
+      "SwapFree": 1048576,
+      "SwapTotal": 1048576
+    },
+    "wslconfig": "[wsl2]\nmemory=5GB\nswap=1GB\n"
+  }
+}

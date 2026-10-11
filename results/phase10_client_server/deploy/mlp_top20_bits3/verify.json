@@ -1,0 +1,20 @@
+{
+  "client_zip_sha256_matches": true,
+  "decrypted_equals_reference": true,
+  "decrypted_ints": [
+    35,
+    -31
+  ],
+  "id": "mlp_top20_bits3",
+  "keygen_seconds": 3.1059282830000114,
+  "loaded_server_sizes": {
+    "size_of_bootstrap_keys_bytes": 450019328,
+    "size_of_keyswitch_keys_bytes": 199720960,
+    "size_of_secret_keys_bytes": 60208
+  },
+  "loaded_server_sizes_match_manifest": true,
+  "passed": true,
+  "run_fhe": true,
+  "server_load_seconds": 0.02621950799999695,
+  "server_zip_sha256_matches": true
+}

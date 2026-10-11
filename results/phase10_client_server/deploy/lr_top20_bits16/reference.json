@@ -1,0 +1,78 @@
+{
+  "artifact_minimization": "Artifact minimisation: the quantized input vector (q_in) of each validation row was replaced by q_in_sha256 (sha256 over the vector as little-endian int64) and q_in_length. The row identifiers, clear/simulated outputs and probabilities are unchanged.",
+  "fixed_position": 32148,
+  "id": "lr_top20_bits16",
+  "reproduction_proof": {
+    "circuit_stats_expected": {
+      "programmable_bootstrap_count": 0,
+      "size_of_bootstrap_keys_bytes": 0,
+      "size_of_inputs_bytes": 480,
+      "size_of_keyswitch_keys_bytes": 0,
+      "size_of_outputs_bytes": 17656,
+      "size_of_secret_keys_bytes": 17648
+    },
+    "circuit_stats_match": true,
+    "circuit_stats_rebuilt": {
+      "programmable_bootstrap_count": 0,
+      "size_of_bootstrap_keys_bytes": 0,
+      "size_of_inputs_bytes": 480,
+      "size_of_keyswitch_keys_bytes": 0,
+      "size_of_outputs_bytes": 17656,
+      "size_of_secret_keys_bytes": 17648
+    },
+    "passed": true,
+    "validation_pr_auc": {
+      "match": true,
+      "rebuilt": 0.34823939389983716,
+      "recorded": 0.34823939389983716
+    }
+  },
+  "request_positions": [
+    32148,
+    13560,
+    32148,
+    32148,
+    32148,
+    32148,
+    32148
+  ],
+  "rows": {
+    "13560": {
+      "clear_equals_recorded": null,
+      "clear_equals_simulate": true,
+      "clear_ints": [
+        -207943503
+      ],
+      "probability": 0.7925174495257087,
+      "q_in_length": 20,
+      "q_in_sha256": "4a457f8a067393d08c6481548306d8b6f76478ef41f655dd0342f91ae822da8c",
+      "recorded_ints": null,
+      "simulate_ints": [
+        -207943503
+      ],
+      "y_true": 1
+    },
+    "32148": {
+      "clear_equals_recorded": true,
+      "clear_equals_simulate": true,
+      "clear_ints": [
+        -214667949
+      ],
+      "probability": 0.20602411586250002,
+      "q_in_length": 20,
+      "q_in_sha256": "99ed81e5183480f7c964d3054691f05edc2a034a304236b22a3e9143fddfc2d2",
+      "recorded_ints": [
+        -214667949
+      ],
+      "simulate_ints": [
+        -214667949
+      ],
+      "y_true": 0
+    }
+  },
+  "t1_positions": [
+    32148,
+    13560
+  ],
+  "threshold": 0.7086411714553833
+}

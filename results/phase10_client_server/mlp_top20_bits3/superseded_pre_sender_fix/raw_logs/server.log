@@ -1,0 +1,10 @@
+{"event": "server_ready", "pid": 969, "host": "127.0.0.1", "port": 44987, "models": {"mlp_top20_bits3": 0.020018783999830703}}
+{"timestamp": "2026-09-29T05:05:28.236242+00:00", "level": "INFO", "logger": "src.server.app", "message": "Evaluation keys registered", "model": "mlp_top20_bits3", "key_id": "deaeb9ccd948a3f9", "n_bytes": 115553032}
+{"timestamp": "2026-09-29T05:05:37.800972+00:00", "level": "INFO", "logger": "src.server.app", "message": "Inference served", "model": "mlp_top20_bits3", "fhe_run_s": 9.547823591999986, "response_bytes": 65816}
+{"timestamp": "2026-09-29T05:05:44.460778+00:00", "level": "INFO", "logger": "src.server.app", "message": "Inference served", "model": "mlp_top20_bits3", "fhe_run_s": 6.581127496000136, "response_bytes": 65816}
+{"timestamp": "2026-09-29T05:05:52.546516+00:00", "level": "INFO", "logger": "src.server.app", "message": "Inference served", "model": "mlp_top20_bits3", "fhe_run_s": 6.639359140000124, "response_bytes": 65816}
+{"timestamp": "2026-09-29T05:05:59.799322+00:00", "level": "INFO", "logger": "src.server.app", "message": "Inference served", "model": "mlp_top20_bits3", "fhe_run_s": 7.239605698999867, "response_bytes": 65816}
+{"timestamp": "2026-09-29T05:06:06.591523+00:00", "level": "INFO", "logger": "src.server.app", "message": "Inference served", "model": "mlp_top20_bits3", "fhe_run_s": 6.770933888999934, "response_bytes": 65816}
+{"timestamp": "2026-09-29T05:06:13.450200+00:00", "level": "INFO", "logger": "src.server.app", "message": "Inference served", "model": "mlp_top20_bits3", "fhe_run_s": 6.849076141000069, "response_bytes": 65816}
+{"timestamp": "2026-09-29T05:06:19.613798+00:00", "level": "INFO", "logger": "src.server.app", "message": "Inference served", "model": "mlp_top20_bits3", "fhe_run_s": 6.1477792939999745, "response_bytes": 65816}
+{"timestamp": "2026-09-29T05:06:20.158776+00:00", "level": "INFO", "logger": "src.server.app", "message": "Evaluation keys deleted", "key_id": "deaeb9ccd948a3f9"}

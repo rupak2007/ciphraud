@@ -186,6 +186,20 @@ Evaluation/public material required for server-side computation: generated
 client-side and provided to the server ahead of inference (standard
 Concrete-ML client/server deployment pattern).
 
+**Implemented in Phase 10 (2026-09-29; `docs/client_server.md`).** The client
+generates a fresh keyset per run (`keygen(force=True)`; measured to be
+randomized across processes) and holds it in memory. Only the serialized
+*evaluation* keys are uploaded, once, via `POST /v1/keys`; the server keeps
+one key set at a time, in memory only, and drops it on `DELETE /v1/keys`. The
+upload is bound to the client artifact the keys were generated from (a
+sha256 header), because Concrete's native runtime crashes when a circuit is
+run with another circuit's keys. The only path on which the secret keyset is
+ever written anywhere is the staged XGBoost client, which saves it to one
+client-local, gitignored file (`data/phase10/client_keys/`) between two
+client processes and deletes it afterwards.
+
+**Resource footprint measured in Phase 10 (2026-10-11).** The XGBoost `xgboost_top50_bits14` server holds 308,396,952 B of serialized evaluation keys (1.93 GB at full size); observed server RSS was 2.1 GB during key registration and 2.9-3.1 GB (peak 3,112 MB) while the first encrypted request evaluates. On the ~3.9 GiB development VM two supervised attempts ended `aborted_memory` under the 250 MB guard; with the VM limit raised to 5GB on the same computer the third attempt completed (1,263 MB MemAvailable minimum). The architecture is unchanged; the deployment needs roughly 5 GB for the VM that hosts both client-side sender and server. The key-less sender needs no FHE stack (43 MB baseline measured).
+
 ## 12. Model Ownership
 
 Model parameters are plaintext and held by the server. Model confidentiality
@@ -202,6 +216,14 @@ is explicitly not a goal of this project (see §10).
   feature-tier choice).
 - Never visible to the server: plaintext feature values, plaintext
   inference result.
+- **Additional server-visible metadata found in Phase 10** (per
+  `docs/instructions.md`, newly discovered channels are added here): the
+  `key_id` (sha256 of the uploaded evaluation keys), which links every request
+  made under one key set to one client; the evaluation-key upload size and the
+  per-request ciphertext sizes, which are fixed per model and therefore
+  identify *which* model is in use (already public: the model is not
+  confidential, §12); the model id and client-artifact hash sent with the key
+  upload; and request timing. None of these reveal a feature value or a result.
 
 ## 14. Metadata / Side-Channel Limitations
 
@@ -247,6 +269,16 @@ A minimal FastAPI service exposing:
 - Client-side logic (quantize/encrypt/decrypt) is a library/script, not a
   separate network service, since the client is the trusted party and has
   no reason to expose these operations over a network boundary.
+
+**Deviation recorded in Phase 10 (2026-09-29).** The single `/encrypt-infer`
+endpoint was replaced by four label-less endpoints, because the name implied
+the server encrypts (it never does) and because §11 requires the evaluation
+keys to reach the server ahead of inference, which one endpoint cannot express:
+`GET /v1/models` (what is loaded, hashes, versions), `POST /v1/keys?model=`
+(register evaluation keys), `POST /v1/infer?model=&key_id=` (one input
+ciphertext in, one encrypted result out) and `DELETE /v1/keys?key_id=`. Every
+body is Concrete's own serialized bytes as `application/octet-stream`; a
+JSON or plaintext body is rejected with 415. See `docs/client_server.md`.
 
 This API layer exists to demonstrate the real client/server split; it is
 not intended as a scalable production deployment (see §20).

@@ -1,7 +1,7 @@
 # Ciphraud — Complete Technical Audit and Historical Reconstruction
 
 **Project:** Ciphraud — Latency-Bounded Privacy-Preserving Fraud Detection Under FHE
-**Audit snapshot:** 2026-09-25, ~00:20 IST (repository at commit `e85d16a`, working tree dirty — see §13). **The body reflects this snapshot; later developments (LR scaler defect fixed and verified; Phase 8 completed with Pareto analysis and prior-art comparison; Phase 9 quantized MLP grid completed) are in Addenda A, B and C at the end, which supersede the body where they differ (Addendum C is the newest).**
+**Audit snapshot:** 2026-09-25, ~00:20 IST (repository at commit `e85d16a`, working tree dirty — see §13). **The body reflects this snapshot; later developments (LR scaler defect fixed and verified; Phase 8 completed with Pareto analysis and prior-art comparison; Phase 9 quantized MLP grid completed; Phase 10 client/server encrypted inference completed for LR, MLP and XGBoost) are in Addenda A, B, C and D at the end, which supersede the body where they differ (Addendum D is the newest).**
 **Method:** read-only inspection of source, configs, docs, results, git history, and file timestamps; a few small read-only numerical checks (listed in Appendix A). Nothing in the project was modified by this audit except the addition of this report (`Ciphraud_Project_Audit.md`, `Ciphraud_Project_Audit.docx`).
 
 ---
@@ -1169,3 +1169,18 @@ The FR5/D5 plaintext-only seed-stability evaluation (`phase9_grid.py --plaintext
 | `top_100` | 0.4455 ± 0.0111 | 0.4868 ± 0.0083 |
 
 **Finding:** the QAT-vs-float PR-AUC gap (0.034–0.086 across the 9 runs) is 4–20× larger than the seed-to-seed spread within any tier (std 0.004–0.011) and has the same sign in every run. This independently corroborates C.1's T3 finding (decision agreement 0.966–0.979, never reaching ≥0.99): the 4-bit QAT accuracy shortfall is systematic to the quantization, not an artifact a different training seed would remove. Full write-up: `docs/fhe_mlp.md` §7.7.
+
+---
+
+## Addendum D — Phase 10 client/server (2026-10-11, pending commit approval)
+
+**Where Addendum C, the body and this addendum disagree, this addendum is newest.** Full write-up: `docs/client_server.md`.
+
+- **Built:** FastAPI server (`GET /v1/models`, `POST /v1/keys`, `POST /v1/infer`, `DELETE /v1/keys`), client library, deployment persistence (`src/fhe/deploy.py`), fail-closed memory watchdog, results validator with archive and correction checks, 100 Phase 10 tests.
+- **Demonstrated (all three model types, on the final code):** LR (`lr_top20_bits16`) 7/7 and MLP (`mlp_top20_bits3`) 7/7 exact-match requests, and **XGBoost (`xgboost_top50_bits14`) 1/1**: all 219 decrypted output integers equal the clear-quantized, simulated and Phase 8 recorded values, probability difference exactly 0.0, decision correct; one cold request, server FHE 2,445.06 s (40.8 min), 3,590,120 B encrypted result, server RSS peak 3,112 MB, sender 351 MB, WSL MemAvailable minimum 1,263 MB, swap 0.3 MB, guards never tripped. Only evaluation keys and ciphertexts crossed the wire. The MLP configuration passed execution/integrity checks but failed the Phase 9 quantization-accuracy gate; it is not a validated fraud model.
+- **How XGBoost got there:** attempt 1 and attempt 2 (after removing an avoidable ~590 MB Concrete-ML/torch import from the key-less sender) both ended `aborted_memory` under the unchanged pre-registered guard on the default ~3.9 GiB WSL limit (MemAvailable 246 MB and 249 MB against the 250 MB floor); both are archived with corrected derived flags (an earlier draft wrongly gave 923 MB as the attempt-1 server memory; that was the sender). Attempt 3 ran on the same computer after the WSL memory limit was raised to 5GB (`.wslconfig` memory=5GB, swap=1GB) and unneeded Windows applications were closed. No source, model, bit-width, guard or gate change separated attempt 2 from attempt 3.
+- **Caveats:** the XGBoost pass depends on that environment setting; it is a single request (n=1) and not a benchmark latency (Phase 8's recorded mean for this circuit is 2,650.6 s on the same CPU; the two are not comparable as a speed-up); the VM's monotonic clock, which every recorded duration uses, ran about 8% slower than real time during the run (recorded evaluation 2,445.06 s; real elapsed about 2,650 s; the same effect is present in the other recorded runs and was not investigated, nor was it checked for the Phase 8/9 timings); LR/MLP timings were not stable between two recordings (cause not investigated); the late +216 MB memory step seen in attempt 2 is unexplained.
+- **Artifact minimisation:** committed `reference.json` files keep `q_in_sha256`, not the quantized input vectors. Raw XGBoost attempt-3 logs (about 11 MB) stay local; their sha256 and a 10-second memory timeline are in the record.
+- **Security claim demonstrated:** the application protocol does not transmit the client's secret key or plaintext feature vector to the inference server (wire audit clean for all three models; secret keyset deleted after every XGBoost attempt). No TLS/authentication; no claim of complete isolation.
+- **Exit criterion:** **satisfied** (at least one successful end-to-end encrypted request for each of LR, MLP and XGBoost), not redefined.
+- **Not established / open:** XGBoost latency and variance; whether XGBoost fits in less than the 5GB WSL limit; WAN/throughput; why the LR/MLP recordings differ in speed; what the final memory step of XGBoost attempt 2 was.

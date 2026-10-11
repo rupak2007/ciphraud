@@ -1,0 +1,73 @@
+{
+  "code_files": {
+    "configs/phase10/client_server.yaml": {
+      "git_blob_sha1": "eb34de48e81bd709acf1f67b57820ee230861fb1",
+      "sha256": "2d37f348e59f519962e1afb3d9c610d6c22991a3e17f37371b96ed0ea74bd7cc"
+    },
+    "src/benchmark/memwatch.py": {
+      "git_blob_sha1": "9b4868fb2994fe4b066045001cc0df4a4d5714e4",
+      "sha256": "48f2f24363e4fe3820e779fea73f8c382f69e580f2f63e654a7d8bc2af2cdf63"
+    },
+    "src/benchmark/phase10_roundtrip.py": {
+      "git_blob_sha1": "63ee6252f2fb405880bb08d82f281f96cf5e1cb6",
+      "sha256": "3a0d0de8bd3b2e769cd33c6adc73a0ca1ec2c6a0226c176d4301d2e761b5cf75"
+    },
+    "src/client/__init__.py": {
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "src/client/client.py": {
+      "git_blob_sha1": "bea46622f96ce0513675876b111ff91d694b4916",
+      "sha256": "f430fce4be81a5edd7e5dfeed6041c6cbb0fad6fe4ec7dae567da794ce4166df"
+    },
+    "src/client/http.py": {
+      "git_blob_sha1": "2577bd16c3e1bf448e4c62615366d001fffd1dbf",
+      "sha256": "0d86d9458517d981965c8cff8c0420b0309b20dc896d55bc7005fe8af1fcd125"
+    },
+    "src/client/preprocess.py": {
+      "git_blob_sha1": "dfbc4acde83f02c042e14f7925379a33b166a56d",
+      "sha256": "a46440d6ccc65e7d462dc9a51faa8a4169224be0c4acd6fd25638b8f174b5a9e"
+    },
+    "src/fhe/deploy.py": {
+      "git_blob_sha1": "a90d70a69b92400d40a122e4e7374e4bc81c68d0",
+      "sha256": "aa53c6db41a8afc205071f5ed899b27ccd20cac5a7b7d8b4e0018705910d30e3"
+    },
+    "src/server/__init__.py": {
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "src/server/__main__.py": {
+      "git_blob_sha1": "d075390245b08b618c254a70ae8d1c88e8fb1279",
+      "sha256": "d5b6d5de24262db2d928371f24549d3c18dd9e11deeeca22778b84a12afdae64"
+    },
+    "src/server/app.py": {
+      "git_blob_sha1": "58a5d5e2749709ac57dcbf97764751d089d56465",
+      "sha256": "1e7f221ab4e03e6a3908112c6072589a22f2d9179770ae6d4b09aadd83bb768f"
+    },
+    "src/server/registry.py": {
+      "git_blob_sha1": "cfe34602d5ec318e1e14258ae322aabdff217e0c",
+      "sha256": "6fe313234e3d3d48abd7a5a691b7f1e861811e3399168adfa0ce2da21c0d3584"
+    }
+  },
+  "config_hash": "1ab995d708e2a257",
+  "config_path": "configs/phase10/client_server.yaml",
+  "deployment_manifest_sha256": "ce5b5df93acb93afe17878bce98138cdeb0315aae2d4e98b999e4533092d3030",
+  "git_commit": "afb09da6b526d88369d85f24e4606313485b6be5",
+  "library_versions": {
+    "PyYAML": "6.0.3",
+    "brevitas": "0.10.2",
+    "concrete-ml": "1.9.0",
+    "concrete-python": "2.10.0",
+    "fastapi": "0.141.1",
+    "httpx": "0.28.1",
+    "numpy": "1.26.4",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.5.0",
+    "torch": "2.3.1",
+    "uvicorn": "0.54.0",
+    "xgboost": "1.6.2"
+  },
+  "raw_file_sha256": {},
+  "seed": 42,
+  "timestamp_utc": "2026-09-29T17:28:59.815032+00:00"
+}

@@ -235,3 +235,75 @@ updated to the current path so it stays actionable. Any other historical
 document in this repo that quotes the old path (e.g. Phase 5's real WSL
 run logs or manifest fields recording a Windows git commit hash) is left
 untouched for the same reason.
+
+## Phase 10 addendum: running the client and server (2026-09-29)
+
+**Both processes run in the WSL2 FHE venv.** The server needs Concrete-ML to run
+the circuit and the client needs it to generate keys, encrypt and decrypt, and
+Concrete-ML has no Windows wheels (see above), so there is no Windows-side
+client. The Windows `.venv` is untouched and gains no new dependency; the Phase
+10 tests that need Concrete-ML or FastAPI skip there.
+
+**New dependencies (WSL venv only, pinned in `requirements-fhe.txt`):** `fastapi==0.141.1`,
+`uvicorn==0.54.0` and six transitive packages (`starlette`, `pydantic`,
+`pydantic_core`, `annotated-types`, `annotated-doc`, `typing-inspection`).
+`pip install --dry-run` was run first and showed these are the *only* packages
+added and that no existing pin moves (Phase 9 recorded a matplotlib install that
+silently pulled `numpy 2.x` and broke Concrete-ML, so this was checked, not
+assumed); `pip check` afterwards reports only the pre-existing "xgboost 1.6.2
+is not supported on this platform" notice.
+
+**Persistent storage in WSL.** Each separate `wsl.exe` invocation can start on a
+fresh VM with an empty `/tmp` (observed: a probe's temporary directory vanished
+between two calls). Deployment artifacts therefore live on the Windows
+filesystem under the gitignored `data/phase10/`, never in `/tmp`.
+
+**Commands** (from the project root, inside the WSL venv; every command takes
+`--config configs/phase10/client_server.yaml`):
+
+```bash
+# 1. build a model's deployment (rebuild the validated circuit, prove it reproduces the Phase 8/9 record, persist)
+python -m src.fhe.deploy  --model lr_top20_bits16
+python -m src.fhe.deploy  --model lr_top20_bits16 --verify        # fresh-process check of the persisted artifacts
+# 2. run the round trip (spawns the real server process itself, drives it over loopback HTTP)
+python -m src.benchmark.phase10_roundtrip --model lr_top20_bits16
+python -m src.benchmark.phase10_roundtrip --model xgboost_top50_bits14 --staged --preflight-only   # memory feasibility only
+python -m src.benchmark.phase10_roundtrip --model xgboost_top50_bits14 --staged                    # the full three-process run
+# 3. or run the server on its own
+python -m src.server --models lr_top20_bits16 --port 8710
+# 4. validate what was recorded
+python -m src.analysis.phase10_results --check-code-hashes --summary
+```
+
+**A Concrete-ML quirk to know when scripting these** (measured with a step-by-step
+ladder, `src/fhe/probes/phase10_probe.py`, `docs/client_server.md`): a Python
+process that has *run a circuit* in-process (`FHEModelServer.run`) exits with
+status 0 and drops unflushed stdout no matter what `sys.exit(n)` was given.
+Loading a server or client, key generation and encryption do not trigger it. The
+Phase 10 CLIs therefore flush and `os._exit` with the real status; do not rely on
+a plain `print` + `sys.exit` in a new script that executes a circuit, and treat
+the exit status of the server process itself (which runs circuits) as
+uninformative.
+
+**Memory notes for the XGBoost run (measured, 2026-09-29 to 2026-10-11).** The staged XGBoost run needs the server (observed 2.9-3.1 GB resident while the
+encrypted request evaluates; 2.1 GB during key registration) and the key-less sender (43 MB baseline, about 350 MB after holding the 308 MB key upload)
+resident together, inside the WSL2 VM, against a 250 MB MemAvailable abort floor. Under WSL's default cap (50% of the 7.95 GB host, about 3.9 GiB) two
+supervised attempts ended `aborted_memory`. After creating `C:\Users\Rupak\.wslconfig` with
+
+```
+[wsl2]
+memory=5GB
+swap=1GB
+```
+
+and `wsl --shutdown` (WSL then reported `MemTotal` 5,038,916 kB, swap 1 GiB), the third attempt passed with WSL MemAvailable never below 1,263 MB. **To revert:** delete `C:\Users\Rupak\.wslconfig` and run `wsl --shutdown`. The sender stage must not import Concrete-ML or torch (`stage_serve` uses a stdlib
+`resource.getrusage` helper; a test enforces it): that single import had cost about 590 MB. Windows has little spare memory on this computer (7.95 GB, about
+1.1-3.4 GB available depending on what is open): close browsers and other heavy applications and let other long jobs finish before a staged XGBoost run, do not run
+tests or other memory-heavy work during it, and expect Windows to page (a background Windows download caused a short burst during attempt 3). Running `git` inside WSL
+on this Windows checkout reports CRLF-only differences as modifications (`core.autocrlf` is unset there); use Windows Git for status/diff checks.
+
+**Result archives.** `results/phase10_client_server/xgboost_top50_bits14/attempt_N_*/` and `<model>/superseded_pre_sender_fix/`
+are verbatim as-run records with `SHA256SUMS.json`; do not edit them. `python -m src.analysis.phase10_correct_record` (post-run
+corrections and `--minimize-reference`) and `python -m src.analysis.phase10_results --check-code-hashes --summary` (validator)
+are the only tools that touch or judge them.
+

@@ -1,0 +1,37 @@
+{
+  "all_preflight_checks_passed_before_this_line": true,
+  "artifact_sha256": {
+    "booster": "1dcf91738388d8a9329714ae18f49c9dce3324628534f8a082b586beb7169d45",
+    "client_zip": "0b3540f647f1106650cb840eb857239fd2466ab0a6f2933c6f845c11e16e1821",
+    "handoff_npz": "718a4db84bb34d4d53478a81a9bdafdb04f72b703fd33d6ee28b940c5ca06197",
+    "server_zip": "93c4cb211789f0c2480941711ced2916013ebb8d136979af96e8fd4c78ceb736"
+  },
+  "command": "python -m src.benchmark.phase10_roundtrip --config configs/phase10/client_server.yaml --model xgboost_top50_bits14 --staged",
+  "config_sha256": "2d37f348e59f519962e1afb3d9c610d6c22991a3e17f37371b96ed0ea74bd7cc",
+  "git_head": "afb09da6b526d88369d85f24e4606313485b6be5",
+  "git_tracked_changes": [
+    " M .gitignore",
+    " M Ciphraud_Project_Audit.docx",
+    " M Ciphraud_Project_Audit.md",
+    " M docs/architecture.md",
+    " M docs/environment.md",
+    " M docs/plan.md",
+    " M requirements-fhe.txt"
+  ],
+  "meminfo_kb": {
+    "MemAvailable": 4549376,
+    "MemTotal": 5038912,
+    "SwapFree": 1048576,
+    "SwapTotal": 1048576
+  },
+  "memory_guards": {
+    "abort_max_swap_used_mb": 700,
+    "abort_min_mem_available_mb": 250,
+    "go_max_swap_used_mb": 256,
+    "go_min_mem_available_mb": 900,
+    "run_timeout_seconds": 10800,
+    "sample_interval_seconds": 0.1
+  },
+  "recorded_at_utc": "2026-10-11T12:31:34.715181+00:00",
+  "wslconfig": "[wsl2]\nmemory=5GB\nswap=1GB\n"
+}

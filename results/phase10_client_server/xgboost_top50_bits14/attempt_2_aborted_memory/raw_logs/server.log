@@ -1,0 +1,2 @@
+{"event": "server_ready", "pid": 440, "host": "127.0.0.1", "port": 60755, "models": {"xgboost_top50_bits14": 0.05698373400002765}}
+{"timestamp": "2026-09-29T17:03:10.681141+00:00", "level": "INFO", "logger": "src.server.app", "message": "Evaluation keys registered", "model": "xgboost_top50_bits14", "key_id": "1cac9a7c6f68b06b", "n_bytes": 308396952}

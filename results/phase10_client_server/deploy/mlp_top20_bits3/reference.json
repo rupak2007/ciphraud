@@ -1,0 +1,87 @@
+{
+  "artifact_minimization": "Artifact minimisation: the quantized input vector (q_in) of each validation row was replaced by q_in_sha256 (sha256 over the vector as little-endian int64) and q_in_length. The row identifiers, clear/simulated outputs and probabilities are unchanged.",
+  "fixed_position": 32148,
+  "id": "mlp_top20_bits3",
+  "reproduction_proof": {
+    "circuit_stats_expected": {
+      "programmable_bootstrap_count": 560,
+      "size_of_bootstrap_keys_bytes": 450019328,
+      "size_of_inputs_bytes": 480,
+      "size_of_keyswitch_keys_bytes": 199720960,
+      "size_of_outputs_bytes": 65552,
+      "size_of_secret_keys_bytes": 60208
+    },
+    "circuit_stats_match": true,
+    "circuit_stats_rebuilt": {
+      "programmable_bootstrap_count": 560,
+      "size_of_bootstrap_keys_bytes": 450019328,
+      "size_of_inputs_bytes": 480,
+      "size_of_keyswitch_keys_bytes": 199720960,
+      "size_of_outputs_bytes": 65552,
+      "size_of_secret_keys_bytes": 60208
+    },
+    "passed": true,
+    "t0_reload_equals_saved_logits": true,
+    "validation_pr_auc": {
+      "match": true,
+      "rebuilt": 0.3924097013252142,
+      "recorded": 0.3924097013252142
+    }
+  },
+  "request_positions": [
+    32148,
+    13560,
+    32148,
+    32148,
+    32148,
+    32148,
+    32148
+  ],
+  "rows": {
+    "13560": {
+      "clear_equals_recorded": true,
+      "clear_equals_simulate": true,
+      "clear_ints": [
+        -37,
+        26
+      ],
+      "probability": 0.8519528019683105,
+      "q_in_length": 20,
+      "q_in_sha256": "ae35f4a515b7d1579785b89d89b469b6771d85a75f3b2dc1f40fce90dac5f4af",
+      "recorded_ints": [
+        -37,
+        26
+      ],
+      "simulate_ints": [
+        -37,
+        26
+      ],
+      "y_true": 1
+    },
+    "32148": {
+      "clear_equals_recorded": true,
+      "clear_equals_simulate": true,
+      "clear_ints": [
+        35,
+        -31
+      ],
+      "probability": 0.09268777863937605,
+      "q_in_length": 20,
+      "q_in_sha256": "12c3780adddf03acdf745d5e8a9acb6206e068d1e78bad088087d1bef08a219f",
+      "recorded_ints": [
+        35,
+        -31
+      ],
+      "simulate_ints": [
+        35,
+        -31
+      ],
+      "y_true": 0
+    }
+  },
+  "t1_positions": [
+    32148,
+    13560
+  ],
+  "threshold": 0.9060934853382423
+}

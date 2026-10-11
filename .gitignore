@@ -41,6 +41,8 @@ build/
 dist/
 outputs/
 *.log
+# Phase 10 archived as-run evidence: the raw server logs are hashed by the archives' SHA256SUMS.json and cited by the recorded corrections
+!results/phase10_client_server/**/raw_logs/*.log
 
 # IDE / OS
 .vscode/

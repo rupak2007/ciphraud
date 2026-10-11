@@ -1,0 +1,62 @@
+# Phase 10 client/server encrypted-inference demo (`docs/plan.md` Phase 10; `docs/client_server.md`).
+#
+# Phase 10 proves INTEGRATION, not another benchmark: the already-validated Phase 8/9 circuits are deployed behind a
+# FastAPI process that never receives the secret key or plaintext features. Nothing here retrains a model, changes a
+# bit-width, gate or calibration, or touches the 2.4 GB Phase 9 key-material limit (`configs/phase9/mlp_grid.yaml`).
+#
+# Each model points at its Phase 8/9 grid config and label; `src/fhe/deploy.py` reads label -> source config / n_bits /
+# tier from THAT file (never duplicated here) and rebuilds the exact validated circuit with the exact calibration.
+phase: 10
+seed: 42
+
+server:
+  host: 127.0.0.1
+  port: 8710
+  max_key_upload_bytes: 3221225472     # 3 GiB; the largest evaluation-key upload the server will buffer (413 above)
+  max_ciphertext_bytes: 67108864       # 64 MiB; an input ciphertext is ~1 KB (413 above)
+  startup_timeout_seconds: 900         # runner waits this long for GET /v1/models (XGBoost server.zip load)
+
+output:
+  results_dir: results/phase10_client_server
+  deploy_dir: data/phase10/deploy              # gitignored (/data/); server/ and client/ are separate directories
+  client_keys_dir: data/phase10/client_keys    # gitignored; staged-client secret keyset, deleted after the run
+  logs_dir: data/phase10/logs                  # gitignored; per-run server logs and 0.5 s memory samples
+
+# Request plan per model: request 1 is the fixed row of the source result (`row_selection.position`, 32,148, the row
+# Phase 8/9 measured latency on); `t1_rows` adds the source phase's other T1 correctness row(s); `repeat_fixed_row`
+# adds cheap repeats. Repeats only where one server FHE run costs <= ~60 s (LR ~8 ms, MLP ~5 s); XGBoost (~44 min per
+# request, Phase 8) gets exactly the one request.
+models:
+  - id: lr_top20_bits16
+    model_type: lr
+    grid_config: configs/phase8/research_grid.yaml
+    t1_rows: true
+    repeat_fixed_row: 5
+  - id: mlp_top20_bits3
+    model_type: mlp
+    grid_config: configs/phase9/mlp_grid.yaml
+    t1_rows: true
+    repeat_fixed_row: 5
+    # Recorded verbatim in every MLP result and document (T3 failed for EVERY Phase 9 MLP configuration).
+    t3_disclosure: >-
+      The client/server FHE deployment was demonstrated using mlp_top20_bits3, which passed the relevant
+      execution/integrity checks but failed the Phase 9 quantization-accuracy gate.
+  - id: xgboost_top50_bits14
+    model_type: xgboost
+    grid_config: configs/phase8/research_grid.yaml
+    t1_rows: false
+    repeat_fixed_row: 0
+
+# XGBoost memory guards, PRE-REGISTERED here before any XGBoost attempt. They may not be raised after a failed attempt
+# without explicit approval, and they are independent of (never a substitute for) the Phase 9 2.4 GB key-material gate.
+# The watchdog only ever kills OUR OWN client/server processes -- it exists so a failed attempt is recorded evidence,
+# not a Linux OOM kill of the WSL VM.
+memory_guards:
+  sample_interval_seconds: 0.1         # 10 Hz. Set to 0.1 (from 0.5) BEFORE any guarded XGBoost run, after the first preflight
+                                       # showed multi-hundred-MB allocations complete well inside a 0.5 s window; finer sampling only
+                                       # tightens the guard (no threshold below was loosened)
+  abort_min_mem_available_mb: 250      # kill our processes and record `aborted_memory` if MemAvailable falls below
+  abort_max_swap_used_mb: 700          # ... or if swap in use exceeds this
+  go_min_mem_available_mb: 900         # go/no-go after key registration (server holding keys, sender still alive)
+  go_max_swap_used_mb: 256
+  run_timeout_seconds: 10800           # 3 h ~= 4x the Phase 8 mean (2,650.6 s) -- thrashing must not run forever

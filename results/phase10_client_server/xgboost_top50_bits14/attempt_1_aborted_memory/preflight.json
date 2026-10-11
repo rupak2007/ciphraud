@@ -1,0 +1,199 @@
+{
+  "client_keyset_file_deleted": true,
+  "id": "xgboost_top50_bits14",
+  "memory_after_keys": {
+    "mem_available_mb": 3215.65625,
+    "mem_total_mb": 3886.12109375,
+    "swap_used_mb": 2.3984375
+  },
+  "memory_after_serve": {
+    "mem_available_mb": 3330.26953125,
+    "mem_total_mb": 3886.12109375,
+    "swap_used_mb": 3.76171875
+  },
+  "memory_at_start": {
+    "mem_available_mb": 3342.9609375,
+    "mem_total_mb": 3886.12109375,
+    "swap_used_mb": 2.3984375
+  },
+  "memory_guards": {
+    "abort_max_swap_used_mb": 700,
+    "abort_min_mem_available_mb": 250,
+    "go_max_swap_used_mb": 256,
+    "go_min_mem_available_mb": 900,
+    "run_timeout_seconds": 10800,
+    "sample_interval_seconds": 0.1
+  },
+  "mode": "staged_client",
+  "model_type": "xgboost",
+  "preflight_only": true,
+  "request_positions": [
+    32148
+  ],
+  "stages": {
+    "keys": {
+      "client_load_seconds": 0.037352456000007805,
+      "client_zip_sha256": "0b3540f647f1106650cb840eb857239fd2466ab0a6f2933c6f845c11e16e1821",
+      "evaluation_keys_bytes": 308396952,
+      "evaluation_keys_serialize_seconds": 3.220752288000085,
+      "evaluation_keys_sha256": "7fb3fa70306a092d0c14ef87e91eed1c65117d72f1baf1cd13b86db6e4a913f4",
+      "exit_code": 0,
+      "id": "xgboost_top50_bits14",
+      "keygen_seconds": 4.681207653999991,
+      "keyset_bytes": 308458280,
+      "memory": {
+        "process_peak_rss_mb": 1874.1171875
+      },
+      "parent_watch": {
+        "abort_reason": null,
+        "aborted": false,
+        "guards": {
+          "abort_max_swap_used_mb": 700.0,
+          "abort_min_mem_available_mb": 250.0
+        },
+        "max_swap_used_mb": 2.3984375,
+        "min_mem_available_mb": 1775.13671875,
+        "n_samples": 199,
+        "per_process": {
+          "stage_keys": {
+            "max_rss_mb": 1823.359375,
+            "max_swap_mb": 0.0,
+            "peak_rss_mb": 1874.1171875
+          }
+        },
+        "watchdog_error": null
+      },
+      "position": 32148,
+      "request": {
+        "ciphertext_bytes": 1464,
+        "ciphertext_sha256": "90e75d48c056e5d0013f814c972e75225853d8e28960e3f55a00da4101de3ca3",
+        "timings": {
+          "encrypt_seconds": 0.009384390000150233,
+          "preprocess_seconds": 4.814999988411728e-05,
+          "quantize_seconds": 0.0009780299999420095,
+          "serialize_seconds": 3.0599999945479794e-05
+        }
+      },
+      "save_keys_seconds": 1.8487073700000565,
+      "stage": "keys",
+      "status": "ok",
+      "wall_seconds": 20.21094417800009
+    },
+    "serve": {
+      "exit_code": 0,
+      "fhe_execution_started": false,
+      "go_no_go": {
+        "allowed_swap_used_mb": 256.0,
+        "go": true,
+        "mem_available_mb": 2037.03515625,
+        "required_mem_available_mb": 900.0,
+        "swap_used_mb": 3.76171875
+      },
+      "id": "xgboost_top50_bits14",
+      "key_delete_seconds": 0.27632231600000523,
+      "key_upload": {
+        "bytes": 308396952,
+        "http_seconds": 12.37211638000008,
+        "server_deserialize_seconds": 6.885229916000071
+      },
+      "memory": {
+        "abort_reason": null,
+        "aborted": false,
+        "guards": {
+          "abort_max_swap_used_mb": 700.0,
+          "abort_min_mem_available_mb": 250.0
+        },
+        "max_swap_used_mb": 3.76171875,
+        "min_mem_available_mb": 917.11328125,
+        "n_samples": 191,
+        "per_process": {
+          "sender": {
+            "max_rss_mb": 922.36328125,
+            "max_swap_mb": 0.0,
+            "peak_rss_mb": 922.36328125
+          },
+          "server": {
+            "max_rss_mb": 2096.125,
+            "max_swap_mb": 0.0,
+            "peak_rss_mb": 2103.32421875
+          }
+        },
+        "sender_process_peak_rss_mb": 921.85546875,
+        "watchdog_error": null
+      },
+      "memory_after_registration": {
+        "mem_available_mb": 2037.03515625,
+        "mem_total_mb": 3886.12109375,
+        "server": {
+          "peak_rss_mb": 2103.32421875,
+          "rss_mb": 904.80859375,
+          "swap_mb": 0.0
+        },
+        "swap_used_mb": 3.76171875
+      },
+      "memory_after_server_load": {
+        "mem_available_mb": 2639.1953125,
+        "mem_total_mb": 3886.12109375,
+        "server": {
+          "peak_rss_mb": 637.12890625,
+          "rss_mb": 637.12890625,
+          "swap_mb": 0.0
+        },
+        "swap_used_mb": 2.3984375
+      },
+      "parent_watch": {
+        "abort_reason": null,
+        "aborted": false,
+        "guards": {
+          "abort_max_swap_used_mb": 700.0,
+          "abort_min_mem_available_mb": 250.0
+        },
+        "max_swap_used_mb": 3.76171875,
+        "min_mem_available_mb": 917.0703125,
+        "n_samples": 239,
+        "per_process": {
+          "stage_serve": {
+            "max_rss_mb": 922.36328125,
+            "max_swap_mb": 0.0,
+            "peak_rss_mb": 922.36328125
+          }
+        },
+        "watchdog_error": null
+      },
+      "preflight_only": true,
+      "secret_key_sent": false,
+      "server_exit_code": -15,
+      "server_startup": {
+        "model_load_seconds": 0.041252718999885474,
+        "ready_seconds": 5.05439297099997
+      },
+      "stage": "serve",
+      "status": "ok",
+      "wall_seconds": 24.574398914000085,
+      "wire_audit": {
+        "all_bodies_are_evaluation_keys_or_ciphertexts": true,
+        "classes": [
+          "evaluation_keys",
+          "no_body"
+        ],
+        "requests": [
+          {
+            "method": "POST",
+            "n_bytes": 308396952,
+            "path": "/v1/keys",
+            "sha256": "7fb3fa70306a092d0c14ef87e91eed1c65117d72f1baf1cd13b86db6e4a913f4"
+          },
+          {
+            "method": "DELETE",
+            "n_bytes": 0,
+            "path": "/v1/keys",
+            "sha256": null
+          }
+        ]
+      }
+    }
+  },
+  "status": "preflight_passed",
+  "t3_disclosure": null,
+  "test_partition_touched": false
+}
