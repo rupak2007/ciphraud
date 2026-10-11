@@ -106,7 +106,7 @@ clock of about 3 s each (217 s in total), and the real time from key registratio
 correct as a record of the guest's monotonic clock, and the real elapsed time was about 2,650 s. The same effect shows up in
 every recorded run (steps were 10% of the MLP run's span, 22% of XGBoost attempt 2's); all durations in this phase,
 including LR and MLP, are on the same lagging clock. Its cause was not investigated, and the Phase 8/9 timings were taken in the same
-kind of WSL VM and were not re-examined here. Details: `environment.json` -> `clock_note`.
+kind of WSL VM. (Correction added after Phase 12: Phase 8 had already measured the same effect with a sleep probe, about 10-11% slow, and a 5-11% gap in checkpoint timestamps; see `docs/research.md` section 7.5 and `report.md` section 12. Phase 9 was not separately probed.) Details: `environment.json` -> `clock_note`.
 **Comparability.** Phase 8's recorded in-process evaluation for this circuit was 2,650.6 s (std 771.9 s, n=5) on the same CPU.
 This run is a single cold request through the client/server stack with the WSL limit at 5GB and a Windows background download
 running for a few minutes of it. The two numbers sit in the same range (and the real-time figure, about 2,650 s, happens to
