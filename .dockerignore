@@ -1,6 +1,6 @@
 *
 !Dockerfile
-!requirements-fhe.txt
+!requirements-server-cpu.txt
 !src/
 !configs/phase10/
 **/__pycache__

@@ -326,4 +326,4 @@ script and a locally-run FastAPI server process (optionally containerized
 as a final polish item, per prd.md §17 stretch goals). No cloud
 infrastructure, autoscaling, or managed deployment is in scope.
 
-**Phase 11 (container packaging):** a server-only `Dockerfile`, a default-deny `.dockerignore` and tests exist; the image has not been built or run (blocker and run recipe in `docs/docker.md`). The container exposes the same four endpoints, mounts only `server.zip` read-only, and must be published on loopback because the project still has no TLS or authentication.
+**Phase 11 (container packaging):** a server-only `Dockerfile`, a default-deny `.dockerignore` and tests exist; the CPU-only image was built and one live LR container round trip passed on 2026-10-12 (details, caveats and the XGBoost/MLP gap in `docs/docker.md`). The container exposes the same four endpoints, mounts only `server.zip` read-only, and must be published on loopback because the project still has no TLS or authentication.
