@@ -17,3 +17,6 @@ configs/phase8/research_grid.yaml text eol=lf
 configs/phase9/mlp_grid.yaml text eol=lf
 results/phase4_features/tiers.json text eol=crlf
 results/phase2_pipeline/split_boundaries.json text eol=crlf
+
+# Frozen evaluation records and outputs: their sha256 values are recorded in run_complete.json, so keep LF on every checkout.
+results/phase12_test_eval/** text eol=lf
