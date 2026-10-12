@@ -1,4 +1,4 @@
-# License review and recommendation (DRAFT for the owner; no license file has been added)
+# License review and recommendation (DECIDED 2026-10-12: the owner selected Apache-2.0 for original code; `LICENSE`, `NOTICE` and `THIRD_PARTY_NOTICES.md` were added; the analysis below is the pre-decision review)
 
 Not legal advice. Statements marked **[official]** come from the licensor's own repository text fetched 2026-10-12; **[unverified]** items were not confirmed from an authoritative source.
 

@@ -76,7 +76,7 @@ After the models, thresholds and code were frozen (`results/phase12_test_eval/fr
 | XGBoost 14-bit | 0.467 [0.418, 0.512] | 0.474 [0.426, 0.519] | 0.466 [0.420, 0.511] |
 | MLP 3-bit (gate failed) | 0.305 [0.263, 0.347] | 0.360 [0.309, 0.409] | 0.355 [0.307, 0.400] |
 
-Every configuration scored lower on the test partition than on validation (for example XGBoost top-100 0.571 to 0.466, LR top-20 0.348 to 0.140), and the ranking of feature tiers changed: for XGBoost the tiers are statistically indistinguishable on test, and the validation advantage of more features does not hold up. The 8-bit configurations remain worse than their wide counterparts. Full 18-row table, ROC-AUC and float references: `results/phase12_test_eval/summary.md`. The report ([`report.md`](report.md)) was written before this evaluation and still says "validation only"; read this section as the update.
+Every configuration scored lower on the test partition than on validation (for example XGBoost top-100 0.571 to 0.466, LR top-20 0.348 to 0.140), and the ranking of feature tiers changed: for XGBoost the tiers are statistically indistinguishable on test, and the validation advantage of more features does not hold up. The 8-bit configurations remain worse than their wide counterparts. Full 18-row table, ROC-AUC and float references: [`results/phase12_test_eval/summary.md`](results/phase12_test_eval/summary.md). The explanation that earlier file-access-time changes on the sealed label file came from my own metadata inspection is circumstantial (no OS audit log exists); see section 11 of the protocol. The report ([`report.md`](report.md)) was written before this evaluation and still says "validation only"; read this section as the update.
 
 ## Setup and reproduction
 
@@ -104,7 +104,7 @@ Recorded runs: WSL full suite 515 passed; Windows full suite 434 passed, 104 ski
 ## Docker (partially validated)
 
 A server-only, CPU-only image builds (3.33 GB, `torch 2.3.1+cpu`, non-root). In live container tests over loopback, the LR and MLP models each returned exact encrypted-vs-clear agreement, with only evaluation keys and ciphertexts on the wire and no key material in the logs;
-the documented error responses and a container restart were also tested (12/12 Docker tests passed). The MLP is a pipeline demonstration, not a validated fraud model. XGBoost was not tested in a container, and there is no TLS or authentication (loopback demo only).
+the documented error responses and a container restart were also tested (12/12 Docker tests passed). The MLP is a pipeline demonstration, not a validated fraud model. XGBoost container inference was not tested and is hardware-blocked on the 8 GB development PC (it needs about 5 GB of the shared WSL VM; the VM limit was deliberately left unchanged), so no XGBoost container support is claimed; the MLP evidence is two requests on a model that failed the Phase 9 quantization-accuracy gate; and there is no TLS or authentication (loopback demo only).
 Details, caveats and what had to be fixed: [`docs/docker.md`](docs/docker.md).
 
 ## Limitations and honest findings

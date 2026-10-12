@@ -118,3 +118,8 @@ Verified facts are separate from open questions. Status labels: PASS, PARTIAL, B
 | License | NEEDS APPROVAL | `docs/license_recommendation.md`: Apache-2.0 if reuse is expected, MIT otherwise; none added. |
 | Tests | see logs | Windows 24 passed / 6 skipped (`pytest_windows_static_post_run.log`); WSL Phase 11+12 files 25 passed / 5 skipped (`data/phase12/logs/pytest_wsl_phase12_post_run.log`); live Docker 12 passed (log above). Skips are live-Docker or Concrete-ML-only tests, not counted as passes. |
 | Pushed to remote | NOT RUN | nothing pushed. |
+
+## 10. Release update (2026-10-12, after the owner's decisions)
+- License: **PASS** - Apache-2.0 (`LICENSE`, `NOTICE`, `THIRD_PARTY_NOTICES.md`); scope limited to original material; data and dependencies not relicensed; Zama patent position noted, not adjudicated.
+- Dataset exposure: **PASS for the published repository** after remediation (rewritten history contains none of the five row-level extract paths; verified by object scan and header scan); **not asserted** for pre-rewrite forks/caches. Commit hashes changed: `docs/history_rewrite_notice.md`.
+- Label-access explanation stays circumstantial (protocol section 11). XGBoost container: BLOCKED (hardware). TLS/authentication: NOT RUN. MLP container evidence: two requests, gate-failing model.

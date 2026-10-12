@@ -1,4 +1,4 @@
-# Remediation plan: `results/phase2_pipeline/split_assignments.csv` (PLAN ONLY — nothing below has been applied)
+# Remediation of `results/phase2_pipeline/split_assignments.csv` and the `execute_sample.csv` files (EXECUTED 2026-10-12: Track 1 and Track 3, see the end of this file and `docs/history_rewrite_notice.md`)
 
 ## Facts (verified 2026-10-12)
 - File: 590,540 rows; columns `TransactionID`, `TransactionDT`, `split`, `cv_eval_fold`; no labels, no features; sha256 `4c58eed9b326c15219bb1ba5ff4ba2df1d290868473601792bf48d25cb2c6567`; 14.4 MB.
@@ -43,3 +43,8 @@ Source: Kaggle "IEEE-CIS Fraud Detection" Competition Rules, <https://www.kaggle
 - The raw CSVs, processed arrays and the sealed test arrays are gitignored (`/data/`); that part is consistent with 7.B.
 
 **Recommendation (one clear one):** take Track 1 now (untrack the CSV and add a hash-bearing manifest) in a separate commit *before any push*, regenerate it locally (verified byte-identical), and do **not** push the four unpushed commits plus any new ones until you decide on Track 3 for the already-public history. The CSV is already on the public `origin/main`, so only Track 3 or a new repository removes it from published history. Both are your call; I did not apply any of it. Untracking in this task was not performed because it changes a file that tests and docs depend on and it does not remove the published copy; it is prepared as a separate decision.
+
+## Executed 2026-10-12 (owner authorized remediation and publishing)
+- Inventory (full history scan): `results/phase2_pipeline/split_assignments.csv` and `results/phase5_fhe_poc/execute_sample.csv`, `results/phase6_fhe_xgboost/top_{20,50,100}/execute_sample.csv`. All other tracked CSVs are aggregates (EDA tables, feature rankings, benchmark tables); no secrets, keys, raw data, label arrays or datasets were found in any reachable commit.
+- Track 1 (untrack, ignore, manifest) done in a commit; Track 3 (history rewrite with `git filter-repo --invert-paths` on a fresh clone) done and verified; the pre-rewrite repository is kept as a local mirror outside the repo; the public `origin/main` was at the Phase 9 commit and is replaced using a lease-protected force push (see `docs/history_rewrite_notice.md`).
+- Residual: forks, clones and GitHub caches from before the rewrite are outside our control; compliance with the Kaggle rules is not asserted for those copies, and compliance of the remaining aggregate result tables was not separately litigated (they contain statistics, not records).
