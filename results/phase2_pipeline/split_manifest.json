@@ -1,0 +1,26 @@
+{
+  "note": "Row-level split_assignments.csv and execute_sample.csv files are NOT distributed (Kaggle IEEE-CIS rules prohibit redistributing competition data). Regenerate split_assignments.csv locally from data/raw/train_transaction.csv with src.data.split (compute_split_boundaries, build_split_assignments) and compare its sha256 below.",
+  "split_assignments.csv": {
+    "sha256": "4c58eed9b326c15219bb1ba5ff4ba2df1d290868473601792bf48d25cb2c6567",
+    "n_rows": 590540,
+    "columns": [
+      "TransactionID",
+      "TransactionDT",
+      "split",
+      "cv_eval_fold"
+    ],
+    "rows_per_split": {
+      "train": 380815,
+      "val": 105088,
+      "test": 104637
+    },
+    "TransactionDT_min": 86400,
+    "TransactionDT_max": 15811131
+  },
+  "execute_sample_csv_sha256": {
+    "results/phase5_fhe_poc/execute_sample.csv": "1ea398a193b6cff4791bd8b993d0c1769fe891994abe778b8c486d1e5e772198",
+    "results/phase6_fhe_xgboost/top_100/execute_sample.csv": "07957387cf30f1a62af0085803da577d0767ac38d1f889acf23342e190c12165",
+    "results/phase6_fhe_xgboost/top_20/execute_sample.csv": "aa3f85bac91ca7256ccbfadfde77fde32f71a0cf6c1b8d0794d386b3c3b87c24",
+    "results/phase6_fhe_xgboost/top_50/execute_sample.csv": "72e48778e0a13a14c2806ccd5fd26dcba0e7958806fc77259213ff5672e676e9"
+  }
+}

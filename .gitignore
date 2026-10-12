@@ -27,6 +27,10 @@ env/
 # This negation is required because the blanket *.csv above would otherwise
 # swallow them silently. Raw data under data/ stays ignored regardless.
 !results/**/*.csv
+# Row-level extracts of the Kaggle IEEE-CIS data must not be published (competition rules, section 7); regenerate locally.
+# See docs/history_rewrite_notice.md and results/phase2_pipeline/split_manifest.json.
+results/phase2_pipeline/split_assignments.csv
+results/**/execute_sample.csv
 
 # ML artifacts
 models/
