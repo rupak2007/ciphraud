@@ -1,0 +1,32 @@
+# Phase 12 frozen test-partition evaluation (docs/test_evaluation_protocol.md). DRAFT: prepared, NOT executed.
+# Pinned hashes below were recorded 2026-10-12 BEFORE any test score existed; the scripts refuse to run if any differs.
+# Nothing here selects, tunes or changes a model, tier, bit-width, threshold or gate.
+phase: 12
+seed: 42
+
+inputs:
+  test_pkl: data/processed/test.pkl
+  test_pkl_sha256: 0775f916203aff0123ad004a211d93409b6808cf21efff771e1ae5e033a43bb8
+  tiers_json: results/phase4_features/tiers.json
+  tiers_json_sha256: c62a9f9068bb7b2a13148f16371ba69dc187cec17c2ca29caba8fe8ab4002f6b
+  split_boundaries: results/phase2_pipeline/split_boundaries.json
+  split_boundaries_sha256: d7239c67bf30c7244fe82a666f0e8aa4c06faa7a970f96b54a6b227556cd87c6
+  phase8_config: configs/phase8/research_grid.yaml      # the 12 LR/XGBoost configurations (labels, bit-widths, source configs)
+  phase9_config: configs/phase9/mlp_grid.yaml           # the 6 MLP configurations
+
+export_dir: data/phase12/test_arrays      # gitignored (/data/): per-tier test features, ids, and the label file kept separate
+results_dir: results/phase12_test_eval    # committed after the run
+
+# Pre-specified uncertainty: time-block bootstrap (contiguous blocks of the time-ordered test rows, to respect temporal
+# dependence; an i.i.d. row bootstrap would be too narrow). Percentile intervals; paired resamples shared by all models.
+bootstrap:
+  n_resamples: 1000
+  n_blocks: 50
+  seed: 42
+  confidence: 0.95
+  n_jobs: 4
+
+# The MLP float twin's WEIGHTS were never saved (only its validation logits), so a test-set QAT-vs-float comparison for the MLP
+# needs a retrain. "off": score only the saved QAT models (no retraining). "retrain_verified": retrain each twin with the recorded
+# settings and proceed only if its validation logits equal the saved ones exactly. Requires explicit approval; default off.
+mlp_float_twin: "off"

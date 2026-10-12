@@ -1,0 +1,19 @@
+# Phase 12 integrity: these files are sha256-hashed by src/analysis/test_evaluation.py (code, configs and pinned inputs).
+# The freeze recorded the bytes below (LF everywhere except the two Windows-authored JSON pins, which were hashed as CRLF); every checkout must materialise exactly those bytes.
+src/analysis/test_evaluation.py text eol=lf
+src/analysis/test_eval_export.py text eol=lf
+src/benchmark/run.py text eol=lf
+src/benchmark/phase8_grid.py text eol=lf
+src/benchmark/phase9_grid.py text eol=lf
+src/fhe/handoff.py text eol=lf
+src/fhe/xgb_poc.py text eol=lf
+src/fhe/compile/linear.py text eol=lf
+src/fhe/compile/tree.py text eol=lf
+src/fhe/compile/mlp.py text eol=lf
+src/fhe/validate/correctness.py text eol=lf
+src/train/metrics.py text eol=lf
+configs/phase12/test_eval.yaml text eol=lf
+configs/phase8/research_grid.yaml text eol=lf
+configs/phase9/mlp_grid.yaml text eol=lf
+results/phase4_features/tiers.json text eol=crlf
+results/phase2_pipeline/split_boundaries.json text eol=crlf

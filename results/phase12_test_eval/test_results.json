@@ -1,0 +1,1857 @@
+{
+  "bootstrap": {
+    "confidence": 0.95,
+    "method": "time-block percentile bootstrap, paired resamples",
+    "n_blocks": 50,
+    "n_jobs": 4,
+    "n_resamples": 1000,
+    "n_resamples_without_both_classes": 0,
+    "seed": 42
+  },
+  "configurations": {
+    "lr_top100_bits16": {
+      "float": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2274,
+              "fp": 2112,
+              "tn": 98963,
+              "tp": 1288
+            },
+            "f1": 0.3700086182131571,
+            "f2": 0.3649138712601995,
+            "precision": 0.3788235294117647,
+            "recall": 0.36159460976979224,
+            "threshold": 0.8343608975410461
+          }
+        },
+        "pr_auc": 0.3401080293709696,
+        "pr_auc_ci": [
+          0.29081533727712566,
+          0.3882615454957066
+        ],
+        "roc_auc": 0.8326595415954514,
+        "roc_auc_ci": [
+          0.8183359532396398,
+          0.8447676165260648
+        ]
+      },
+      "model_type": "lr",
+      "n_bits": 16,
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2276,
+              "fp": 2084,
+              "tn": 98991,
+              "tp": 1286
+            },
+            "f1": 0.3710328909405655,
+            "f2": 0.3649676467249404,
+            "precision": 0.38160237388724033,
+            "recall": 0.36103312745648514,
+            "threshold": 0.8343608975410461
+          }
+        },
+        "pr_auc": 0.3406586605408538,
+        "pr_auc_ci": [
+          0.29124243944011263,
+          0.38890632498024896
+        ],
+        "roc_auc": 0.8324561622301971,
+        "roc_auc_ci": [
+          0.8181736052380744,
+          0.8446236629126871
+        ]
+      },
+      "quantized_minus_float_pr_auc": {
+        "a": "lr_top100_bits16",
+        "b": "float:lr_top_100",
+        "ci": [
+          0.0003771643834120848,
+          0.0007258086157300572
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.000547429463726143,
+        "metric": "pr_auc"
+      },
+      "t3_analogue_on_test": {
+        "decision_agreement": 0.9996368397412005,
+        "float_confusion_matrix": {
+          "fn": 2274,
+          "fp": 2112,
+          "tn": 98963,
+          "tp": 1288
+        },
+        "float_pr_auc": 0.3401080293709696,
+        "float_roc_auc": 0.8326595415954514,
+        "max_abs_prob_diff": 0.025819074244823215,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.0028120089334886735,
+        "min_decision_agreement": 0.99,
+        "note": "same bars as the validation gate; reported, not used for any decision",
+        "passed": true,
+        "pr_auc_drop": -0.0005506311698841859,
+        "quantized_confusion_matrix": {
+          "fn": 2276,
+          "fp": 2084,
+          "tn": 98991,
+          "tp": 1286
+        },
+        "quantized_pr_auc": 0.3406586605408538,
+        "quantized_roc_auc": 0.8324561622301971
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.8343608975410461
+      },
+      "tier": "top_100",
+      "validation": {
+        "float_pr_auc": 0.4223780321639392,
+        "quantized_pr_auc": 0.42208232086880737
+      }
+    },
+    "lr_top100_bits8": {
+      "float": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2274,
+              "fp": 2112,
+              "tn": 98963,
+              "tp": 1288
+            },
+            "f1": 0.3700086182131571,
+            "f2": 0.3649138712601995,
+            "precision": 0.3788235294117647,
+            "recall": 0.36159460976979224,
+            "threshold": 0.8343608975410461
+          }
+        },
+        "pr_auc": 0.3401080293709696,
+        "pr_auc_ci": [
+          0.29081533727712566,
+          0.3882615454957066
+        ],
+        "roc_auc": 0.8326595415954514,
+        "roc_auc_ci": [
+          0.8183359532396398,
+          0.8447676165260648
+        ]
+      },
+      "model_type": "lr",
+      "n_bits": 8,
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2590,
+              "fp": 2049,
+              "tn": 99026,
+              "tp": 972
+            },
+            "f1": 0.29530609144766823,
+            "f2": 0.28142915050089756,
+            "precision": 0.3217477656405164,
+            "recall": 0.27288040426726556,
+            "threshold": 0.8343608975410461
+          }
+        },
+        "pr_auc": 0.23518024514821997,
+        "pr_auc_ci": [
+          0.19059968304212932,
+          0.28161955060494115
+        ],
+        "roc_auc": 0.8032411889426175,
+        "roc_auc_ci": [
+          0.7876978390194685,
+          0.8170857167655899
+        ]
+      },
+      "quantized_minus_float_pr_auc": {
+        "a": "lr_top100_bits8",
+        "b": "float:lr_top_100",
+        "ci": [
+          -0.12059264923165018,
+          -0.0907617408709905
+        ],
+        "fraction_a_greater": 0.0,
+        "mean_resampled_diff": -0.10505766199437738,
+        "metric": "pr_auc"
+      },
+      "t3_analogue_on_test": {
+        "decision_agreement": 0.9780670317382952,
+        "float_confusion_matrix": {
+          "fn": 2274,
+          "fp": 2112,
+          "tn": 98963,
+          "tp": 1288
+        },
+        "float_pr_auc": 0.3401080293709696,
+        "float_roc_auc": 0.8326595415954514,
+        "max_abs_prob_diff": 0.9971769956580625,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.07376709100996674,
+        "min_decision_agreement": 0.99,
+        "note": "same bars as the validation gate; reported, not used for any decision",
+        "passed": false,
+        "pr_auc_drop": 0.10492778422274965,
+        "quantized_confusion_matrix": {
+          "fn": 2590,
+          "fp": 2049,
+          "tn": 99026,
+          "tp": 972
+        },
+        "quantized_pr_auc": 0.23518024514821997,
+        "quantized_roc_auc": 0.8032411889426175
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.8343608975410461
+      },
+      "tier": "top_100",
+      "validation": {
+        "float_pr_auc": 0.4223780321639392,
+        "quantized_pr_auc": 0.28290416108881705
+      }
+    },
+    "lr_top20_bits16": {
+      "float": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2366,
+              "fp": 4032,
+              "tn": 97043,
+              "tp": 1196
+            },
+            "f1": 0.272127417519909,
+            "f2": 0.30704456767303345,
+            "precision": 0.2287681713848508,
+            "recall": 0.3357664233576642,
+            "threshold": 0.7086411714553833
+          }
+        },
+        "pr_auc": 0.1399252087359713,
+        "pr_auc_ci": [
+          0.1014406105543108,
+          0.22952051505596216
+        ],
+        "roc_auc": 0.7841927938334993,
+        "roc_auc_ci": [
+          0.7659630493832676,
+          0.79980331371721
+        ]
+      },
+      "model_type": "lr",
+      "n_bits": 16,
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2359,
+              "fp": 4066,
+              "tn": 97009,
+              "tp": 1203
+            },
+            "f1": 0.27244932623711926,
+            "f2": 0.30819285750883846,
+            "precision": 0.2283165686088442,
+            "recall": 0.3377316114542392,
+            "threshold": 0.7086411714553833
+          }
+        },
+        "pr_auc": 0.13981189895241886,
+        "pr_auc_ci": [
+          0.10135141272197784,
+          0.22940744052209575
+        ],
+        "roc_auc": 0.7839164898175606,
+        "roc_auc_ci": [
+          0.765681736193944,
+          0.7995945971136397
+        ]
+      },
+      "quantized_minus_float_pr_auc": {
+        "a": "lr_top20_bits16",
+        "b": "float:lr_top_20",
+        "ci": [
+          -0.00016276023448285186,
+          -7.899271149967857e-05
+        ],
+        "fraction_a_greater": 0.0,
+        "mean_resampled_diff": -0.0001151008725277409,
+        "metric": "pr_auc"
+      },
+      "t3_analogue_on_test": {
+        "decision_agreement": 0.9996081691944532,
+        "float_confusion_matrix": {
+          "fn": 2366,
+          "fp": 4032,
+          "tn": 97043,
+          "tp": 1196
+        },
+        "float_pr_auc": 0.1399252087359713,
+        "float_roc_auc": 0.7841927938334993,
+        "max_abs_prob_diff": 0.0035618476089467332,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.0014250494394038719,
+        "min_decision_agreement": 0.99,
+        "note": "same bars as the validation gate; reported, not used for any decision",
+        "passed": true,
+        "pr_auc_drop": 0.00011330978355245103,
+        "quantized_confusion_matrix": {
+          "fn": 2359,
+          "fp": 4066,
+          "tn": 97009,
+          "tp": 1203
+        },
+        "quantized_pr_auc": 0.13981189895241886,
+        "quantized_roc_auc": 0.7839164898175606
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.7086411714553833
+      },
+      "tier": "top_20",
+      "validation": {
+        "float_pr_auc": 0.3484381889851565,
+        "quantized_pr_auc": 0.34823939389983716
+      }
+    },
+    "lr_top20_bits8": {
+      "float": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2366,
+              "fp": 4032,
+              "tn": 97043,
+              "tp": 1196
+            },
+            "f1": 0.272127417519909,
+            "f2": 0.30704456767303345,
+            "precision": 0.2287681713848508,
+            "recall": 0.3357664233576642,
+            "threshold": 0.7086411714553833
+          }
+        },
+        "pr_auc": 0.1399252087359713,
+        "pr_auc_ci": [
+          0.1014406105543108,
+          0.22952051505596216
+        ],
+        "roc_auc": 0.7841927938334993,
+        "roc_auc_ci": [
+          0.7659630493832676,
+          0.79980331371721
+        ]
+      },
+      "model_type": "lr",
+      "n_bits": 8,
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2332,
+              "fp": 5144,
+              "tn": 95931,
+              "tp": 1230
+            },
+            "f1": 0.24758454106280192,
+            "f2": 0.2982251963922025,
+            "precision": 0.192971446501412,
+            "recall": 0.34531162268388543,
+            "threshold": 0.7086411714553833
+          }
+        },
+        "pr_auc": 0.12811801275920884,
+        "pr_auc_ci": [
+          0.0933263940872305,
+          0.21110046165037058
+        ],
+        "roc_auc": 0.7696578013196987,
+        "roc_auc_ci": [
+          0.7502827478626379,
+          0.7860375431519677
+        ]
+      },
+      "quantized_minus_float_pr_auc": {
+        "a": "lr_top20_bits8",
+        "b": "float:lr_top_20",
+        "ci": [
+          -0.019451425628745144,
+          -0.007482811467858617
+        ],
+        "fraction_a_greater": 0.0,
+        "mean_resampled_diff": -0.012378585571796507,
+        "metric": "pr_auc"
+      },
+      "t3_analogue_on_test": {
+        "decision_agreement": 0.9843841088716229,
+        "float_confusion_matrix": {
+          "fn": 2366,
+          "fp": 4032,
+          "tn": 97043,
+          "tp": 1196
+        },
+        "float_pr_auc": 0.1399252087359713,
+        "float_roc_auc": 0.7841927938334993,
+        "max_abs_prob_diff": 0.6742887948071158,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.027616823159754018,
+        "min_decision_agreement": 0.99,
+        "note": "same bars as the validation gate; reported, not used for any decision",
+        "passed": false,
+        "pr_auc_drop": 0.011807195976762469,
+        "quantized_confusion_matrix": {
+          "fn": 2332,
+          "fp": 5144,
+          "tn": 95931,
+          "tp": 1230
+        },
+        "quantized_pr_auc": 0.12811801275920884,
+        "quantized_roc_auc": 0.7696578013196987
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.7086411714553833
+      },
+      "tier": "top_20",
+      "validation": {
+        "float_pr_auc": 0.3484381889851565,
+        "quantized_pr_auc": 0.3218202330592772
+      }
+    },
+    "lr_top50_bits16": {
+      "float": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2294,
+              "fp": 3313,
+              "tn": 97762,
+              "tp": 1268
+            },
+            "f1": 0.311433132752057,
+            "f2": 0.3367146423070795,
+            "precision": 0.27679545950665796,
+            "recall": 0.3559797866367209,
+            "threshold": 0.8216891288757324
+          }
+        },
+        "pr_auc": 0.21534736611680727,
+        "pr_auc_ci": [
+          0.14968007793400323,
+          0.334268178339369
+        ],
+        "roc_auc": 0.8169673066750289,
+        "roc_auc_ci": [
+          0.7986588797639165,
+          0.8323045284872261
+        ]
+      },
+      "model_type": "lr",
+      "n_bits": 16,
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2293,
+              "fp": 3308,
+              "tn": 97767,
+              "tp": 1269
+            },
+            "f1": 0.31183192038333946,
+            "f2": 0.33705179282868525,
+            "precision": 0.2772558444395892,
+            "recall": 0.3562605277933745,
+            "threshold": 0.8216891288757324
+          }
+        },
+        "pr_auc": 0.21494354236874352,
+        "pr_auc_ci": [
+          0.1493728004084745,
+          0.33366289746897687
+        ],
+        "roc_auc": 0.8165618645045825,
+        "roc_auc_ci": [
+          0.798218012156976,
+          0.8319018070656686
+        ]
+      },
+      "quantized_minus_float_pr_auc": {
+        "a": "lr_top50_bits16",
+        "b": "float:lr_top_50",
+        "ci": [
+          -0.0006849961264434308,
+          -0.00022413311705692248
+        ],
+        "fraction_a_greater": 0.0,
+        "mean_resampled_diff": -0.00042613872143639587,
+        "metric": "pr_auc"
+      },
+      "t3_analogue_on_test": {
+        "decision_agreement": 0.9995986123455374,
+        "float_confusion_matrix": {
+          "fn": 2294,
+          "fp": 3313,
+          "tn": 97762,
+          "tp": 1268
+        },
+        "float_pr_auc": 0.21534736611680727,
+        "float_roc_auc": 0.8169673066750289,
+        "max_abs_prob_diff": 0.011591868984134113,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.0020183638158805185,
+        "min_decision_agreement": 0.99,
+        "note": "same bars as the validation gate; reported, not used for any decision",
+        "passed": true,
+        "pr_auc_drop": 0.00040382374806374743,
+        "quantized_confusion_matrix": {
+          "fn": 2293,
+          "fp": 3308,
+          "tn": 97767,
+          "tp": 1269
+        },
+        "quantized_pr_auc": 0.21494354236874352,
+        "quantized_roc_auc": 0.8165618645045825
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.8216891288757324
+      },
+      "tier": "top_50",
+      "validation": {
+        "float_pr_auc": 0.3888610406399093,
+        "quantized_pr_auc": 0.3886008050465755
+      }
+    },
+    "lr_top50_bits8": {
+      "float": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2294,
+              "fp": 3313,
+              "tn": 97762,
+              "tp": 1268
+            },
+            "f1": 0.311433132752057,
+            "f2": 0.3367146423070795,
+            "precision": 0.27679545950665796,
+            "recall": 0.3559797866367209,
+            "threshold": 0.8216891288757324
+          }
+        },
+        "pr_auc": 0.21534736611680727,
+        "pr_auc_ci": [
+          0.14968007793400323,
+          0.334268178339369
+        ],
+        "roc_auc": 0.8169673066750289,
+        "roc_auc_ci": [
+          0.7986588797639165,
+          0.8323045284872261
+        ]
+      },
+      "model_type": "lr",
+      "n_bits": 8,
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2424,
+              "fp": 4761,
+              "tn": 96314,
+              "tp": 1138
+            },
+            "f1": 0.2405665363069443,
+            "f2": 0.2824241822603862,
+            "precision": 0.19291405322936092,
+            "recall": 0.31948343627175746,
+            "threshold": 0.8216891288757324
+          }
+        },
+        "pr_auc": 0.17680556196477076,
+        "pr_auc_ci": [
+          0.12794755497573704,
+          0.234127987311501
+        ],
+        "roc_auc": 0.782180219296132,
+        "roc_auc_ci": [
+          0.7650301808503563,
+          0.7971539962491161
+        ]
+      },
+      "quantized_minus_float_pr_auc": {
+        "a": "lr_top50_bits8",
+        "b": "float:lr_top_50",
+        "ci": [
+          -0.11083572843257539,
+          -0.011215733335790555
+        ],
+        "fraction_a_greater": 0.002,
+        "mean_resampled_diff": -0.04904227349088257,
+        "metric": "pr_auc"
+      },
+      "t3_analogue_on_test": {
+        "decision_agreement": 0.9754006708907939,
+        "float_confusion_matrix": {
+          "fn": 2294,
+          "fp": 3313,
+          "tn": 97762,
+          "tp": 1268
+        },
+        "float_pr_auc": 0.21534736611680727,
+        "float_roc_auc": 0.8169673066750289,
+        "max_abs_prob_diff": 0.9821346013184246,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.09241233172917053,
+        "min_decision_agreement": 0.99,
+        "note": "same bars as the validation gate; reported, not used for any decision",
+        "passed": false,
+        "pr_auc_drop": 0.03854180415203651,
+        "quantized_confusion_matrix": {
+          "fn": 2424,
+          "fp": 4761,
+          "tn": 96314,
+          "tp": 1138
+        },
+        "quantized_pr_auc": 0.17680556196477076,
+        "quantized_roc_auc": 0.782180219296132
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.8216891288757324
+      },
+      "tier": "top_50",
+      "validation": {
+        "float_pr_auc": 0.3888610406399093,
+        "quantized_pr_auc": 0.2495829757753253
+      }
+    },
+    "mlp_top100_bits3": {
+      "float": null,
+      "model_type": "mlp",
+      "n_bits": 3,
+      "note": "MLP float twin: weights never saved, no test-set float comparison (mlp_float_twin=off)",
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2407,
+              "fp": 1304,
+              "tn": 99771,
+              "tp": 1155
+            },
+            "f1": 0.38365719980069757,
+            "f2": 0.34566349434368826,
+            "precision": 0.46970313135420905,
+            "recall": 0.32425603593486807,
+            "threshold": 0.9168166745048371
+          },
+          "qat_own_threshold": {
+            "confusion_matrix": {
+              "fn": 2308,
+              "fp": 1728,
+              "tn": 99347,
+              "tp": 1254
+            },
+            "f1": 0.38325183374083127,
+            "f2": 0.3639001741149158,
+            "precision": 0.42052313883299797,
+            "recall": 0.352049410443571,
+            "threshold": 0.8991213772699435
+          }
+        },
+        "pr_auc": 0.35522338741551546,
+        "pr_auc_ci": [
+          0.30731442562497824,
+          0.399642811326571
+        ],
+        "roc_auc": 0.8315425945371369,
+        "roc_auc_ci": [
+          0.8183165969624042,
+          0.844075832403586
+        ]
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.9168166745048371,
+        "qat_own_threshold": 0.8991213772699435
+      },
+      "tier": "top_100",
+      "validation": {
+        "float_pr_auc": 0.49078405024328187,
+        "quantized_pr_auc": 0.4494084243676107
+      }
+    },
+    "mlp_top100_bits4": {
+      "float": null,
+      "model_type": "mlp",
+      "n_bits": 4,
+      "note": "MLP float twin: weights never saved, no test-set float comparison (mlp_float_twin=off)",
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2230,
+              "fp": 2389,
+              "tn": 98686,
+              "tp": 1332
+            },
+            "f1": 0.3657833310448991,
+            "f2": 0.37063832155378706,
+            "precision": 0.35796828809459824,
+            "recall": 0.37394722066254915,
+            "threshold": 0.9168166745048371
+          },
+          "qat_own_threshold": {
+            "confusion_matrix": {
+              "fn": 2329,
+              "fp": 1854,
+              "tn": 99221,
+              "tp": 1233
+            },
+            "f1": 0.37088283952474055,
+            "f2": 0.35563888087683876,
+            "precision": 0.39941690962099125,
+            "recall": 0.34615384615384615,
+            "threshold": 0.935346511643776
+          }
+        },
+        "pr_auc": 0.31065612905389994,
+        "pr_auc_ci": [
+          0.26278637096142915,
+          0.35914127920034816
+        ],
+        "roc_auc": 0.8374334855941526,
+        "roc_auc_ci": [
+          0.8249493763957435,
+          0.8493267929087738
+        ]
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.9168166745048371,
+        "qat_own_threshold": 0.935346511643776
+      },
+      "tier": "top_100",
+      "validation": {
+        "float_pr_auc": 0.49078405024328187,
+        "quantized_pr_auc": 0.4392051719548554
+      }
+    },
+    "mlp_top20_bits3": {
+      "float": null,
+      "model_type": "mlp",
+      "n_bits": 3,
+      "note": "MLP float twin: weights never saved, no test-set float comparison (mlp_float_twin=off)",
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2454,
+              "fp": 1829,
+              "tn": 99246,
+              "tp": 1108
+            },
+            "f1": 0.3409755346976458,
+            "f2": 0.32237416351469306,
+            "precision": 0.37725570309839973,
+            "recall": 0.3110612015721505,
+            "threshold": 0.9060934853382423
+          },
+          "qat_own_threshold": {
+            "confusion_matrix": {
+              "fn": 2539,
+              "fp": 1324,
+              "tn": 99751,
+              "tp": 1023
+            },
+            "f1": 0.3462514807920122,
+            "f2": 0.30822536908707443,
+            "precision": 0.43587558585428204,
+            "recall": 0.2871982032565974,
+            "threshold": 0.9241418199787564
+          }
+        },
+        "pr_auc": 0.30487284962264394,
+        "pr_auc_ci": [
+          0.2629054961808993,
+          0.34646707206762517
+        ],
+        "roc_auc": 0.8063810083155767,
+        "roc_auc_ci": [
+          0.791422970822217,
+          0.8196768097272997
+        ]
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.9060934853382423,
+        "qat_own_threshold": 0.9241418199787564
+      },
+      "tier": "top_20",
+      "validation": {
+        "float_pr_auc": 0.4891828305207049,
+        "quantized_pr_auc": 0.3924097013252142
+      }
+    },
+    "mlp_top20_bits4": {
+      "float": null,
+      "model_type": "mlp",
+      "n_bits": 4,
+      "note": "MLP float twin: weights never saved, no test-set float comparison (mlp_float_twin=off)",
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2447,
+              "fp": 2033,
+              "tn": 99042,
+              "tp": 1115
+            },
+            "f1": 0.3323397913561848,
+            "f2": 0.3204759714876983,
+            "precision": 0.35419313850063533,
+            "recall": 0.3130263896687254,
+            "threshold": 0.9060934853382423
+          },
+          "qat_own_threshold": {
+            "confusion_matrix": {
+              "fn": 2397,
+              "fp": 2283,
+              "tn": 98792,
+              "tp": 1165
+            },
+            "f1": 0.33238231098430815,
+            "f2": 0.32917043399638335,
+            "precision": 0.337877030162413,
+            "recall": 0.3270634475014037,
+            "threshold": 0.8962513731336204
+          }
+        },
+        "pr_auc": 0.2906360401861594,
+        "pr_auc_ci": [
+          0.2519126532529511,
+          0.3319569961210816
+        ],
+        "roc_auc": 0.8192461943706503,
+        "roc_auc_ci": [
+          0.806262207643913,
+          0.8320898311607662
+        ]
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.9060934853382423,
+        "qat_own_threshold": 0.8962513731336204
+      },
+      "tier": "top_20",
+      "validation": {
+        "float_pr_auc": 0.4891828305207049,
+        "quantized_pr_auc": 0.40697029219832703
+      }
+    },
+    "mlp_top50_bits3": {
+      "float": null,
+      "model_type": "mlp",
+      "n_bits": 3,
+      "note": "MLP float twin: weights never saved, no test-set float comparison (mlp_float_twin=off)",
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2221,
+              "fp": 2181,
+              "tn": 98894,
+              "tp": 1341
+            },
+            "f1": 0.37859966120835686,
+            "f2": 0.37732132808103547,
+            "precision": 0.3807495741056218,
+            "recall": 0.37647389107243123,
+            "threshold": 0.8800875931401826
+          },
+          "qat_own_threshold": {
+            "confusion_matrix": {
+              "fn": 2369,
+              "fp": 1372,
+              "tn": 99703,
+              "tp": 1193
+            },
+            "f1": 0.3894238615962135,
+            "f2": 0.3547849878070541,
+            "precision": 0.4651072124756335,
+            "recall": 0.33492419988770356,
+            "threshold": 0.907312221360624
+          }
+        },
+        "pr_auc": 0.3594552341448812,
+        "pr_auc_ci": [
+          0.30903713593542126,
+          0.40845600974545987
+        ],
+        "roc_auc": 0.8344216850218934,
+        "roc_auc_ci": [
+          0.8214320050789902,
+          0.8463281714483695
+        ]
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.8800875931401826,
+        "qat_own_threshold": 0.907312221360624
+      },
+      "tier": "top_50",
+      "validation": {
+        "float_pr_auc": 0.46956821353735456,
+        "quantized_pr_auc": 0.41728841628104807
+      }
+    },
+    "mlp_top50_bits4": {
+      "float": null,
+      "model_type": "mlp",
+      "n_bits": 4,
+      "note": "MLP float twin: weights never saved, no test-set float comparison (mlp_float_twin=off)",
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2056,
+              "fp": 3705,
+              "tn": 97370,
+              "tp": 1506
+            },
+            "f1": 0.3433261142140659,
+            "f2": 0.38696747006526544,
+            "precision": 0.2890040299366724,
+            "recall": 0.4227961819202695,
+            "threshold": 0.8800875931401826
+          },
+          "qat_own_threshold": {
+            "confusion_matrix": {
+              "fn": 2305,
+              "fp": 1961,
+              "tn": 99114,
+              "tp": 1257
+            },
+            "f1": 0.37079646017699114,
+            "f2": 0.35984197870147716,
+            "precision": 0.3906152889993785,
+            "recall": 0.35289163391353173,
+            "threshold": 0.9334308110294983
+          }
+        },
+        "pr_auc": 0.33769196887062775,
+        "pr_auc_ci": [
+          0.2990118183223979,
+          0.3745501184085906
+        ],
+        "roc_auc": 0.8470507471408912,
+        "roc_auc_ci": [
+          0.8359298220362323,
+          0.8566679150538578
+        ]
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.8800875931401826,
+        "qat_own_threshold": 0.9334308110294983
+      },
+      "tier": "top_50",
+      "validation": {
+        "float_pr_auc": 0.46956821353735456,
+        "quantized_pr_auc": 0.43238566538551154
+      }
+    },
+    "xgboost_top100_bits14": {
+      "float": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2013,
+              "fp": 1493,
+              "tn": 99582,
+              "tp": 1549
+            },
+            "f1": 0.46910963052695337,
+            "f2": 0.44794679005205323,
+            "precision": 0.5092044707429323,
+            "recall": 0.4348680516563728,
+            "threshold": 0.7784428000450134
+          }
+        },
+        "pr_auc": 0.4753020374528153,
+        "pr_auc_ci": [
+          0.4288506983883923,
+          0.5197092102303209
+        ],
+        "roc_auc": 0.8814815189270091,
+        "roc_auc_ci": [
+          0.8713375501202848,
+          0.8907407838687905
+        ]
+      },
+      "model_type": "xgboost",
+      "n_bits": 14,
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2020,
+              "fp": 1581,
+              "tn": 99494,
+              "tp": 1542
+            },
+            "f1": 0.46133133881824984,
+            "f2": 0.44384318692072994,
+            "precision": 0.49375600384245916,
+            "recall": 0.43290286355979785,
+            "threshold": 0.7784428000450134
+          }
+        },
+        "pr_auc": 0.46612682119745674,
+        "pr_auc_ci": [
+          0.4200713278390769,
+          0.5111385359960524
+        ],
+        "roc_auc": 0.8765417814085333,
+        "roc_auc_ci": [
+          0.865912877627478,
+          0.8866543191849631
+        ]
+      },
+      "quantized_minus_float_pr_auc": {
+        "a": "xgboost_top100_bits14",
+        "b": "float:xgboost_top_100",
+        "ci": [
+          -0.012090320169695447,
+          -0.006303943570252446
+        ],
+        "fraction_a_greater": 0.0,
+        "mean_resampled_diff": -0.009192061564474068,
+        "metric": "pr_auc"
+      },
+      "t3_analogue_on_test": {
+        "decision_agreement": 0.997066047382857,
+        "float_confusion_matrix": {
+          "fn": 2013,
+          "fp": 1493,
+          "tn": 99582,
+          "tp": 1549
+        },
+        "float_pr_auc": 0.4753020374528153,
+        "float_roc_auc": 0.8814815189270091,
+        "max_abs_prob_diff": 0.3201304276142602,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.022958720890907145,
+        "min_decision_agreement": 0.99,
+        "note": "same bars as the validation gate; reported, not used for any decision",
+        "passed": true,
+        "pr_auc_drop": 0.009175216255358554,
+        "quantized_confusion_matrix": {
+          "fn": 2020,
+          "fp": 1581,
+          "tn": 99494,
+          "tp": 1542
+        },
+        "quantized_pr_auc": 0.46612682119745674,
+        "quantized_roc_auc": 0.8765417814085333
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.7784428000450134
+      },
+      "tier": "top_100",
+      "validation": {
+        "float_pr_auc": 0.5677994646626904,
+        "quantized_pr_auc": 0.5710116054523484
+      }
+    },
+    "xgboost_top100_bits8": {
+      "float": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2013,
+              "fp": 1493,
+              "tn": 99582,
+              "tp": 1549
+            },
+            "f1": 0.46910963052695337,
+            "f2": 0.44794679005205323,
+            "precision": 0.5092044707429323,
+            "recall": 0.4348680516563728,
+            "threshold": 0.7784428000450134
+          }
+        },
+        "pr_auc": 0.4753020374528153,
+        "pr_auc_ci": [
+          0.4288506983883923,
+          0.5197092102303209
+        ],
+        "roc_auc": 0.8814815189270091,
+        "roc_auc_ci": [
+          0.8713375501202848,
+          0.8907407838687905
+        ]
+      },
+      "model_type": "xgboost",
+      "n_bits": 8,
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2114,
+              "fp": 9875,
+              "tn": 91200,
+              "tp": 1448
+            },
+            "f1": 0.1945582801477998,
+            "f2": 0.28313323686989167,
+            "precision": 0.12788130354146426,
+            "recall": 0.4065131948343627,
+            "threshold": 0.7784428000450134
+          }
+        },
+        "pr_auc": 0.212777298966207,
+        "pr_auc_ci": [
+          0.16984673286517696,
+          0.26058406643901916
+        ],
+        "roc_auc": 0.7626701129616866,
+        "roc_auc_ci": [
+          0.7470577907614171,
+          0.7782397715124074
+        ]
+      },
+      "quantized_minus_float_pr_auc": {
+        "a": "xgboost_top100_bits8",
+        "b": "float:xgboost_top_100",
+        "ci": [
+          -0.2801259115961617,
+          -0.2412038545117419
+        ],
+        "fraction_a_greater": 0.0,
+        "mean_resampled_diff": -0.2617739807030051,
+        "metric": "pr_auc"
+      },
+      "t3_analogue_on_test": {
+        "decision_agreement": 0.9020900828578801,
+        "float_confusion_matrix": {
+          "fn": 2013,
+          "fp": 1493,
+          "tn": 99582,
+          "tp": 1549
+        },
+        "float_pr_auc": 0.4753020374528153,
+        "float_roc_auc": 0.8814815189270091,
+        "max_abs_prob_diff": 0.8745017818434319,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.20911174646744157,
+        "min_decision_agreement": 0.99,
+        "note": "same bars as the validation gate; reported, not used for any decision",
+        "passed": false,
+        "pr_auc_drop": 0.2625247384866083,
+        "quantized_confusion_matrix": {
+          "fn": 2114,
+          "fp": 9875,
+          "tn": 91200,
+          "tp": 1448
+        },
+        "quantized_pr_auc": 0.212777298966207,
+        "quantized_roc_auc": 0.7626701129616866
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.7784428000450134
+      },
+      "tier": "top_100",
+      "validation": {
+        "float_pr_auc": 0.5677994646626904,
+        "quantized_pr_auc": 0.28243259664360953
+      }
+    },
+    "xgboost_top20_bits14": {
+      "float": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2005,
+              "fp": 1678,
+              "tn": 99397,
+              "tp": 1557
+            },
+            "f1": 0.45814329851405033,
+            "f2": 0.4452897100040039,
+            "precision": 0.4812982998454405,
+            "recall": 0.43711398090960135,
+            "threshold": 0.8031212687492371
+          }
+        },
+        "pr_auc": 0.4667749264186708,
+        "pr_auc_ci": [
+          0.41780099615265304,
+          0.5118877732749757
+        ],
+        "roc_auc": 0.8780411169484471,
+        "roc_auc_ci": [
+          0.8676656627813929,
+          0.8875347974767577
+        ]
+      },
+      "model_type": "xgboost",
+      "n_bits": 14,
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2016,
+              "fp": 1653,
+              "tn": 99422,
+              "tp": 1546
+            },
+            "f1": 0.4573287975151605,
+            "f2": 0.44305611279876195,
+            "precision": 0.4832760237574242,
+            "recall": 0.4340258281864121,
+            "threshold": 0.8031212687492371
+          }
+        },
+        "pr_auc": 0.46723218215510065,
+        "pr_auc_ci": [
+          0.41828970033106255,
+          0.5122238277697034
+        ],
+        "roc_auc": 0.8779473148215915,
+        "roc_auc_ci": [
+          0.8676904527051736,
+          0.8874693942079862
+        ]
+      },
+      "quantized_minus_float_pr_auc": {
+        "a": "xgboost_top20_bits14",
+        "b": "float:xgboost_top_20",
+        "ci": [
+          -0.0007079115606846009,
+          0.001730515552358129
+        ],
+        "fraction_a_greater": 0.755,
+        "mean_resampled_diff": 0.00046344157541038523,
+        "metric": "pr_auc"
+      },
+      "t3_analogue_on_test": {
+        "decision_agreement": 0.9989296329214331,
+        "float_confusion_matrix": {
+          "fn": 2005,
+          "fp": 1678,
+          "tn": 99397,
+          "tp": 1557
+        },
+        "float_pr_auc": 0.4667749264186708,
+        "float_roc_auc": 0.8780411169484471,
+        "max_abs_prob_diff": 0.3569722931559718,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.004609134873844439,
+        "min_decision_agreement": 0.99,
+        "note": "same bars as the validation gate; reported, not used for any decision",
+        "passed": true,
+        "pr_auc_drop": -0.0004572557364298513,
+        "quantized_confusion_matrix": {
+          "fn": 2016,
+          "fp": 1653,
+          "tn": 99422,
+          "tp": 1546
+        },
+        "quantized_pr_auc": 0.46723218215510065,
+        "quantized_roc_auc": 0.8779473148215915
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.8031212687492371
+      },
+      "tier": "top_20",
+      "validation": {
+        "float_pr_auc": 0.5226729593501624,
+        "quantized_pr_auc": 0.5217607097177945
+      }
+    },
+    "xgboost_top20_bits8": {
+      "float": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2005,
+              "fp": 1678,
+              "tn": 99397,
+              "tp": 1557
+            },
+            "f1": 0.45814329851405033,
+            "f2": 0.4452897100040039,
+            "precision": 0.4812982998454405,
+            "recall": 0.43711398090960135,
+            "threshold": 0.8031212687492371
+          }
+        },
+        "pr_auc": 0.4667749264186708,
+        "pr_auc_ci": [
+          0.41780099615265304,
+          0.5118877732749757
+        ],
+        "roc_auc": 0.8780411169484471,
+        "roc_auc_ci": [
+          0.8676656627813929,
+          0.8875347974767577
+        ]
+      },
+      "model_type": "xgboost",
+      "n_bits": 8,
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 988,
+              "fp": 35975,
+              "tn": 65100,
+              "tp": 2574
+            },
+            "f1": 0.1222483436631759,
+            "f2": 0.24376385021876243,
+            "precision": 0.0667721601079146,
+            "recall": 0.7226277372262774,
+            "threshold": 0.8031212687492371
+          }
+        },
+        "pr_auc": 0.2985154579166958,
+        "pr_auc_ci": [
+          0.250920918736861,
+          0.34830091081688425
+        ],
+        "roc_auc": 0.7732620178116132,
+        "roc_auc_ci": [
+          0.7555464875506884,
+          0.7905621491673049
+        ]
+      },
+      "quantized_minus_float_pr_auc": {
+        "a": "xgboost_top20_bits8",
+        "b": "float:xgboost_top_20",
+        "ci": [
+          -0.18766252673530284,
+          -0.14894061066964093
+        ],
+        "fraction_a_greater": 0.0,
+        "mean_resampled_diff": -0.1678987719388292,
+        "metric": "pr_auc"
+      },
+      "t3_analogue_on_test": {
+        "decision_agreement": 0.6601775662528551,
+        "float_confusion_matrix": {
+          "fn": 2005,
+          "fp": 1678,
+          "tn": 99397,
+          "tp": 1557
+        },
+        "float_pr_auc": 0.4667749264186708,
+        "float_roc_auc": 0.8780411169484471,
+        "max_abs_prob_diff": 0.9349054436917669,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.3300867714430654,
+        "min_decision_agreement": 0.99,
+        "note": "same bars as the validation gate; reported, not used for any decision",
+        "passed": false,
+        "pr_auc_drop": 0.16825946850197498,
+        "quantized_confusion_matrix": {
+          "fn": 988,
+          "fp": 35975,
+          "tn": 65100,
+          "tp": 2574
+        },
+        "quantized_pr_auc": 0.2985154579166958,
+        "quantized_roc_auc": 0.7732620178116132
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.8031212687492371
+      },
+      "tier": "top_20",
+      "validation": {
+        "float_pr_auc": 0.5226729593501624,
+        "quantized_pr_auc": 0.3309273910373569
+      }
+    },
+    "xgboost_top50_bits14": {
+      "float": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2070,
+              "fp": 1246,
+              "tn": 99829,
+              "tp": 1492
+            },
+            "f1": 0.47365079365079366,
+            "f2": 0.43918521135052396,
+            "precision": 0.5449233016800584,
+            "recall": 0.4188658057271196,
+            "threshold": 0.8196926712989807
+          }
+        },
+        "pr_auc": 0.4738169479838622,
+        "pr_auc_ci": [
+          0.4258274245113289,
+          0.5194411821917173
+        ],
+        "roc_auc": 0.8820494451629819,
+        "roc_auc_ci": [
+          0.8721796269667451,
+          0.8913549595399559
+        ]
+      },
+      "model_type": "xgboost",
+      "n_bits": 14,
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2067,
+              "fp": 1253,
+              "tn": 99822,
+              "tp": 1495
+            },
+            "f1": 0.47385103011093505,
+            "f2": 0.43980936690986117,
+            "precision": 0.5440320232896652,
+            "recall": 0.4197080291970803,
+            "threshold": 0.8196926712989807
+          }
+        },
+        "pr_auc": 0.47393724427157513,
+        "pr_auc_ci": [
+          0.42588966350925733,
+          0.519188751645223
+        ],
+        "roc_auc": 0.88179269511927,
+        "roc_auc_ci": [
+          0.8720024176969535,
+          0.8911304183076201
+        ]
+      },
+      "quantized_minus_float_pr_auc": {
+        "a": "xgboost_top50_bits14",
+        "b": "float:xgboost_top_50",
+        "ci": [
+          -0.0008823693545664992,
+          0.001268901735693656
+        ],
+        "fraction_a_greater": 0.588,
+        "mean_resampled_diff": 0.00012197027352911749,
+        "metric": "pr_auc"
+      },
+      "t3_analogue_on_test": {
+        "decision_agreement": 0.9995412712520427,
+        "float_confusion_matrix": {
+          "fn": 2070,
+          "fp": 1246,
+          "tn": 99829,
+          "tp": 1492
+        },
+        "float_pr_auc": 0.4738169479838622,
+        "float_roc_auc": 0.8820494451629819,
+        "max_abs_prob_diff": 0.16295941946702586,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.00345662680161444,
+        "min_decision_agreement": 0.99,
+        "note": "same bars as the validation gate; reported, not used for any decision",
+        "passed": true,
+        "pr_auc_drop": -0.00012029628771292877,
+        "quantized_confusion_matrix": {
+          "fn": 2067,
+          "fp": 1253,
+          "tn": 99822,
+          "tp": 1495
+        },
+        "quantized_pr_auc": 0.47393724427157513,
+        "quantized_roc_auc": 0.88179269511927
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.8196926712989807
+      },
+      "tier": "top_50",
+      "validation": {
+        "float_pr_auc": 0.5442247330260617,
+        "quantized_pr_auc": 0.54287966025791
+      }
+    },
+    "xgboost_top50_bits8": {
+      "float": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 2070,
+              "fp": 1246,
+              "tn": 99829,
+              "tp": 1492
+            },
+            "f1": 0.47365079365079366,
+            "f2": 0.43918521135052396,
+            "precision": 0.5449233016800584,
+            "recall": 0.4188658057271196,
+            "threshold": 0.8196926712989807
+          }
+        },
+        "pr_auc": 0.4738169479838622,
+        "pr_auc_ci": [
+          0.4258274245113289,
+          0.5194411821917173
+        ],
+        "roc_auc": 0.8820494451629819,
+        "roc_auc_ci": [
+          0.8721796269667451,
+          0.8913549595399559
+        ]
+      },
+      "model_type": "xgboost",
+      "n_bits": 8,
+      "quantized": {
+        "at_threshold": {
+          "decision_threshold": {
+            "confusion_matrix": {
+              "fn": 1032,
+              "fp": 32774,
+              "tn": 68301,
+              "tp": 2530
+            },
+            "f1": 0.13019091236556374,
+            "f2": 0.25528737487891506,
+            "precision": 0.07166326761840018,
+            "recall": 0.7102751263335205,
+            "threshold": 0.8196926712989807
+          }
+        },
+        "pr_auc": 0.2580497299684577,
+        "pr_auc_ci": [
+          0.2099382465881369,
+          0.3077730855248033
+        ],
+        "roc_auc": 0.772856770069868,
+        "roc_auc_ci": [
+          0.7568221532991353,
+          0.7890908285436055
+        ]
+      },
+      "quantized_minus_float_pr_auc": {
+        "a": "xgboost_top50_bits8",
+        "b": "float:xgboost_top_50",
+        "ci": [
+          -0.23480918925531208,
+          -0.19675309106855898
+        ],
+        "fraction_a_greater": 0.0,
+        "mean_resampled_diff": -0.21550404024481334,
+        "metric": "pr_auc"
+      },
+      "t3_analogue_on_test": {
+        "decision_agreement": 0.6863442185842484,
+        "float_confusion_matrix": {
+          "fn": 2070,
+          "fp": 1246,
+          "tn": 99829,
+          "tp": 1492
+        },
+        "float_pr_auc": 0.4738169479838622,
+        "float_roc_auc": 0.8820494451629819,
+        "max_abs_prob_diff": 0.941762236480176,
+        "max_pr_auc_drop": 0.01,
+        "mean_abs_prob_diff": 0.364908422389007,
+        "min_decision_agreement": 0.99,
+        "note": "same bars as the validation gate; reported, not used for any decision",
+        "passed": false,
+        "pr_auc_drop": 0.2157672180154045,
+        "quantized_confusion_matrix": {
+          "fn": 1032,
+          "fp": 32774,
+          "tn": 68301,
+          "tp": 2530
+        },
+        "quantized_pr_auc": 0.2580497299684577,
+        "quantized_roc_auc": 0.772856770069868
+      },
+      "thresholds_from_validation": {
+        "decision_threshold": 0.8196926712989807
+      },
+      "tier": "top_50",
+      "validation": {
+        "float_pr_auc": 0.5442247330260617,
+        "quantized_pr_auc": 0.30636340395872497
+      }
+    }
+  },
+  "contrasts": {
+    "bit_width": [
+      {
+        "a": "lr_top100_bits16",
+        "b": "lr_top100_bits8",
+        "ci": [
+          0.09125642287331821,
+          0.1212088399072232
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.10560509145810351,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "lr_top20_bits16",
+        "b": "lr_top20_bits8",
+        "ci": [
+          0.007388217059156952,
+          0.019287334072482343
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.012263484699268768,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "lr_top50_bits16",
+        "b": "lr_top50_bits8",
+        "ci": [
+          0.010926120746666051,
+          0.11022388052228338
+        ],
+        "fraction_a_greater": 0.998,
+        "mean_resampled_diff": 0.048616134769446165,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "mlp_top100_bits4",
+        "b": "mlp_top100_bits3",
+        "ci": [
+          -0.062409131596388966,
+          -0.022395523811600086
+        ],
+        "fraction_a_greater": 0.0,
+        "mean_resampled_diff": -0.04361522256275758,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "mlp_top20_bits4",
+        "b": "mlp_top20_bits3",
+        "ci": [
+          -0.027120099716886874,
+          -0.0014832662206207606
+        ],
+        "fraction_a_greater": 0.012,
+        "mean_resampled_diff": -0.014054437201768945,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "mlp_top50_bits4",
+        "b": "mlp_top50_bits3",
+        "ci": [
+          -0.04295083640041273,
+          -0.0007010896777863674
+        ],
+        "fraction_a_greater": 0.02,
+        "mean_resampled_diff": -0.021390109065416395,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "xgboost_top100_bits14",
+        "b": "xgboost_top100_bits8",
+        "ci": [
+          0.2328532144166452,
+          0.27067856796460776
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.25258191913853106,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "xgboost_top20_bits14",
+        "b": "xgboost_top20_bits8",
+        "ci": [
+          0.1495492735061772,
+          0.18811281841572947
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.16836221351423955,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "xgboost_top50_bits14",
+        "b": "xgboost_top50_bits8",
+        "ci": [
+          0.19656651374336132,
+          0.2349791446690072
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.21562601051834246,
+        "metric": "pr_auc"
+      }
+    ],
+    "model_gap": [
+      {
+        "a": "xgboost_top20_bits14",
+        "b": "lr_top20_bits16",
+        "ci": [
+          0.2475031880602082,
+          0.3762699425410447
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.3193147363689657,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "xgboost_top50_bits14",
+        "b": "lr_top50_bits16",
+        "ci": [
+          0.14604073531672787,
+          0.32040837697337166
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.2459581017322653,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "xgboost_top100_bits14",
+        "b": "lr_top100_bits16",
+        "ci": [
+          0.09556323485257949,
+          0.15682160649963733
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.12505309002535914,
+        "metric": "pr_auc"
+      }
+    ],
+    "tier_steps": [
+      {
+        "a": "lr_top50_bits8",
+        "b": "lr_top20_bits8",
+        "ci": [
+          -0.001427046429994264,
+          0.08117352501650991
+        ],
+        "fraction_a_greater": 0.97,
+        "mean_resampled_diff": 0.043897983293042044,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "lr_top100_bits8",
+        "b": "lr_top50_bits8",
+        "ci": [
+          0.023591570755428195,
+          0.08792188087516248
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.056023061269117845,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "lr_top50_bits16",
+        "b": "lr_top20_bits16",
+        "ci": [
+          0.0413017304443261,
+          0.14367829559742584
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.08025063336321944,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "lr_top100_bits16",
+        "b": "lr_top50_bits16",
+        "ci": [
+          0.022406588921154408,
+          0.18269065476917
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.11301201795777521,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "xgboost_top50_bits8",
+        "b": "xgboost_top20_bits8",
+        "ci": [
+          -0.05424647509211425,
+          -0.027802318794882833
+        ],
+        "fraction_a_greater": 0.0,
+        "mean_resampled_diff": -0.040369798277583864,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "xgboost_top100_bits8",
+        "b": "xgboost_top50_bits8",
+        "ci": [
+          -0.061596925775993426,
+          -0.028010104727267605
+        ],
+        "fraction_a_greater": 0.0,
+        "mean_resampled_diff": -0.0448489023693195,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "xgboost_top50_bits14",
+        "b": "xgboost_top20_bits14",
+        "ci": [
+          -0.0018922637618879116,
+          0.015539891760513127
+        ],
+        "fraction_a_greater": 0.927,
+        "mean_resampled_diff": 0.006893998726519033,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "xgboost_top100_bits14",
+        "b": "xgboost_top50_bits14",
+        "ci": [
+          -0.018654098563637686,
+          0.0035806427721020795
+        ],
+        "fraction_a_greater": 0.074,
+        "mean_resampled_diff": -0.007892993749130908,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "mlp_top50_bits3",
+        "b": "mlp_top20_bits3",
+        "ci": [
+          0.038022851265885255,
+          0.07177957687653755
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.054116534115820215,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "mlp_top100_bits3",
+        "b": "mlp_top50_bits3",
+        "ci": [
+          -0.025260493790494838,
+          0.016687154567296858
+        ],
+        "fraction_a_greater": 0.362,
+        "mean_resampled_diff": -0.00377497228216635,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "mlp_top50_bits4",
+        "b": "mlp_top20_bits4",
+        "ci": [
+          0.028620031797676818,
+          0.06414494773320001
+        ],
+        "fraction_a_greater": 1.0,
+        "mean_resampled_diff": 0.04678086225217276,
+        "metric": "pr_auc"
+      },
+      {
+        "a": "mlp_top100_bits4",
+        "b": "mlp_top50_bits4",
+        "ci": [
+          -0.05096391113794473,
+          -0.0020628209154316427
+        ],
+        "fraction_a_greater": 0.019,
+        "mean_resampled_diff": -0.026000085779507538,
+        "metric": "pr_auc"
+      }
+    ]
+  },
+  "freeze_sha256": "48496ba4e4682553390e56b289ff688b5bb1b5d264fe3031cc1be94e33cd14c9",
+  "labels": "TEST. Post hoc. Nothing here selects, tunes or changes any model, tier, bit-width or threshold.",
+  "n_positive": 3562,
+  "n_test_rows": 104637,
+  "positive_rate": 0.0340414958379923,
+  "status": "complete"
+}
