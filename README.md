@@ -50,7 +50,7 @@ pandas, FastAPI + uvicorn + httpx (client/server), pytest. FHE code runs on Linu
 
 ## Key measured results
 
-All accuracy numbers are **validation-partition** numbers (time-based split; the test partition was never touched). Latency is
+All accuracy numbers in the table are **validation-partition** numbers (time-based split). A single frozen test-partition evaluation was run afterwards, once, on 2026-10-12 (see the next section); it was not used for any selection. Latency is
 the mean of five repeats of one input unless stated. See [`report.md`](report.md) for every table and caveat.
 
 | Model (config) | PR-AUC (quantized) | Passes accuracy gate | Encrypted latency |
@@ -65,6 +65,18 @@ the mean of five repeats of one input unless stated. See [`report.md`](report.md
 - Client/server round trips: LR 7/7 and MLP 7/7 exact; XGBoost one request, exact (219/219 output integers). The MLP is a pipeline demonstration only and
   is not a validated fraud model. The XGBoost run is one cold request, needed WSL memory raised to 5 GB after two aborted attempts, and is not a benchmark.
 - Plaintext reference (832 features): LR PR-AUC 0.456, XGBoost 0.571.
+
+## Frozen test-partition evaluation (run once, post hoc)
+
+After the models, thresholds and code were frozen (`results/phase12_test_eval/freeze.json`), the sealed test partition (104,637 rows, 3,562 fraud, 3.40%) was scored once with `python -m src.analysis.test_evaluation --run` (exit 0; protocol [`docs/test_evaluation_protocol.md`](docs/test_evaluation_protocol.md); outputs `test_results.json`, `summary.md`, hashes in `run_complete.json`). Quantized test PR-AUC with 95% time-block bootstrap intervals:
+
+| Model | top 20 | top 50 | top 100 |
+|---|---|---|---|
+| LR 16-bit | 0.140 [0.101, 0.229] | 0.215 [0.149, 0.334] | 0.341 [0.291, 0.389] |
+| XGBoost 14-bit | 0.467 [0.418, 0.512] | 0.474 [0.426, 0.519] | 0.466 [0.420, 0.511] |
+| MLP 3-bit (gate failed) | 0.305 [0.263, 0.347] | 0.360 [0.309, 0.409] | 0.355 [0.307, 0.400] |
+
+Every configuration scored lower on the test partition than on validation (for example XGBoost top-100 0.571 to 0.466, LR top-20 0.348 to 0.140), and the ranking of feature tiers changed: for XGBoost the tiers are statistically indistinguishable on test, and the validation advantage of more features does not hold up. The 8-bit configurations remain worse than their wide counterparts. Full 18-row table, ROC-AUC and float references: `results/phase12_test_eval/summary.md`. The report ([`report.md`](report.md)) was written before this evaluation and still says "validation only"; read this section as the update.
 
 ## Setup and reproduction
 
@@ -89,13 +101,15 @@ python -m src.analysis.report_check                       # report numbers vs th
 
 Recorded runs: WSL full suite 515 passed; Windows full suite 434 passed, 104 skipped; Phase 10 group 100 passed.
 
-## Docker (partial)
+## Docker (partially validated)
 
-A server-only `Dockerfile` and tests exist, but the image has **not been built or run** yet; see [`docs/docker.md`](docs/docker.md).
+A server-only, CPU-only image builds (3.33 GB, `torch 2.3.1+cpu`, non-root). In live container tests over loopback, the LR and MLP models each returned exact encrypted-vs-clear agreement, with only evaluation keys and ciphertexts on the wire and no key material in the logs;
+the documented error responses and a container restart were also tested (12/12 Docker tests passed). The MLP is a pipeline demonstration, not a validated fraud model. XGBoost was not tested in a container, and there is no TLS or authentication (loopback demo only).
+Details, caveats and what had to be fixed: [`docs/docker.md`](docs/docker.md).
 
 ## Limitations and honest findings
 
-- Validation-only accuracy; no test-partition evaluation (so absolute numbers are optimistic). One machine, one library version, five repeats of one input.
+- The headline table is validation-only and therefore optimistic; the post-hoc test evaluation shows lower PR-AUC for every configuration (see above). One machine, one library version, five repeats of one input.
 - All six quantized-MLP configurations failed the quantization-accuracy gate; three were infeasible under the 2.4 GB key-material limit.
 - The VM clock used for timing ran about 5-11% slow against real time; some Phase 10 timings differ 2-3x from earlier recordings of the same circuits with no known cause.
 - Encrypted inference only, not encrypted training. The demo uses plain loopback HTTP: no TLS, no authentication, client and server on one machine.
@@ -109,4 +123,4 @@ A server-only `Dockerfile` and tests exist, but the image has **not been built o
 `tests/`, `docs/` (phase write-ups, [`docs/prd.md`](docs/prd.md), [`docs/plan.md`](docs/plan.md)), `report.md`, `CLAUDE.md` (project rules).
 Large datasets, models, keys and transient logs are git-ignored; selected raw logs are kept as hashed evidence.
 
-No license has been chosen yet; add one before making the repository public.
+**License and data terms:** no license has been chosen yet (the repository is already public, so reuse rights are currently undefined; see [`docs/license_recommendation.md`](docs/license_recommendation.md)). The IEEE-CIS data are not included and must be obtained from Kaggle under the competition rules, which allow non-commercial use only and prohibit redistributing the data; whether the committed `results/phase2_pipeline/split_assignments.csv` (a two-column extract of the data) is compatible with those rules is unresolved ([`docs/dataset_remediation_plan.md`](docs/dataset_remediation_plan.md)).

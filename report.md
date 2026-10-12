@@ -20,7 +20,7 @@ LR answers in 8.6-30.9 ms, XGBoost needs 2,651-4,099 s per encrypted request, at
 (4) A client/server implementation completed encrypted round trips for all three model types with exact integer agreement;
 the XGBoost round trip is a single request that needed a raised WSL memory limit after two aborted attempts.
 (5) A literature latency of about 6 ms for encrypted XGBoost was not reproduced. We make no speed-up, production-readiness
-or general-security claim. All accuracy numbers are validation numbers; no test-partition evaluation was run (section 12).
+or general-security claim. All accuracy numbers are validation numbers; no test-partition evaluation had been run when this report was written (section 12). **Update:** a single frozen test evaluation was run afterwards; see the README section "Frozen test-partition evaluation" and `results/phase12_test_eval/summary.md`.
 
 ## 2. Motivation and problem definition
 
