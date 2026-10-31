@@ -251,7 +251,7 @@ afterward. No such evaluation was run for this report.
 | Relative FHE cost | latency, memory, ciphertext and key sizes, bootstrap counts, compile time, round-trip exactness | No: independent of labels and of the data split |
 
 Availability: the processed test matrix exists locally (`data/processed/test.pkl`, 104,637 rows, about 223 MB), produced by the train-fitted Phase 2
-pipeline, and the test labels have not been read by any phase (`"test_partition_touched": false`). A test run would need no fitting or tuning: transform
+pipeline, and, when this report was written, no phase's result files recorded a test-partition read (`"test_partition_touched": false`). **Update:** a single frozen test evaluation was run afterwards (`docs/test_evaluation_protocol.md` section 12; results in the README section "Frozen test-partition evaluation" and `results/phase12_test_eval/summary.md`), so this sentence describes the state at writing time only. A test run would need no fitting or tuning: transform
 with the already-fitted train-only preprocessors, use the validation-chosen thresholds, and evaluate the already-selected models. What it would need that does not exist yet: the FHE handoffs
 (`data/fhe_handoff`, about 2.1 GB) hold validation rows only, so test rows would have to be exported per tier, and the quantized circuits rebuilt in clear mode (no encrypted execution).
 Rough cost, by arithmetic from recorded compile times and sizes and not measured: plaintext and clear-quantized scoring of nine LR/XGBoost/MLP configurations in minutes,
