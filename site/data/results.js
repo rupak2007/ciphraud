@@ -3,6 +3,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "lr_top20_bits8",
    "model": "lr",
+   "tier": 20,
    "n_bits": 8,
    "status": "failed_accuracy_gates",
    "val_pr_auc": 0.3218202330592772,
@@ -21,6 +22,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 92.9019670480011,
    "latency_mean_s": 0.0064772985992021855,
    "latency_std_s": 0.0005850088566876916,
+   "n_latency_trials": 5,
    "peak_rss_mb": 922.3203125,
    "ciphertext_total_bytes": 10672,
    "key_total_bytes": 10184,
@@ -29,6 +31,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "lr_top20_bits16",
    "model": "lr",
+   "tier": 20,
    "n_bits": 16,
    "status": "passed",
    "val_pr_auc": 0.34823939389983716,
@@ -47,6 +50,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 93.66990765100127,
    "latency_mean_s": 0.008570871200208784,
    "latency_std_s": 0.0008665416081913285,
+   "n_latency_trials": 5,
    "peak_rss_mb": 919.75390625,
    "ciphertext_total_bytes": 18136,
    "key_total_bytes": 17648,
@@ -55,6 +59,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "lr_top50_bits8",
    "model": "lr",
+   "tier": 50,
    "n_bits": 8,
    "status": "failed_accuracy_gates",
    "val_pr_auc": 0.2495829757753253,
@@ -73,6 +78,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 97.08263215199986,
    "latency_mean_s": 0.011596722199465148,
    "latency_std_s": 0.0031689138407390515,
+   "n_latency_trials": 5,
    "peak_rss_mb": 1440.22265625,
    "ciphertext_total_bytes": 10656,
    "key_total_bytes": 9448,
@@ -81,6 +87,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "lr_top50_bits16",
    "model": "lr",
+   "tier": 50,
    "n_bits": 16,
    "status": "passed",
    "val_pr_auc": 0.3886008050465755,
@@ -99,6 +106,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 94.46872827499828,
    "latency_mean_s": 0.015401105999626453,
    "latency_std_s": 0.002741750378586827,
+   "n_latency_trials": 5,
    "peak_rss_mb": 1441.78125,
    "ciphertext_total_bytes": 18128,
    "key_total_bytes": 16920,
@@ -107,6 +115,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "lr_top100_bits8",
    "model": "lr",
+   "tier": 100,
    "n_bits": 8,
    "status": "failed_accuracy_gates",
    "val_pr_auc": 0.28290416108881705,
@@ -125,6 +134,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 96.0234525809974,
    "latency_mean_s": 0.0184904040004767,
    "latency_std_s": 0.0007245596314569003,
+   "n_latency_trials": 5,
    "peak_rss_mb": 2104.125,
    "ciphertext_total_bytes": 13056,
    "key_total_bytes": 10648,
@@ -133,6 +143,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "lr_top100_bits16",
    "model": "lr",
+   "tier": 100,
    "n_bits": 16,
    "status": "passed",
    "val_pr_auc": 0.42208232086880737,
@@ -151,6 +162,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 96.25247223100087,
    "latency_mean_s": 0.030919320201064693,
    "latency_std_s": 0.0012575494575909245,
+   "n_latency_trials": 5,
    "peak_rss_mb": 2104.984375,
    "ciphertext_total_bytes": 20528,
    "key_total_bytes": 18120,
@@ -159,6 +171,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "xgboost_top20_bits8",
    "model": "xgboost",
+   "tier": 20,
    "n_bits": 8,
    "status": "failed_accuracy_gates",
    "val_pr_auc": 0.3309273910373569,
@@ -177,6 +190,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 36.27974360100052,
    "latency_mean_s": 1096.6918938896001,
    "latency_std_s": 12.922871678941295,
+   "n_latency_trials": 5,
    "peak_rss_mb": 2896.4453125,
    "ciphertext_total_bytes": 5868816,
    "key_total_bytes": 956888832,
@@ -185,6 +199,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "xgboost_top20_bits14",
    "model": "xgboost",
+   "tier": 20,
    "n_bits": 14,
    "status": "passed",
    "val_pr_auc": 0.5217607097177945,
@@ -203,6 +218,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 34.43743345899999,
    "latency_mean_s": 4098.6717416556,
    "latency_std_s": 1148.8053976160998,
+   "n_latency_trials": 5,
    "peak_rss_mb": 3433.44140625,
    "ciphertext_total_bytes": 5868816,
    "key_total_bytes": 1930681800,
@@ -211,6 +227,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "xgboost_top50_bits8",
    "model": "xgboost",
+   "tier": 50,
    "n_bits": 8,
    "status": "failed_accuracy_gates",
    "val_pr_auc": 0.30636340395872497,
@@ -229,6 +246,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 56.144402798000556,
    "latency_mean_s": 931.0608594564001,
    "latency_std_s": 212.7700698949742,
+   "n_latency_trials": 5,
    "peak_rss_mb": 2417.0,
    "ciphertext_total_bytes": 3591048,
    "key_total_bytes": 956888832,
@@ -237,6 +255,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "xgboost_top50_bits14",
    "model": "xgboost",
+   "tier": 50,
    "n_bits": 14,
    "status": "passed",
    "val_pr_auc": 0.54287966025791,
@@ -255,6 +274,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 73.08384181900001,
    "latency_mean_s": 2650.5631336608008,
    "latency_std_s": 771.8853169049607,
+   "n_latency_trials": 5,
    "peak_rss_mb": 3355.9609375,
    "ciphertext_total_bytes": 3591048,
    "key_total_bytes": 1930681800,
@@ -263,6 +283,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "xgboost_top100_bits8",
    "model": "xgboost",
+   "tier": 100,
    "n_bits": 8,
    "status": "failed_accuracy_gates",
    "val_pr_auc": 0.28243259664360953,
@@ -281,6 +302,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 54.836580599,
    "latency_mean_s": 1021.1740408864001,
    "latency_std_s": 237.34053769012914,
+   "n_latency_trials": 5,
    "peak_rss_mb": 2644.9609375,
    "ciphertext_total_bytes": 4444632,
    "key_total_bytes": 956888832,
@@ -289,6 +311,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "xgboost_top100_bits14",
    "model": "xgboost",
+   "tier": 100,
    "n_bits": 14,
    "status": "passed",
    "val_pr_auc": 0.5710116054523484,
@@ -307,6 +330,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 111.04423217800002,
    "latency_mean_s": 3687.4708404868006,
    "latency_std_s": 840.2813650515918,
+   "n_latency_trials": 5,
    "peak_rss_mb": 3467.77734375,
    "ciphertext_total_bytes": 4444632,
    "key_total_bytes": 2075385288,
@@ -315,6 +339,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "mlp_top20_bits3",
    "model": "mlp",
+   "tier": 20,
    "n_bits": 3,
    "status": "failed_accuracy_gates",
    "val_pr_auc": 0.3924097013252142,
@@ -333,6 +358,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 5.177254733999973,
    "latency_mean_s": 5.172865255399995,
    "latency_std_s": 0.5939322699147502,
+   "n_latency_trials": 5,
    "peak_rss_mb": 1671.4296875,
    "ciphertext_total_bytes": 66032,
    "key_total_bytes": 649800496,
@@ -341,6 +367,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "mlp_top20_bits4",
    "model": "mlp",
+   "tier": 20,
    "n_bits": 4,
    "status": "failed_accuracy_gates",
    "val_pr_auc": 0.40697029219832703,
@@ -359,6 +386,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 7.446936329999971,
    "latency_mean_s": 72.61477171839996,
    "latency_std_s": 5.674797910985431,
+   "n_latency_trials": 5,
    "peak_rss_mb": 3530.22265625,
    "ciphertext_total_bytes": 262640,
    "key_total_bytes": 2032306776,
@@ -367,6 +395,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "mlp_top50_bits3",
    "model": "mlp",
+   "tier": 50,
    "n_bits": 3,
    "status": "failed_accuracy_gates",
    "val_pr_auc": 0.41728841628104807,
@@ -385,6 +414,7 @@ window.CIPHRAUD_DATA = {
    "compile_s": 5.729909850000013,
    "latency_mean_s": 17.12923646319996,
    "latency_std_s": 1.1436499959816213,
+   "n_latency_trials": 5,
    "peak_rss_mb": 2855.796875,
    "ciphertext_total_bytes": 132288,
    "key_total_bytes": 1194411304,
@@ -393,6 +423,7 @@ window.CIPHRAUD_DATA = {
   {
    "label": "mlp_top50_bits4",
    "model": "mlp",
+   "tier": 50,
    "n_bits": 4,
    "status": "infeasible_key_memory",
    "val_pr_auc": 0.43238566538551154,
@@ -410,13 +441,14 @@ window.CIPHRAUD_DATA = {
    "t3_agreement_val": 0.9656383221680876,
    "compile_s": 5.964391337000052,
    "latency_mean_s": null,
-   "key_material_gb": 4.444899752,
+   "key_total_bytes": 4444899752,
    "bootstraps": 1800,
    "peak_rss_mb": 1312.07421875
   },
   {
    "label": "mlp_top100_bits3",
    "model": "mlp",
+   "tier": 100,
    "n_bits": 3,
    "status": "infeasible_key_memory",
    "val_pr_auc": 0.4494084243676107,
@@ -434,13 +466,14 @@ window.CIPHRAUD_DATA = {
    "t3_agreement_val": 0.9764102466504263,
    "compile_s": 9.145022884000014,
    "latency_mean_s": null,
-   "key_material_gb": 3.23827884,
+   "key_total_bytes": 3238278840,
    "bootstraps": 2400,
    "peak_rss_mb": 1892.890625
   },
   {
    "label": "mlp_top100_bits4",
    "model": "mlp",
+   "tier": 100,
    "n_bits": 4,
    "status": "infeasible_key_memory",
    "val_pr_auc": 0.4392051719548554,
@@ -458,11 +491,53 @@ window.CIPHRAUD_DATA = {
    "t3_agreement_val": 0.970596071863581,
    "compile_s": 8.13271365,
    "latency_mean_s": null,
-   "key_material_gb": 4.797778024,
+   "key_total_bytes": 4797778024,
    "bootstraps": 3200,
    "peak_rss_mb": 1888.60546875
   }
  ],
+ "frontier_latency": {
+  "all": [
+   "lr_top20_bits8",
+   "lr_top20_bits16",
+   "lr_top50_bits16",
+   "lr_top100_bits16",
+   "xgboost_top50_bits14",
+   "xgboost_top100_bits14"
+  ],
+  "t3_passing": [
+   "lr_top20_bits16",
+   "lr_top50_bits16",
+   "lr_top100_bits16",
+   "xgboost_top50_bits14",
+   "xgboost_top100_bits14"
+  ]
+ },
+ "demo": {
+  "model": "lr_top20_bits16",
+  "row": 32148,
+  "decrypted": [
+   -214667949
+  ],
+  "reference_clear_ints": [
+   -214667949
+  ],
+  "exact": true,
+  "phase10_requests": {
+   "lr_top20_bits16": {
+    "n": 7,
+    "exact": true
+   },
+   "mlp_top20_bits3": {
+    "n": 7,
+    "exact": true
+   },
+   "xgboost_top50_bits14": {
+    "n": 1,
+    "exact": true
+   }
+  }
+ },
  "test_set": {
   "rows": 104637,
   "positives": 3562,

@@ -4,205 +4,771 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ciphraud Results</title>
-<meta name="description" content="Latency-bounded privacy-preserving fraud detection under FHE: a recorded encrypted round trip and the full measured results.">
+<meta name="description" content="Fraud detection on encrypted transactions: a recorded FHE round trip and all 18 measured configurations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.css">
 <style>
-:root{--bg:#fafaf9;--fg:#1c1c1a;--mut:#5e5e58;--line:#dcdcd6;--card:#fff;--acc:#1f5fbf;--ok:#1b7a43;--bad:#b3261e;--warn:#8a5a00;--code:#f1f1ee}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#141413;--fg:#ecece8;--mut:#a3a39b;--line:#34342f;--card:#1c1c1a;--acc:#7aa7f0;--ok:#5cc88a;--bad:#f08a82;--warn:#e0b050;--code:#242422}}
-:root[data-theme=dark]{--bg:#141413;--fg:#ecece8;--mut:#a3a39b;--line:#34342f;--card:#1c1c1a;--acc:#7aa7f0;--ok:#5cc88a;--bad:#f08a82;--warn:#e0b050;--code:#242422}
+:root{
+  --bg:#0B0B0B;--panel:#0F0F0F;--card:#202020;--card-2:#141414;--grey:#858585;--white:#F5F5F0;
+  --text:#F5F5F0;--text-2:#A3A3A3;--line:#383838;--yellow:#F3F000;--accent-text:#F3F000;--on-yellow:#0B0B0B;
+  --pass:#3DD68C;--fail:#FF6A55;--infeasible:#F5A623;--chip:#161616;
+}
+:root[data-theme=light]{
+  --bg:#F5F5F0;--panel:#FFFFFF;--card-2:#F7F7F2;--text:#0B0B0B;--text-2:#55554F;--line:#D9D9D1;--accent-text:#6E6C00;--chip:#ECECE6;
+  --pass:#11804A;--fail:#C4321F;--infeasible:#A3620A;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:1040px;margin:0 auto;padding:0 16px 64px}
-header{padding:40px 0 8px}
-h1{font-size:2rem;margin:0 0 4px;letter-spacing:-.01em}
-h2{font-size:1.35rem;margin:48px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
-h3{font-size:1.05rem;margin:24px 0 6px}
-p{margin:8px 0}
-.lede{color:var(--mut);max-width:70ch}
-.mut{color:var(--mut)}
-a{color:var(--acc)}
-code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em}
-code{background:var(--code);padding:1px 5px;border-radius:4px}
-pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow-x:auto;border:1px solid var(--line)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:20px 0}
-.tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
-.tile b{display:block;font-size:1.5rem;line-height:1.2}
-.tile span{color:var(--mut);font-size:.88rem}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0}
-.callout{border-left:4px solid var(--warn);background:var(--card);padding:10px 14px;border-radius:0 8px 8px 0;margin:14px 0}
-.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
-table{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
-th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
-th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card)}
-th{font-weight:600;cursor:pointer;user-select:none;background:var(--card)}
-tr:last-child td{border-bottom:0}
-.pass{color:var(--ok);font-weight:600}.fail{color:var(--bad);font-weight:600}.infeasible{color:var(--warn);font-weight:600}
-.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;color:var(--mut);margin:8px 0}
-.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:baseline}
-#player{margin:12px 0;border-radius:8px;overflow:hidden}
-figure{margin:16px 0}figcaption{color:var(--mut);font-size:.88rem}
-img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--line);background:#fcfbf8}
-svg text{fill:var(--fg);font-size:11px}
-ul{padding-left:20px}li{margin:4px 0}
-footer{margin-top:56px;padding-top:12px;border-top:1px solid var(--line);color:var(--mut);font-size:.85rem}
-@media (max-width:600px){h1{font-size:1.6rem}}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.mono,code,pre{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+.wrap{max-width:1480px;margin:0 auto;padding:0 clamp(16px,2.4vw,32px)}
+.y{color:var(--accent-text)}
+.muted{color:var(--text-2)}
+svg{display:block}
+
+/* header */
+header.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;height:76px}
+.logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:1.55rem;letter-spacing:.02em;text-decoration:none}
+.logo svg{width:34px;height:34px}
+.pills{display:flex;gap:4px;padding:5px;background:var(--chip);border:1px solid var(--line);border-radius:999px}
+.pills a{padding:9px 20px;border-radius:999px;text-decoration:none;font-weight:500;font-size:.98rem;white-space:nowrap;color:var(--text)}
+.pills a:hover{background:color-mix(in srgb,var(--text) 8%,transparent)}
+.pills a.on{background:var(--yellow);color:var(--on-yellow);font-weight:600}
+.right{display:flex;gap:10px;align-items:center}
+.ghost{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px;border:1px solid var(--line);border-radius:999px;background:var(--chip);text-decoration:none;font-weight:600;color:var(--text);cursor:pointer;font:inherit;font-weight:600}
+.ghost svg{width:20px;height:20px}
+.round{width:44px;padding:0;justify-content:center}
+.subnav{display:none}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.22fr);gap:clamp(24px,3vw,48px);align-items:center;padding:34px 0 34px}
+.tag{display:inline-block;padding:6px 14px;border:1px solid var(--line);border-radius:999px;font-size:.92rem;background:var(--chip)}
+h1{font-size:clamp(2.2rem,3.3vw,3.45rem);line-height:1.06;font-weight:800;letter-spacing:-.025em;margin:22px 0 18px}
+.lead{font-size:clamp(1.02rem,1.25vw,1.2rem);color:color-mix(in srgb,var(--text) 86%,transparent);max-width:38ch;margin:0 0 28px}
+.cta{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 28px;border-radius:999px;font-weight:700;font-size:1.02rem;text-decoration:none;border:1px solid var(--line)}
+.btn svg{width:16px;height:16px}
+.btn.primary{background:var(--yellow);color:var(--on-yellow);border-color:var(--yellow)}
+.btn.primary:hover{filter:brightness(.94)}
+.btn.outline:hover{background:color-mix(in srgb,var(--text) 7%,transparent)}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.metric{position:relative;border-radius:26px;padding:22px 22px 24px;min-height:196px;display:flex;flex-direction:column;text-decoration:none}
+.metric .h{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:1.05rem}
+.metric .go{width:34px;height:34px;border-radius:50%;display:grid;place-items:center}
+.metric .go svg{width:15px;height:15px}
+.metric .big{font-size:clamp(2rem,2.75vw,2.95rem);font-weight:800;letter-spacing:-.02em;line-height:1;margin:auto 0 14px;display:flex;align-items:center;gap:12px}
+.metric .big svg{width:.72em;height:.72em}
+.metric p{margin:0;font-size:.95rem;line-height:1.35}
+.metric small{display:block;margin-top:6px;font-family:"JetBrains Mono",monospace;font-size:.74rem;opacity:.8}
+.m1{background:#F5F5F0;color:#0B0B0B;border:1px solid var(--line)}.m1 .go{background:#0B0B0B;color:#F5F5F0}
+.m2{background:#858585;color:#F5F5F0}.m2 .go{background:#F5F5F0;color:#0B0B0B}.m2 p{color:#F0F0EA}
+.m3{background:#202020;color:#F5F5F0;border:1px solid #2c2c2c}.m3 .go{background:#F5F5F0;color:#0B0B0B}.m3 .big{color:#F3F000}.m3 p{color:#D8D8D2}
+.metric:hover{transform:translateY(-2px)}
+@media (prefers-reduced-motion:no-preference){.metric{transition:transform .2s}}
+
+/* panels */
+.grid2{display:grid;grid-template-columns:minmax(0,1.38fr) minmax(0,1fr);gap:24px;align-items:start}
+.stack{display:grid;gap:24px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:28px;padding:clamp(18px,1.8vw,26px)}
+.ptitle{display:flex;align-items:center;gap:12px;margin:0 0 20px;font-size:clamp(1.3rem,1.6vw,1.6rem);font-weight:700;letter-spacing:-.01em}
+.ptitle::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--yellow);flex:none}
+.ptitle small{font-weight:500;font-size:.9rem;color:var(--text-2);margin-left:auto;letter-spacing:0}
+section{margin-bottom:24px}
+
+/* demo */
+.demo{display:grid;grid-template-columns:minmax(0,1fr) 224px;gap:24px;align-items:start}
+.term{border:1px solid #383838;border-radius:16px;background:#0E0E0E;overflow:hidden}
+.term .tb{position:relative;height:40px;display:flex;align-items:center;gap:8px;padding:0 16px;border-bottom:1px solid #2a2a2a;background:#161616}
+.term .tb i{width:12px;height:12px;border-radius:50%;display:block}
+.term .tb span{position:absolute;left:0;right:0;text-align:center;font-size:.86rem;color:#D8D8D2;pointer-events:none}
+#player{min-height:200px}
+#player .ap-wrapper{background:#0E0E0E}
+#player .ap-terminal{background:#0E0E0E;border-color:#0E0E0E;color:#E9E9E3}
+#player .ap-overlay-start{background:rgba(11,11,11,.45);display:flex;align-items:center;justify-content:center}
+#player .ap-play-button{position:static;transform:none;margin:0}
+#player .ap-play-button>div{width:84px;height:84px;border-radius:50%;background:#F3F000;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.55)}
+#player .ap-play-button svg{display:none}
+#player .ap-play-button>div::after{content:"";width:0;height:0;border-left:26px solid #0B0B0B;border-top:16px solid transparent;border-bottom:16px solid transparent;margin-left:8px}
+#player .ap-control-bar{background:#161616;color:#D8D8D2;border-top:1px solid #2a2a2a}
+.asciinema-theme-ciphraud{--term-color-foreground:#E9E9E3;--term-color-background:#0E0E0E;
+  --term-color-0:#0E0E0E;--term-color-1:#FF6A55;--term-color-2:#3DD68C;--term-color-3:#F3F000;--term-color-4:#BDBDB6;--term-color-5:#BDBDB6;--term-color-6:#BDBDB6;--term-color-7:#E9E9E3;
+  --term-color-8:#858585;--term-color-9:#FF6A55;--term-color-10:#3DD68C;--term-color-11:#F3F000;--term-color-12:#E9E9E3;--term-color-13:#E9E9E3;--term-color-14:#E9E9E3;--term-color-15:#FFFFFF}
+.fallback-log{margin:0;padding:14px 16px;max-height:460px;overflow:auto;color:#E9E9E3;font-size:12px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.steps{list-style:none;margin:6px 0 0;padding:0;position:relative}
+.steps li{position:relative;display:grid;grid-template-columns:34px 1fr;gap:14px;padding-bottom:22px}
+.steps li:last-child{padding-bottom:0}
+.steps li::before{content:"";position:absolute;left:16px;top:36px;bottom:2px;width:2px;background:var(--line)}
+.steps li:last-child::before{display:none}
+.steps .n{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--card);border:1px solid var(--line);font-weight:700;font-size:.95rem;color:var(--text)}
+.steps b{display:block;font-weight:600;font-size:1rem}
+.steps span{display:block;font-size:.88rem;color:var(--text-2);line-height:1.35}
+.steps li.done .n{background:var(--text);color:var(--bg);border-color:var(--text)}
+.steps li.cur .n{background:var(--yellow);color:var(--on-yellow);border-color:var(--yellow)}
+.steps li.cur b{color:var(--accent-text)}
+.note{display:flex;gap:10px;align-items:center;margin:20px 0 14px;padding:12px 16px;border-radius:14px;background:var(--card-2);border:1px solid var(--line);font-size:.97rem}
+.note svg{width:18px;height:18px;flex:none}
+.strip{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:18px;background:var(--card-2)}
+.strip>div{padding:16px 24px}
+.strip>div+div{border-left:1px solid var(--line)}
+.strip label{display:block;font-size:.95rem;font-weight:500;margin-bottom:4px}
+.strip .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:clamp(1.5rem,2.2vw,2rem);color:var(--accent-text);display:flex;align-items:center;gap:10px;line-height:1.1}
+.strip .v svg{width:.8em;height:.8em}
+.strip small{display:block;color:var(--text-2);font-size:.8rem;margin-top:6px}
+
+/* how it works */
+.flow{display:grid;grid-template-columns:minmax(0,1fr) 72px minmax(0,1.08fr) 72px minmax(0,1fr);align-items:center}
+.node{border:2px solid var(--line);border-radius:20px;padding:14px 10px 14px;text-align:center;background:var(--card-2);min-height:146px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.node h4{margin:0;font-size:1.08rem;font-weight:700}
+.node .ic{width:40px;height:40px;color:var(--text)}
+.node p{margin:0;font-size:.78rem;line-height:1.3;color:var(--text-2)}
+.node .k{display:flex;gap:8px;align-items:center;text-align:left;font-size:.8rem;line-height:1.25;color:var(--text)}
+.node .k svg{width:22px;height:22px;flex:none;color:var(--accent-text)}
+.node.client{border-color:color-mix(in srgb,var(--text) 70%,transparent)}
+.node.server{border-color:var(--grey);background:color-mix(in srgb,var(--grey) 10%,var(--card-2))}
+.arrow{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:.72rem;line-height:1.2;text-align:center;color:var(--text-2);padding:0 4px}
+.arrow svg{width:100%;height:14px;color:var(--yellow)}
+.flowfoot{display:flex;gap:10px 18px;flex-wrap:wrap;margin-top:16px;font-size:.86rem;color:var(--text-2)}
+.flowfoot span{display:inline-flex;gap:8px;align-items:center}
+.flowfoot i{width:9px;height:9px;border-radius:50%;background:var(--yellow);display:block}
+
+/* findings */
+.finds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.find{border:1px solid var(--line);border-radius:18px;padding:16px 18px;background:var(--card-2);display:grid;grid-template-columns:30px 1fr;gap:4px 12px}
+.find svg{width:26px;height:26px;color:var(--accent-text);grid-row:span 3}
+.find h5{margin:0;font-size:.98rem;font-weight:600}
+.find .v{font-weight:800;font-size:clamp(1.15rem,1.42vw,1.42rem);color:var(--accent-text);letter-spacing:-.01em;line-height:1.15}
+.find .v em{font-style:normal;font-weight:600;font-size:.62em;color:var(--text)}
+.find p{margin:2px 0 0;font-size:.84rem;color:var(--text-2);line-height:1.35}
+
+/* results */
+.filters{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;margin-bottom:18px}
+.fg{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fg>span{font-size:.82rem;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.chips{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:var(--chip)}
+.chips button{border:0;background:transparent;color:var(--text);font:inherit;font-size:.9rem;font-weight:500;padding:6px 14px;border-radius:999px;cursor:pointer}
+.chips button[aria-pressed=true]{background:var(--yellow);color:var(--on-yellow);font-weight:600}
+.count{margin-left:auto;font-size:.9rem;color:var(--text-2)}
+.tw{position:relative;overflow-x:auto;border:1px solid var(--line);border-radius:18px}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums;min-width:860px}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2);font-weight:600;background:var(--card-2);white-space:nowrap}
+th button{all:unset;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+th button:focus-visible{outline:2px solid var(--yellow);outline-offset:3px;border-radius:4px}
+th button[data-dir] .ar{color:var(--accent-text)}
+tbody tr.row{cursor:pointer}
+tbody tr.row:hover td{background:color-mix(in srgb,var(--text) 4%,transparent)}
+tbody tr:last-child td{border-bottom:0}
+td.cfg{font-family:"JetBrains Mono",monospace;font-size:.86rem;white-space:nowrap}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:.8rem;font-weight:600;border:1px solid currentColor;white-space:nowrap}
+.badge::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.b-pass{color:var(--pass)}.b-fail{color:var(--fail)}.b-infeasible{color:var(--infeasible)}
+.barcell{display:flex;align-items:center;gap:10px;min-width:150px}
+.barcell .t{width:46px;flex:none;font-family:"JetBrains Mono",monospace;font-size:.86rem}
+.barcell .tr{flex:1;height:6px;border-radius:6px;background:var(--line);position:relative;min-width:60px}
+.barcell .tr i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--grey)}
+.barcell.test .tr i{background:var(--yellow)}
+.ci{font-family:"JetBrains Mono",monospace;font-size:.76rem;color:var(--text-2);white-space:nowrap}
+.lat{font-family:"JetBrains Mono",monospace;font-size:.86rem;white-space:nowrap}
+.chev{width:18px;height:18px;color:var(--text-2);transition:transform .15s}
+tr.open .chev{transform:rotate(180deg)}
+tr.detail td{background:var(--card-2);padding:16px 18px}
+.kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px 20px}
+.kv div{display:flex;flex-direction:column}
+.kv span{font-size:.76rem;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em}
+.kv b{font-family:"JetBrains Mono",monospace;font-weight:500;font-size:.9rem}
+.tnote{font-size:.85rem;color:var(--text-2);margin:14px 2px 0}
+
+/* charts */
+.charts{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;margin-top:22px}
+.chart{border:1px solid var(--line);border-radius:20px;background:var(--card-2);padding:18px 18px 14px;position:relative}
+.chart h3{margin:0 0 2px;font-size:1.08rem;font-weight:700}
+.chart .sub{margin:0 0 10px;font-size:.84rem;color:var(--text-2)}
+.chart svg text{fill:var(--text-2);font-family:Inter,sans-serif;font-size:12px}
+.chart svg .lbl{fill:var(--text);font-size:12px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.8rem;color:var(--text-2);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend svg{width:14px;height:14px}
+.tip{position:fixed;z-index:50;pointer-events:none;background:#F5F5F0;color:#0B0B0B;border-radius:12px;padding:9px 12px;font-size:.8rem;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:260px;opacity:0;transition:opacity .1s}
+.tip b{font-family:"JetBrains Mono",monospace;font-size:.82rem}
+.pt{cursor:pointer}
+.pt:focus{outline:none}
+.pt:focus-visible{stroke:var(--yellow)}
+
+/* security */
+.sec{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.sc{border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.sc h4{margin:0;font-size:1.05rem;font-weight:700;display:flex;gap:10px;align-items:center}
+.sc h4 svg{width:22px;height:22px}
+.sc p,.sc li{margin:0;font-size:.92rem;line-height:1.45}
+.sc ul{margin:0;padding-left:18px;display:grid;gap:6px}
+.s1{background:#F5F5F0;color:#0B0B0B}.s1 .claim{font-size:1.06rem;font-weight:600;line-height:1.4}.s1 .src{color:#55554F;font-size:.8rem}
+.s2{background:#858585;color:#F5F5F0}
+.s3,.s4{background:var(--card-2);border:1px solid var(--line)}
+.s3 h4 svg{color:var(--infeasible)}.s4 h4 svg{color:var(--fail)}
+.alt{margin-top:16px;padding:14px 18px;border:1px dashed var(--line);border-radius:16px;font-size:.92rem;color:var(--text-2)}
+.alt b{color:var(--text)}
+
+/* verify */
+.ver{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:18px}
+.vbox{min-width:0;border:1px solid var(--line);border-radius:20px;background:var(--card-2);padding:18px}
+.vbox h3{margin:0 0 4px;font-size:1.05rem}
+.vbox .sub{margin:0 0 14px;font-size:.85rem;color:var(--text-2)}
+.hash{display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.hash:first-of-type{border-top:0}
+.hash span{font-size:.88rem;font-weight:600}
+.hash code{font-size:.76rem;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy{border:1px solid var(--line);background:var(--chip);color:var(--text);border-radius:999px;font:inherit;font-size:.78rem;font-weight:600;padding:5px 12px;cursor:pointer;white-space:nowrap}
+.copy:hover{border-color:var(--yellow)}
+.code{position:relative}
+.code pre{margin:0;padding:16px;border-radius:14px;background:#0E0E0E;color:#E9E9E3;border:1px solid #2a2a2a;font-size:.78rem;line-height:1.55;overflow-x:auto}
+.code pre .c{color:#8E8E88}
+.code .copy{position:absolute;top:10px;right:10px}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.links a{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--line);border-radius:999px;text-decoration:none;font-size:.9rem;font-weight:500;background:var(--chip)}
+.links a:hover{border-color:var(--yellow)}
+.links a.gh{background:var(--yellow);color:var(--on-yellow);border-color:var(--yellow);font-weight:700}
+.links svg{width:16px;height:16px}
+footer{padding:28px 0 48px;color:var(--text-2);font-size:.85rem;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* responsive */
+@media (min-width:1281px){h1 .y{white-space:nowrap}}
+@media (max-width:1280px){.hero{grid-template-columns:1fr}.lead{max-width:60ch}}
+@media (max-width:1180px){.grid2{grid-template-columns:1fr}.sec{grid-template-columns:repeat(2,minmax(0,1fr))}.charts{grid-template-columns:1fr}}
+@media (max-width:980px){
+  .bar .pills{display:none}
+  .subnav{display:block;border-top:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+  .subnav::-webkit-scrollbar{display:none}
+  .subnav .pills{display:inline-flex;margin:8px 0;border:0;background:transparent;padding:0}
+  .subnav .pills a{padding:7px 14px;font-size:.92rem}
+  html{scroll-padding-top:128px}
+  .ver{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:820px){
+  .demo{grid-template-columns:1fr}
+  .steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 12px}
+  .steps li{padding-bottom:0;grid-template-columns:30px 1fr;gap:10px}
+  .steps .n{width:30px;height:30px}
+  .steps li::before{display:none}
+  .metrics{grid-template-columns:1fr}
+  .metric{min-height:0}
+  .metric .big{margin:22px 0 10px}
+  .flow{grid-template-columns:1fr;gap:4px}
+  .arrow{flex-direction:row;justify-content:center;padding:6px 0}
+  .arrow svg{width:36px;height:14px;transform:rotate(90deg);margin:10px -6px;flex:none}
+  .finds{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .logo{font-size:1.25rem}.logo svg{width:28px;height:28px}
+  .ghost .t{display:none}.ghost{width:44px;padding:0;justify-content:center}
+  .strip{grid-template-columns:1fr}.strip>div+div{border-left:0;border-top:1px solid var(--line)}
+  .sec{grid-template-columns:1fr}
+  .hash{grid-template-columns:1fr auto}.hash code{grid-column:1/-1;grid-row:2}
+  .count{margin-left:0;width:100%}
+  .steps span{font-size:.82rem}
+  .ptitle small{display:none}
+  table{min-width:0}
+  thead{display:none}
+  tbody tr.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;padding:14px 14px;border-bottom:1px solid var(--line)}
+  tbody tr.row td{border:0;padding:0;background:transparent!important}
+  tbody tr.row td:nth-child(2),tbody tr.row td:nth-child(3),tbody tr.row td:nth-child(4){display:none}
+  tbody tr.row td:nth-child(5){justify-self:end}
+  tbody tr.row td:nth-child(6),tbody tr.row td:nth-child(7){grid-column:1/-1}
+  tbody tr.row td:nth-child(6)::before,tbody tr.row td:nth-child(7)::before,tbody tr.row td:nth-child(8)::before{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2);margin-bottom:3px}
+  tbody tr.row td:nth-child(6)::before{content:"Validation PR-AUC"}
+  tbody tr.row td:nth-child(7)::before{content:"Test PR-AUC [95% CI]"}
+  tbody tr.row td:nth-child(8)::before{content:"FHE latency"}
+  tbody tr.row td:nth-child(9){align-self:end;justify-self:end}
+  tr.detail,tr.detail td{display:block}
+  .kv{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 </style>
 </head>
 <body>
-<main>
-<header>
-  <h1>Ciphraud</h1>
-  <p class="lede">Fraud scoring on encrypted transactions. A client encrypts the features, a server evaluates the model on the ciphertext without the secret key, and the client decrypts the result. This page shows a recording of the real system running, then every measured result, including the ones that failed.</p>
-  <p class="mut">Research project on the IEEE-CIS fraud dataset using Concrete-ML. Not a product and not production-ready.</p>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-arrow-ur" viewBox="0 0 16 16"><path d="M4.5 11.5 11.5 4.5M5.5 4.5h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 6" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-gh" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .5A11.5 11.5 0 0 0 8.36 22.9c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.2"/></g></symbol>
+    <symbol id="i-laptop" viewBox="0 0 40 40"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="7" y="9" width="26" height="17" rx="2"/><path d="M3 31h34l-2.5-5h-29Z"/></g></symbol>
+    <symbol id="i-server" viewBox="0 0 40 40"><g fill="none" stroke="currentColor" stroke-width="2.2"><rect x="6" y="6" width="28" height="12" rx="3"/><rect x="6" y="22" width="28" height="12" rx="3"/></g><g fill="currentColor"><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="28" r="1.6"/></g><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 12h9M20 28h9"/></g></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.8-9.8M17 6l3 3M14.5 8.5l2 2"/></g></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></g></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5Z"/><path d="m3 12.5 9 5 9-5M3 16.5l9 5 9-5"/></g></symbol>
+    <symbol id="i-bars" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="12" width="4.5" height="9" rx="1"/><rect x="9.75" y="7" width="4.5" height="14" rx="1"/><rect x="16.5" y="3" width="4.5" height="18" rx="1"/></g></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20.5h20Z"/><path d="M12 10v4.5M12 17.5v.2"/></g></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.8 8 10 4.6-1.2 8-5 8-10v-6Z"/><path d="m8.5 12 2.5 2.5 4.5-5" stroke-linecap="round"/></g></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></g></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="m8.5 8.5 7 7M15.5 8.5l-7 7"/></g></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 2.5h8l4 4V21.5H6Z"/><path d="M14 2.5v4h4M9 12h6M9 16h6"/></g></symbol>
+    <symbol id="i-flow" viewBox="0 0 200 14" preserveAspectRatio="none"><path d="M0 7h188" stroke="currentColor" stroke-width="3" vector-effect="non-scaling-stroke"/><path d="M186 1l13 6-13 6Z" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap bar">
+    <a class="logo" href="#top" aria-label="Ciphraud, back to top">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2.5 5 6.6v8.2c0 6.9 4.7 12.1 11 13.9 6.3-1.8 11-7 11-13.9V6.6Z" fill="none" stroke="#F3F000" stroke-width="2.6" stroke-linejoin="round"/><path d="M16 9.5v6.5" stroke="#F3F000" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="20.5" r="1.8" fill="#F3F000"/></svg>
+      CIPHRAUD
+    </a>
+    <nav class="pills" aria-label="Sections">
+      <a href="#demo" data-s="demo">Demo</a><a href="#how" data-s="how">How it Works</a><a href="#results" data-s="results">Results</a><a href="#security" data-s="security">Security</a><a href="#verify" data-s="verify">Verify</a>
+    </nav>
+    <div class="right">
+      <a class="ghost" href="https://github.com/rupak2007/ciphraud" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-gh"/></svg><span class="t">GitHub</span></a>
+      <button class="ghost round" id="theme" type="button" aria-label="Switch to light theme"><svg aria-hidden="true"><use href="#i-sun"/></svg></button>
+    </div>
+  </div>
+  <div class="subnav"><div class="wrap"><nav class="pills" aria-label="Sections">
+    <a href="#demo" data-s="demo">Demo</a><a href="#how" data-s="how">How it Works</a><a href="#results" data-s="results">Results</a><a href="#security" data-s="security">Security</a><a href="#verify" data-s="verify">Verify</a>
+  </nav></div></div>
 </header>
 
-<h2 id="demo">1. It runs: a recorded encrypted round trip</h2>
-<p>This is one real run of the existing logistic-regression client and server (20 features, 16-bit quantization), captured with its real timing. The client and the server are separate processes talking over loopback HTTP. Nothing in the recording was edited, generated or re-timed.</p>
-<div id="player"></div>
-<noscript><p>The player needs JavaScript. The full output is in <a href="assets/lr_roundtrip.log">lr_roundtrip.log</a>.</p></noscript>
-<p class="mut">Plain-text output of the same run: <a href="assets/lr_roundtrip.log">lr_roundtrip.log</a> &middot; recording file: <a href="assets/lr_roundtrip.cast">lr_roundtrip.cast</a>.</p>
-<div class="card">
-  <h3 style="margin-top:0">What the recording shows</h3>
-  <ul>
-    <li>The client generates the keys. The secret key stays in client memory; only the evaluation (public) keys are uploaded.</li>
-    <li>One transaction is quantized and encrypted on the client. The server only ever receives the ciphertext.</li>
-    <li>The server evaluates the model on the ciphertext and returns an encrypted result.</li>
-    <li>The client decrypts and gets the integer <code>-214667949</code>, which equals the plaintext-quantized model, the Concrete simulation and the value recorded in the earlier validation phase.</li>
-    <li>A client-side audit of every request body confirms each one was evaluation keys or an input ciphertext.</li>
-  </ul>
-  <p class="mut">Scope of this evidence: one request on one fixed validation row, over loopback, run from the committed deployment artifacts. It is a functional demonstration, not a benchmark and not a statement about a network deployment. The committed Phase 10 record contains further round trips: LR 7 of 7 and MLP 7 of 7 exact, and XGBoost one request, exact.</p>
-</div>
+<main class="wrap" id="top">
+  <div class="hero">
+    <div>
+      <span class="tag">Research project · FHE · IEEE-CIS</span>
+      <h1>Fraud detection on <span class="y">encrypted transactions.</span></h1>
+      <p class="lead">A client encrypts a transaction, a server scores it without the secret key, and the client decrypts the result.</p>
+      <div class="cta">
+        <a class="btn primary" href="#demo">Watch it run <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5Z" fill="currentColor"/></svg></a>
+        <a class="btn outline" href="#results">See the results <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h10M8.5 3.5 13 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+    <div class="metrics">
+      <a class="metric m1" href="#demo"><div class="h">Exact match<span class="go"><svg><use href="#i-arrow-ur"/></svg></span></div>
+        <div class="big"><svg aria-hidden="true"><use href="#i-check"/></svg>Exact</div>
+        <p>Decrypted result matches the plaintext-quantized model<small>lr_top20_bits16</small></p></a>
+      <a class="metric m2" href="#results"><div class="h">Configurations<span class="go"><svg><use href="#i-arrow-ur"/></svg></span></div>
+        <div class="big" id="m-count">18</div>
+        <p id="m-split">6 pass · 9 fail · 3 infeasible</p></a>
+      <a class="metric m3" href="#results"><div class="h">Best test PR-AUC<span class="go"><svg><use href="#i-arrow-ur"/></svg></span></div>
+        <div class="big" id="m-best">0.474</div>
+        <p>On the held-out test set<small id="m-best-l"></small></p></a>
+    </div>
+  </div>
 
-<h2 id="all-results">2. Results for all 18 configurations</h2>
-<div class="tiles" id="tiles"></div>
-<p>Three model families, three feature tiers (top 20, 50 and 100 features ranked by XGBoost total gain), two bit-widths each. PR-AUC is the headline metric because only 3.4% of transactions are fraud. Latency is the mean of 5 repeated executions of one input on a single machine; it is not a throughput figure. Click a column header to sort.</p>
-<div class="legend">
-  <span><b class="pass">pass</b> passes the plaintext-agreement gate (T3)</span>
-  <span><b class="fail">fail</b> fails the gate</span>
-  <span><b class="infeasible">infeasible</b> encrypted key material exceeded the memory limit; no latency was measured</span>
-</div>
-<div class="tablewrap"><table id="results"></table></div>
-<p class="mut" id="tablenote"></p>
+  <div class="grid2">
+    <section class="panel" id="demo" aria-labelledby="demo-t">
+      <h2 class="ptitle" id="demo-t">Watch it run: an encrypted LR round trip</h2>
+      <div class="demo">
+        <div class="term">
+          <div class="tb" aria-hidden="true"><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i><span>lr_roundtrip.cast</span></div>
+          <div id="player"></div>
+        </div>
+        <ol class="steps" id="steps">
+          <li><div class="n">1</div><div><b>Generate keys</b><span>Secret + evaluation keys, on the client</span></div></li>
+          <li><div class="n">2</div><div><b>Encrypt</b><span>Quantize and encrypt one transaction</span></div></li>
+          <li><div class="n">3</div><div><b>Send ciphertext</b><span>Upload evaluation keys and ciphertext only</span></div></li>
+          <li><div class="n">4</div><div><b>Compute</b><span>Server evaluates the model on ciphertext</span></div></li>
+          <li><div class="n">5</div><div><b>Decrypt</b><span>Client decrypts the encrypted result</span></div></li>
+          <li class="cur"><div class="n">6</div><div><b>Verify</b><span>Exact agreement with the plaintext model</span></div></li>
+        </ol>
+      </div>
+      <div class="note"><svg aria-hidden="true"><use href="#i-info"/></svg><span>One real request over loopback, unedited and played at real speed. A demonstration, not a benchmark. <a href="assets/lr_roundtrip.log">Plain-text log</a></span></div>
+      <div class="strip">
+        <div><label>Decrypted integer</label><div class="v" id="d-int">-214667949</div><small id="d-ctx">lr_top20_bits16 · validation row 32148</small></div>
+        <div><label>Exact agreement</label><div class="v" id="d-exact"><svg aria-hidden="true"><use href="#i-check"/></svg>YES</div><small>Equals the clear-quantized model, Concrete simulation and the recorded value</small></div>
+      </div>
+    </section>
 
-<h3>Validation versus held-out test</h3>
-<p>The models, tiers and thresholds were chosen on validation data. The test partition was then scored once, after everything was frozen. Every configuration scored lower on test. For XGBoost the three feature tiers are statistically indistinguishable on test, so the validation advantage of more features did not hold up.</p>
-<div id="dumbbell"></div>
-<div class="callout"><b>Reading these numbers.</b> Part of the validation-to-test drop is the expected cost of selecting on validation and part reflects drift in fraud patterns over time. The intervals are 95% time-block bootstrap intervals. The MLP configurations all failed the plaintext-agreement gate, so the MLP is shown as a pipeline demonstration and not as a validated fraud model.</div>
+    <div class="stack">
+      <section class="panel" id="how" aria-labelledby="how-t">
+        <h2 class="ptitle" id="how-t">How it works</h2>
+        <div class="flow" role="img" aria-label="Client encrypts and sends ciphertext to the server; the server returns an encrypted result; the client decrypts it. The secret key stays on the client.">
+          <div class="node client"><h4>Client</h4><svg class="ic"><use href="#i-laptop"/></svg>
+            <p>Generates keys, encrypts features</p><div class="k"><svg><use href="#i-key"/></svg><span>Secret key<br>(stays on client)</span></div></div>
+          <div class="arrow"><span>Ciphertext + evaluation keys</span><svg aria-hidden="true"><use href="#i-flow"/></svg></div>
+          <div class="node server"><h4>Server</h4><svg class="ic"><use href="#i-server"/></svg>
+            <p>Encrypted inference. Sees ciphertext, model parameters, timing and size</p></div>
+          <div class="arrow"><span>Encrypted result</span><svg aria-hidden="true"><use href="#i-flow"/></svg></div>
+          <div class="node client"><h4>Client</h4><svg class="ic"><use href="#i-laptop"/></svg>
+            <p>Holds the secret key</p><div class="k"><svg><use href="#i-lock"/></svg><span>Decrypts<br>the result</span></div></div>
+        </div>
+        <div class="flowfoot"><span><i></i>Yellow = encrypted data in transit</span><span>Concrete-ML, TFHE scheme, single machine</span></div>
+      </section>
 
-<h3>Accuracy versus latency</h3>
-<figure>
-  <img src="assets/pareto_accuracy_vs_latency.png" alt="Scatter plot of validation PR-AUC against FHE latency on a log scale for LR, XGBoost and MLP configurations, with the Pareto frontier drawn as a staircase">
-  <figcaption>Committed figure from <code>results/phase9_mlp/pareto/</code> (validation PR-AUC, copied unchanged). Hollow markers fail the plaintext-agreement gate. LR costs milliseconds; XGBoost reaches higher PR-AUC for roughly 10<sup>5</sup> times the latency.</figcaption>
-</figure>
+      <section class="panel" aria-labelledby="find-t">
+        <h2 class="ptitle" id="find-t">Key findings</h2>
+        <div class="finds">
+          <div class="find"><svg><use href="#i-bolt"/></svg><h5>Speed</h5><div class="v" id="f-speed"></div><p id="f-speed-p"></p></div>
+          <div class="find"><svg><use href="#i-layers"/></svg><h5>Bit-width</h5><div class="v">8-bit failed</div><p id="f-bits-p"></p></div>
+          <div class="find"><svg><use href="#i-bars"/></svg><h5>Test reality check</h5><div class="v" id="f-test"></div><p id="f-test-p"></p></div>
+          <div class="find"><svg><use href="#i-warn"/></svg><h5>Limits found</h5><div class="v" id="f-lim"></div><p id="f-lim-p"></p></div>
+        </div>
+      </section>
+    </div>
+  </div>
 
-<h2 id="threat">3. What is and is not claimed</h2>
-<div class="card">
-  <p><b>The one security claim.</b> An honest, hardware-untrusted inference server cannot recover the plaintext transaction features or the plaintext fraud decision from the protected inference data it receives.</p>
-  <p class="mut">Source: <code>docs/architecture.md</code>. Nothing on this page claims more than that.</p>
-</div>
-<h3>The server knows</h3>
-<ul><li>The ciphertexts, the plaintext model parameters, and request timing, size and frequency.</li></ul>
-<h3>Out of scope</h3>
-<ul>
-  <li>Model confidentiality, and timing, volume or ciphertext-size side channels.</li>
-  <li>A malicious server tampering with results (no verifiable computation).</li>
-  <li>Side channels on the client machine, poisoning of the training data, multi-party collaboration, and any regulatory compliance.</li>
-  <li>TLS and authentication: the demo server has neither and is meant for loopback only.</li>
-</ul>
-<h3>Alternatives</h3>
-<p>If the hardware can be trusted, a trusted execution environment is far faster than FHE. If several institutions must compute together, multi-party computation is the better fit. FHE is not automatically the right choice for every threat model.</p>
+  <section class="panel" id="results" aria-labelledby="res-t" style="margin-top:24px">
+    <h2 class="ptitle" id="res-t">All 18 configurations<small>Model × feature tier × bit-width</small></h2>
+    <div class="filters" role="group" aria-label="Filters">
+      <div class="fg"><span>Model</span><div class="chips" data-f="model"><button aria-pressed="true" data-v="all">All</button><button aria-pressed="false" data-v="lr">LR</button><button aria-pressed="false" data-v="xgboost">XGBoost</button><button aria-pressed="false" data-v="mlp">MLP</button></div></div>
+      <div class="fg"><span>Features</span><div class="chips" data-f="tier"><button aria-pressed="true" data-v="all">All</button><button aria-pressed="false" data-v="20">20</button><button aria-pressed="false" data-v="50">50</button><button aria-pressed="false" data-v="100">100</button></div></div>
+      <div class="fg"><span>Status</span><div class="chips" data-f="status"><button aria-pressed="true" data-v="all">All</button><button aria-pressed="false" data-v="pass">Pass</button><button aria-pressed="false" data-v="fail">Fail</button><button aria-pressed="false" data-v="infeasible">Infeasible</button></div></div>
+      <div class="count" id="count" aria-live="polite"></div>
+    </div>
+    <div class="tw"><table id="tbl"><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
+    <p class="tnote" id="tnote"></p>
 
-<h2 id="limits">4. Limitations</h2>
-<ul>
-  <li><b>XGBoost is slow.</b> 931 to 4,099 s per encrypted request here, and the one client/server XGBoost run needed the WSL memory limit raised to 5 GB after two attempts stopped on the memory guard. A published figure of about 6 ms for encrypted XGBoost was not reproduced; the reason is unknown.</li>
-  <li><b>8-bit quantization failed</b> the accuracy gate for every LR and XGBoost configuration. XGBoost at 15 and 16 bits does not compile.</li>
-  <li><b>Three MLP configurations were infeasible</b> because their key material (3.2 to 4.8 GB) exceeded the memory limit.</li>
-  <li><b>Single machine, loopback only.</b> No WAN measurements, no concurrency, no TLS or authentication, and no production claim.</li>
-  <li><b>Label access.</b> An unexplained access-time change on the sealed test-label file was later explained as most plausibly my own metadata inspection. That explanation is strong but not certain, because no OS audit log exists to confirm it. See <code>docs/test_evaluation_protocol.md</code>, section 11.</li>
-  <li><b>Docker</b> was validated for LR and MLP only; XGBoost was not containerized.</li>
-</ul>
+    <div class="charts">
+      <div class="chart">
+        <h3>Accuracy vs latency</h3>
+        <p class="sub">Validation PR-AUC (quantized) against FHE latency, log scale. Hover or tap a point. Frontier membership from the committed <a href="assets/pareto_accuracy_vs_latency.png">Pareto figure</a>.</p>
+        <div id="scatter"></div>
+        <div class="legend" id="sc-legend"></div>
+      </div>
+      <div class="chart">
+        <h3>Validation vs held-out test</h3>
+        <p class="sub">PR-AUC per configuration; band = 95% time-block bootstrap interval on test.</p>
+        <div id="dumbbell"></div>
+        <div class="legend"><span><svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" fill="#858585"/></svg>Validation</span><span><svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" fill="#F3F000"/></svg>Test</span><span><svg viewBox="0 0 14 14"><rect x="0" y="4" width="14" height="6" rx="3" fill="#F3F000" fill-opacity=".3"/></svg>Test 95% CI</span></div>
+      </div>
+    </div>
+  </section>
 
-<h2 id="verify">5. Verify it yourself</h2>
-<p>Every number above is read from a committed file; none is recomputed here. The frozen test evaluation was run once, and its outputs are hash-pinned:</p>
-<div class="tablewrap"><table id="hashes"></table></div>
-<p>The code, configs, per-configuration provenance and the full write-up are in the repository: <code>report.md</code>, <code>docs/research.md</code>, <code>docs/client_server.md</code>. The README has a short Docker reproduction path for the LR server.</p>
+  <section class="panel" id="security" aria-labelledby="sec-t">
+    <h2 class="ptitle" id="sec-t">What is claimed, and what is not</h2>
+    <div class="sec">
+      <div class="sc s1"><h4><svg><use href="#i-shield"/></svg>What is protected</h4>
+        <p class="claim">An honest, hardware-untrusted inference server cannot recover the plaintext transaction features or the plaintext fraud decision from the protected inference data it receives.</p>
+        <p class="src">The project's single security claim (docs/architecture.md).</p></div>
+      <div class="sc s2"><h4><svg><use href="#i-eye"/></svg>What the server can see</h4>
+        <ul><li>Ciphertexts and evaluation keys</li><li>The plaintext model parameters</li><li>Request timing, size and frequency</li><li>Ciphertext size</li></ul></div>
+      <div class="sc s3"><h4><svg><use href="#i-warn"/></svg>Outside the threat model</h4>
+        <ul><li>Model confidentiality</li><li>Timing, volume and size side channels</li><li>A malicious server tampering with results</li><li>Client-side attacks, training-data poisoning</li><li>Multi-party use and regulatory compliance</li></ul></div>
+      <div class="sc s4"><h4><svg><use href="#i-x"/></svg>Why it isn't production-ready</h4>
+        <ul><li>No TLS or authentication; loopback only</li><li>XGBoost takes minutes per request and ~5 GB of memory</li><li>Single machine; no WAN or concurrency tests</li><li>MLP failed the accuracy gate; demo use only</li><li>Test-label access-time explanation is strong, not certain (no OS audit log)</li></ul></div>
+    </div>
+    <p class="alt"><b>Alternatives.</b> If the hardware can be trusted, a TEE is far faster. For several institutions computing together, MPC fits better. FHE is not automatically the right tool for every threat model.</p>
+  </section>
 
-<footer>Static page generated from committed results by <code>site/build_data.py</code>. It is separate from the research implementation and runs no model, holds no keys and serves no inference.</footer>
+  <section class="panel" id="verify" aria-labelledby="ver-t">
+    <h2 class="ptitle" id="ver-t">Verify it yourself</h2>
+    <div class="ver">
+      <div class="vbox">
+        <h3>Frozen test evaluation</h3>
+        <p class="sub">Run once after everything was frozen. sha256 of the committed outputs in results/phase12_test_eval/.</p>
+        <div id="hashes"></div>
+      </div>
+      <div class="vbox">
+        <h3>Reproduce the LR round trip with Docker</h3>
+        <p class="sub">The validated workflow from docs/docker.md. The container is the server; the client and its secret key stay outside it.</p>
+        <div class="code"><button class="copy" type="button" data-copy="docker">Copy</button><pre id="docker"><span class="c"># WSL FHE venv: build the validated LR deployment artifacts</span>
+python -m src.fhe.deploy --config configs/phase10/client_server.yaml \
+  --model lr_top20_bits16 --force
+docker build -t ciphraud-server:phase11 .
+<span class="c"># live test: starts the container, one real encrypted request,</span>
+<span class="c"># checks exact integer agreement, deletes the keys</span>
+CIPHRAUD_DOCKER_TEST=1 python -m pytest tests/test_phase11_docker.py -q</pre></div>
+      </div>
+    </div>
+    <div class="links">
+      <a class="gh" href="https://github.com/rupak2007/ciphraud" target="_blank" rel="noopener"><svg><use href="#i-gh"/></svg>GitHub repository</a>
+      <a href="https://github.com/rupak2007/ciphraud/blob/main/report.md" target="_blank" rel="noopener"><svg><use href="#i-doc"/></svg>Technical report</a>
+      <a href="https://github.com/rupak2007/ciphraud/blob/main/docs/research.md" target="_blank" rel="noopener"><svg><use href="#i-doc"/></svg>Research write-up</a>
+      <a href="https://github.com/rupak2007/ciphraud/blob/main/docs/architecture.md" target="_blank" rel="noopener"><svg><use href="#i-doc"/></svg>Architecture &amp; threat model</a>
+      <a href="https://github.com/rupak2007/ciphraud/blob/main/docs/client_server.md" target="_blank" rel="noopener"><svg><use href="#i-doc"/></svg>Client/server evidence</a>
+      <a href="https://github.com/rupak2007/ciphraud/blob/main/docs/test_evaluation_protocol.md" target="_blank" rel="noopener"><svg><use href="#i-doc"/></svg>Test protocol</a>
+    </div>
+  </section>
 </main>
+<footer class="wrap"><span>Static page built from committed results by site/build_data.py. It runs no model, holds no keys and serves no inference.</span><span>Research project, not a product.</span></footer>
+<div class="tip" id="tip" role="tooltip"></div>
 
 <script src="data/results.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.min.js"></script>
 <script>
 (function(){
+  "use strict";
   var D = window.CIPHRAUD_DATA, rows = D.rows;
-  function el(t, a, h){ var e=document.createElement(t); if(a) for(var k in a) e.setAttribute(k,a[k]); if(h!=null) e.innerHTML=h; return e; }
-  function fmtT(s){ if(s==null) return '–'; if(s<1) return (s*1000).toFixed(s<0.01?2:1)+' ms'; if(s<100) return s.toFixed(1)+' s'; return Math.round(s).toLocaleString()+' s'; }
-  function fmtB(b){ if(b==null) return '–'; if(b>=1e9) return (b/1e9).toFixed(2)+' GB'; if(b>=1e6) return (b/1e6).toFixed(2)+' MB'; if(b>=1e3) return (b/1e3).toFixed(1)+' kB'; return b+' B'; }
-  function status(r){ return r.status==='passed' ? ['pass','pass'] : r.status==='infeasible_key_memory' ? ['infeasible','infeasible'] : ['fail','fail']; }
+  var $ = function(id){ return document.getElementById(id); };
+  var by = function(l){ return rows.filter(function(r){ return r.label === l; })[0]; };
+  var MODEL = {lr:'LR', xgboost:'XGBoost', mlp:'MLP'};
+  function st(r){ return r.status === 'passed' ? 'pass' : r.status === 'infeasible_key_memory' ? 'infeasible' : 'fail'; }
+  function fT(s){ if(s == null) return '–'; if(s < 1) return (s*1000).toFixed(s < 0.1 ? 2 : 1).replace(/\.?0+$/,'') + ' ms'; if(s < 100) return s.toFixed(1) + ' s'; return Math.round(s).toLocaleString('en-US') + ' s'; }
+  function fB(b){ if(b == null) return '–'; if(b >= 1e9) return (b/1e9).toFixed(2) + ' GB'; if(b >= 1e6) return (b/1e6).toFixed(2) + ' MB'; if(b >= 1e3) return (b/1e3).toFixed(1) + ' kB'; return b + ' B'; }
+  function f3(v){ return v.toFixed(3); }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
-  // tiles
-  var passed = rows.filter(function(r){return r.status==='passed';}).length;
-  var infeas = rows.filter(function(r){return r.status==='infeasible_key_memory';}).length;
-  var best = rows.reduce(function(a,b){return b.test_pr_auc>a.test_pr_auc?b:a;});
-  var fastest = rows.filter(function(r){return r.status==='passed' && r.latency_mean_s!=null;}).reduce(function(a,b){return b.latency_mean_s<a.latency_mean_s?b:a;});
-  document.getElementById('tiles').innerHTML =
-    '<div class="tile"><b>'+rows.length+'</b><span>configurations, none dropped</span></div>'+
-    '<div class="tile"><b>'+passed+' / '+rows.length+'</b><span>pass the plaintext-agreement gate; '+infeas+' infeasible</span></div>'+
-    '<div class="tile"><b>'+best.test_pr_auc.toFixed(3)+'</b><span>best test PR-AUC ('+best.label.replace(/_/g,' ')+')</span></div>'+
-    '<div class="tile"><b>'+fmtT(fastest.latency_mean_s)+'</b><span>fastest passing encrypted evaluation ('+fastest.label.replace(/_/g,' ')+')</span></div>';
+  /* ---------- hero + demo strip + findings (all derived from committed data) ---------- */
+  var cnt = {pass:0, fail:0, infeasible:0}; rows.forEach(function(r){ cnt[st(r)]++; });
+  $('m-count').textContent = rows.length;
+  $('m-split').innerHTML = cnt.pass + ' pass · ' + cnt.fail + ' fail<br>' + cnt.infeasible + ' infeasible';
+  var best = rows.reduce(function(a,b){ return b.test_pr_auc > a.test_pr_auc ? b : a; });
+  $('m-best').textContent = f3(best.test_pr_auc);
+  $('m-best-l').textContent = best.label;
+  $('d-int').textContent = D.demo.decrypted.join(', ');
+  $('d-ctx').textContent = D.demo.model + ' · validation row ' + D.demo.row;
+  if(!D.demo.exact){ $('d-exact').textContent = 'NO'; }
 
-  // results table
-  var cols = [
-    ['label','Config',function(r){return r.label;},function(r){return r.label;}],
-    ['status','Gate',function(r){var s=status(r);return '<span class="'+s[1]+'">'+s[0]+'</span>';},function(r){return status(r)[0];}],
-    ['val','Val PR-AUC',function(r){return r.val_pr_auc.toFixed(3);},function(r){return r.val_pr_auc;}],
-    ['test','Test PR-AUC [95% CI]',function(r){return r.test_pr_auc.toFixed(3)+' ['+r.test_pr_auc_ci[0].toFixed(3)+', '+r.test_pr_auc_ci[1].toFixed(3)+']';},function(r){return r.test_pr_auc;}],
-    ['roc','Test ROC-AUC',function(r){return r.test_roc_auc.toFixed(3);},function(r){return r.test_roc_auc;}],
-    ['lat','FHE latency',function(r){return r.latency_mean_s==null?'not run':fmtT(r.latency_mean_s)+' ± '+fmtT(r.latency_std_s);},function(r){return r.latency_mean_s==null?Infinity:r.latency_mean_s;}],
-    ['comp','Compile',function(r){return fmtT(r.compile_s);},function(r){return r.compile_s==null?Infinity:r.compile_s;}],
-    ['rss','Peak RSS',function(r){return r.peak_rss_mb==null?'–':Math.round(r.peak_rss_mb).toLocaleString()+' MB';},function(r){return r.peak_rss_mb==null?Infinity:r.peak_rss_mb;}],
-    ['ct','Ciphertext in+out',function(r){return fmtB(r.ciphertext_total_bytes);},function(r){return r.ciphertext_total_bytes==null?Infinity:r.ciphertext_total_bytes;}]
+  var lr = by('lr_top20_bits16');
+  var xg = rows.filter(function(r){ return r.model === 'xgboost' && r.latency_mean_s != null; });
+  var xmin = Math.min.apply(null, xg.map(function(r){ return r.latency_mean_s; })), xmax = Math.max.apply(null, xg.map(function(r){ return r.latency_mean_s; }));
+  $('f-speed').innerHTML = esc(fT(lr.latency_mean_s)) + '<br><em>vs</em> ' + Math.round(xmin).toLocaleString('en-US') + '–' + Math.round(xmax).toLocaleString('en-US') + ' s';
+  $('f-speed-p').textContent = 'LR top-20 16-bit vs the six XGBoost configs (mean of 5 runs of one input). Higher accuracy costs about 10⁵× latency.';
+  var eight = rows.filter(function(r){ return r.n_bits === 8; });
+  var eightFail = eight.filter(function(r){ return st(r) === 'fail'; }).length;
+  $('f-bits-p').textContent = eightFail + ' of ' + eight.length + ' LR and XGBoost 8-bit configs failed the accuracy gate. Bit-width mattered more than feature count.';
+  var x100 = by('xgboost_top100_bits14');
+  $('f-test').innerHTML = f3(x100.val_pr_auc) + ' → ' + f3(x100.test_pr_auc);
+  var lower = rows.filter(function(r){ return r.test_pr_auc < r.val_pr_auc; }).length;
+  $('f-test-p').textContent = 'XGBoost top-100 14-bit, validation → test PR-AUC. ' + lower + ' of ' + rows.length + ' configs scored lower on test.';
+  var inf = rows.filter(function(r){ return st(r) === 'infeasible'; });
+  var kg = inf.map(function(r){ return r.key_total_bytes / 1e9; });
+  $('f-lim').textContent = inf.length + ' MLP infeasible';
+  $('f-lim-p').textContent = 'Key material ' + Math.min.apply(null,kg).toFixed(1) + '–' + Math.max.apply(null,kg).toFixed(1) + ' GB exceeded the 2.4 GB limit. XGBoost at 15 and 16 bits did not compile. Failures are results too.';
+
+  /* ---------- recording player + step tracking ---------- */
+  var steps = Array.prototype.slice.call($('steps').children);
+  function setStep(k){ steps.forEach(function(li,i){ li.classList.toggle('done', k >= 0 && i < k); li.classList.toggle('cur', i === k); }); }
+  var marks = null;
+  function loadMarks(){
+    // Times at which each step's output first appears in the recorded cast (read from the cast itself).
+    var keys = ['== 2.', '== 3.', 'request body', 'server FHE evaluation', '== 5.', '== 6.'];
+    return fetch('assets/lr_roundtrip.cast').then(function(r){ return r.text(); }).then(function(t){
+      var acc = '', out = keys.map(function(){ return null; });
+      t.split('\n').slice(1).forEach(function(line){
+        if(!line.trim()) return; var e = JSON.parse(line); acc += e[2];
+        keys.forEach(function(k,i){ if(out[i] === null && acc.indexOf(k) !== -1) out[i] = e[0]; });
+      });
+      marks = out;
+    }).catch(function(){ marks = null; });
+  }
+  function startPlayer(){
+    var host = $('player');
+    if(!window.AsciinemaPlayer){
+      fetch('assets/lr_roundtrip.log').then(function(r){ return r.text(); }).then(function(t){
+        host.innerHTML = '<pre class="fallback-log">' + esc(t) + '</pre>';
+      }).catch(function(){ host.innerHTML = '<p class="fallback-log">Player unavailable. <a href="assets/lr_roundtrip.log">Open the log</a>.</p>'; });
+      return;
+    }
+    var player = AsciinemaPlayer.create('assets/lr_roundtrip.cast', host, {
+      cols: window.innerWidth < 600 ? 52 : 74, rows: window.innerWidth < 600 ? 34 : 30, fit: 'width', theme: 'ciphraud', poster: 'npt:0:14', controls: true,
+      terminalFontFamily: "'JetBrains Mono', ui-monospace, monospace", terminalLineHeight: 1.3
+    });
+    var timer = null;
+    function tick(){
+      if(!marks) return;
+      Promise.resolve(player.getCurrentTime()).then(function(t){
+        var k = -1; marks.forEach(function(m,i){ if(m !== null && t >= m) k = i; }); setStep(k);
+      });
+    }
+    player.addEventListener('play', function(){ setStep(-1); if(!timer) timer = setInterval(tick, 200); });
+    player.addEventListener('pause', function(){ clearInterval(timer); timer = null; tick(); });
+    player.addEventListener('ended', function(){ clearInterval(timer); timer = null; setStep(5); });
+  }
+  loadMarks();
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(startPlayer);
+
+  /* ---------- results table ---------- */
+  var filt = {model:'all', tier:'all', status:'all'}, sortK = null, sortD = 1, open = {};
+  var COLS = [
+    {k:'label', h:'Configuration', v:function(r){ return r.label; }},
+    {k:'model', h:'Model', v:function(r){ return MODEL[r.model]; }},
+    {k:'tier', h:'Features', v:function(r){ return r.tier; }},
+    {k:'n_bits', h:'Bits', v:function(r){ return r.n_bits; }},
+    {k:'status', h:'Status', v:function(r){ return ({pass:0, fail:1, infeasible:2})[st(r)]; }},
+    {k:'val', h:'Val PR-AUC', v:function(r){ return r.val_pr_auc; }},
+    {k:'test', h:'Test PR-AUC [95% CI]', v:function(r){ return r.test_pr_auc; }},
+    {k:'lat', h:'FHE latency', v:function(r){ return r.latency_mean_s == null ? Infinity : r.latency_mean_s; }},
+    {k:'x', h:'<span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Details</span>', v:null}
   ];
-  var sortKey=null, asc=true, table=document.getElementById('results');
+  function bar(v, cls){ return '<div class="barcell ' + cls + '"><span class="t">' + f3(v) + '</span><span class="tr"><i style="width:' + Math.min(100, v/0.6*100).toFixed(1) + '%"></i></span></div>'; }
+  function head(){
+    $('thead').innerHTML = COLS.map(function(c){
+      if(!c.v) return '<th style="width:44px">' + c.h + '</th>';
+      var dir = sortK === c.k ? (sortD > 0 ? 'ascending' : 'descending') : 'none';
+      return '<th aria-sort="' + dir + '"><button type="button" data-k="' + c.k + '"' + (sortK === c.k ? ' data-dir' : '') + '>' + c.h + '<span class="ar">' + (sortK === c.k ? (sortD > 0 ? '▲' : '▼') : '') + '</span></button></th>';
+    }).join('');
+  }
+  function detail(r){
+    var items = [
+      ['Test ROC-AUC [95% CI]', f3(r.test_roc_auc) + ' [' + f3(r.test_roc_auc_ci[0]) + ', ' + f3(r.test_roc_auc_ci[1]) + ']'],
+      ['Float val PR-AUC', f3(r.float_pr_auc_val)],
+      ['Plaintext agreement (val)', r.t3_agreement_val == null ? '–' : (r.t3_agreement_val*100).toFixed(2) + '%'],
+      ['Compile time', fT(r.compile_s)],
+      ['Peak RSS', r.peak_rss_mb == null ? '–' : Math.round(r.peak_rss_mb).toLocaleString('en-US') + ' MB'],
+      ['Ciphertext in + out', fB(r.ciphertext_total_bytes)],
+      ['Key material', fB(r.key_total_bytes)],
+      ['Programmable bootstraps', r.bootstraps == null ? '–' : r.bootstraps.toLocaleString('en-US')],
+      ['Latency trials', r.latency_mean_s == null ? 'not run (keys did not fit)' : String(r.n_latency_trials) + ' executions of one input']
+    ];
+    return '<div class="kv">' + items.map(function(i){ return '<div><span>' + i[0] + '</span><b>' + esc(i[1]) + '</b></div>'; }).join('') + '</div>';
+  }
   function render(){
-    var data=rows.slice();
-    if(sortKey){ var c=cols.filter(function(c){return c[0]===sortKey;})[0]; data.sort(function(a,b){var x=c[3](a),y=c[3](b); return (x<y?-1:x>y?1:0)*(asc?1:-1);}); }
-    var h='<thead><tr>'+cols.map(function(c){return '<th data-k="'+c[0]+'">'+c[1]+(sortKey===c[0]?(asc?' ▲':' ▼'):'')+'</th>';}).join('')+'</tr></thead><tbody>';
-    data.forEach(function(r){ h+='<tr>'+cols.map(function(c){return '<td>'+c[2](r)+'</td>';}).join('')+'</tr>'; });
-    table.innerHTML=h+'</tbody>';
-    Array.prototype.forEach.call(table.querySelectorAll('th'),function(th){th.onclick=function(){var k=th.getAttribute('data-k'); if(sortKey===k) asc=!asc; else {sortKey=k;asc=true;} render();};});
+    head();
+    var list = rows.filter(function(r){
+      return (filt.model === 'all' || r.model === filt.model) && (filt.tier === 'all' || String(r.tier) === filt.tier) && (filt.status === 'all' || st(r) === filt.status);
+    });
+    if(sortK){ var c = COLS.filter(function(c){ return c.k === sortK; })[0]; list.sort(function(a,b){ var x=c.v(a), y=c.v(b); return (x < y ? -1 : x > y ? 1 : 0) * sortD; }); }
+    var h = '';
+    list.forEach(function(r){
+      var s = st(r), o = !!open[r.label];
+      h += '<tr class="row' + (o ? ' open' : '') + '" data-l="' + r.label + '" tabindex="0" aria-expanded="' + o + '">' +
+        '<td class="cfg">' + r.label + '</td><td>' + MODEL[r.model] + '</td><td>' + r.tier + '</td><td>' + r.n_bits + '</td>' +
+        '<td><span class="badge b-' + s + '">' + s + '</span></td>' +
+        '<td>' + bar(r.val_pr_auc, 'val') + '</td>' +
+        '<td>' + bar(r.test_pr_auc, 'test') + '<div class="ci">[' + f3(r.test_pr_auc_ci[0]) + ', ' + f3(r.test_pr_auc_ci[1]) + ']</div></td>' +
+        '<td class="lat">' + (r.latency_mean_s == null ? '<span class="muted">not run</span>' : fT(r.latency_mean_s) + ' <span class="muted">± ' + fT(r.latency_std_s) + '</span>') + '</td>' +
+        '<td><svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></td></tr>';
+      if(o) h += '<tr class="detail"><td colspan="9">' + detail(r) + '</td></tr>';
+    });
+    if(!list.length) h = '<tr><td colspan="9" class="muted">No configuration matches these filters.</td></tr>';
+    $('tbody').innerHTML = h;
+    $('count').textContent = 'Showing ' + list.length + ' of ' + rows.length;
   }
-  render();
-  document.getElementById('tablenote').textContent =
-    'Validation and latency figures are from the committed Phase 8 and Phase 9 results; test figures are from the single frozen Phase 12 run ('+D.test_set.rows.toLocaleString()+' rows, '+D.test_set.positives.toLocaleString()+' fraud, '+(D.test_set.positive_rate*100).toFixed(2)+'%). Infeasible rows have no latency because the encrypted key material did not fit.';
-
-  // dumbbell chart: validation vs test PR-AUC
-  var W=1000, rowH=24, padL=190, padR=20, top=28, H=top+rows.length*rowH+30, max=0.6;
-  function x(v){ return padL+(W-padL-padR)*v/max; }
-  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Validation versus test PR-AUC for each configuration">';
-  [0,0.1,0.2,0.3,0.4,0.5,0.6].forEach(function(t){ s+='<line x1="'+x(t)+'" x2="'+x(t)+'" y1="'+(top-6)+'" y2="'+(H-24)+'" stroke="var(--line)"/><text x="'+x(t)+'" y="'+(H-8)+'" text-anchor="middle">'+t.toFixed(1)+'</text>'; });
-  rows.forEach(function(r,i){
-    var y=top+i*rowH+rowH/2;
-    s+='<text x="'+(padL-10)+'" y="'+(y+4)+'" text-anchor="end">'+r.label+'</text>';
-    s+='<line x1="'+x(r.test_pr_auc)+'" x2="'+x(r.val_pr_auc)+'" y1="'+y+'" y2="'+y+'" stroke="var(--mut)" stroke-width="2"/>';
-    s+='<line x1="'+x(r.test_pr_auc_ci[0])+'" x2="'+x(r.test_pr_auc_ci[1])+'" y1="'+y+'" y2="'+y+'" stroke="var(--acc)" stroke-width="5" stroke-opacity=".28" stroke-linecap="round"/>';
-    s+='<circle cx="'+x(r.val_pr_auc)+'" cy="'+y+'" r="5" fill="var(--mut)"><title>'+r.label+' validation '+r.val_pr_auc.toFixed(3)+'</title></circle>';
-    s+='<circle cx="'+x(r.test_pr_auc)+'" cy="'+y+'" r="5" fill="var(--acc)"><title>'+r.label+' test '+r.test_pr_auc.toFixed(3)+'</title></circle>';
+  $('thead').addEventListener('click', function(e){ var b = e.target.closest('button'); if(!b) return; var k = b.getAttribute('data-k'); if(sortK === k) sortD = -sortD; else { sortK = k; sortD = 1; } render(); });
+  function toggle(tr){ var l = tr.getAttribute('data-l'); open[l] = !open[l]; render(); var n = document.querySelector('tr.row[data-l="' + l + '"]'); if(n) n.focus(); }
+  $('tbody').addEventListener('click', function(e){ var tr = e.target.closest('tr.row'); if(tr) toggle(tr); });
+  $('tbody').addEventListener('keydown', function(e){ if((e.key === 'Enter' || e.key === ' ') && e.target.matches('tr.row')){ e.preventDefault(); toggle(e.target); } });
+  Array.prototype.forEach.call(document.querySelectorAll('.chips'), function(g){
+    g.addEventListener('click', function(e){ var b = e.target.closest('button'); if(!b) return;
+      Array.prototype.forEach.call(g.children, function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      filt[g.getAttribute('data-f')] = b.getAttribute('data-v'); render(); });
   });
-  s+='<text x="'+padL+'" y="12">PR-AUC</text><circle cx="'+(W-250)+'" cy="9" r="5" fill="var(--mut)"/><text x="'+(W-240)+'" y="13">validation</text><circle cx="'+(W-160)+'" cy="9" r="5" fill="var(--acc)"/><text x="'+(W-150)+'" y="13">test (95% CI band)</text></svg>';
-  document.getElementById('dumbbell').innerHTML=s;
+  render();
+  $('tnote').textContent = 'Validation and latency: committed Phase 8/9 results (latency = mean ± std of 5 executions of one input, single machine). Test: the single frozen Phase 12 run (' +
+    D.test_set.rows.toLocaleString('en-US') + ' rows, ' + D.test_set.positives.toLocaleString('en-US') + ' fraud, ' + (D.test_set.positive_rate*100).toFixed(2) + '%). Click a row for details. Nothing is hidden: failed and infeasible configurations are listed.';
 
-  // hashes
-  var ht='<thead><tr><th>File (results/phase12_test_eval/)</th><th>sha256</th></tr></thead><tbody>';
-  Object.keys(D.hashes).forEach(function(k){ ht+='<tr><td>'+k+'</td><td style="text-align:left"><code>'+D.hashes[k]+'</code></td></tr>'; });
-  document.getElementById('hashes').innerHTML=ht+'</tbody>';
-
-  // player (falls back to a link if the CDN script is unavailable)
-  if(window.AsciinemaPlayer){
-    AsciinemaPlayer.create('assets/lr_roundtrip.cast', document.getElementById('player'), {cols:110, rows:36, idleTimeLimit:2, fit:'width', theme:'asciinema', poster:'npt:0:14'});
-  } else {
-    document.getElementById('player').innerHTML='<p class="callout">The recording player could not be loaded. Read the same output in <a href="assets/lr_roundtrip.log">lr_roundtrip.log</a>.</p>';
+  /* ---------- tooltip ---------- */
+  var tip = $('tip');
+  function showTip(html, x, y){ tip.innerHTML = html; tip.style.opacity = 1; var w = tip.offsetWidth, hh = tip.offsetHeight;
+    var left = Math.min(window.innerWidth - w - 8, Math.max(8, x + 14)), top = y - hh - 12 < 8 ? y + 16 : y - hh - 12; tip.style.left = left + 'px'; tip.style.top = top + 'px'; }
+  function hideTip(){ tip.style.opacity = 0; }
+  function bindTips(svg, fn){
+    svg.addEventListener('pointermove', function(e){ var p = e.target.closest('.pt'); if(p) showTip(fn(p.getAttribute('data-l')), e.clientX, e.clientY); else hideTip(); });
+    svg.addEventListener('pointerleave', hideTip);
+    svg.addEventListener('focusin', function(e){ var p = e.target.closest('.pt'); if(!p) return; var b = p.getBoundingClientRect(); showTip(fn(p.getAttribute('data-l')), b.right, b.top); });
+    svg.addEventListener('focusout', hideTip);
   }
+  function tipHtml(l){ var r = by(l); return '<b>' + l + '</b><br>Status: ' + st(r) + '<br>Val PR-AUC ' + f3(r.val_pr_auc) + ' · Test ' + f3(r.test_pr_auc) +
+    '<br>Test 95% CI [' + f3(r.test_pr_auc_ci[0]) + ', ' + f3(r.test_pr_auc_ci[1]) + ']' + (r.latency_mean_s == null ? '<br>Latency: not run (key material did not fit)' : '<br>FHE latency ' + fT(r.latency_mean_s) + ' ± ' + fT(r.latency_std_s)); }
+  window.addEventListener('scroll', hideTip, {passive:true});
+
+  /* ---------- scatter: accuracy vs latency (log x), committed frontier ---------- */
+  function drawScatter(){
+    var cw = $('scatter').clientWidth || 720, W = Math.max(300, Math.round(cw)), H = W < 520 ? Math.round(W * 0.82) : 430, L = 52, R = 34, T = 16, B = 46, x0 = -3, x1 = 4, y0 = 0.2, y1 = 0.6, k = W < 520 ? 0.7 : 1;
+    function X(s){ return L + (W-L-R) * (Math.log10(s) - x0) / (x1 - x0); }
+    function Y(v){ return T + (H-T-B) * (1 - (v - y0) / (y1 - y0)); }
+    var light = document.documentElement.getAttribute('data-theme') === 'light';
+    var COL = light ? {lr:'#0B0B0B', xgboost:'#55554F', mlp:'#9A9A93'} : {lr:'#F5F5F0', xgboost:'#BDBDB6', mlp:'#858585'}, YEL = light ? '#A8A500' : '#F3F000';
+    var allF = D.frontier_latency.all, passF = D.frontier_latency.t3_passing;
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Scatter of validation PR-AUC against FHE latency on a log scale with the committed Pareto frontier">';
+    for(var e = x0; e <= x1; e++){ var xx = X(Math.pow(10,e)); s += '<line x1="'+xx+'" x2="'+xx+'" y1="'+T+'" y2="'+(H-B)+'" stroke="var(--line)" stroke-width="1"/>'; if(W < 520 && (e - x0) % 2) continue; s += '<text x="'+xx+'" y="'+(H-B+18)+'" text-anchor="middle">'+(e < 0 ? (Math.pow(10,e+3)) + ' ms' : (e === 0 ? '1 s' : Math.pow(10,e).toLocaleString('en-US') + ' s'))+'</text>'; }
+    for(var v = 0.2; v <= 0.601; v += 0.1){ var yy = Y(v); s += '<line x1="'+L+'" x2="'+(W-R)+'" y1="'+yy+'" y2="'+yy+'" stroke="var(--line)" stroke-width="1" stroke-dasharray="'+(v < 0.21 ? '0' : '3 4')+'"/><text x="'+(L-10)+'" y="'+(yy+4)+'" text-anchor="end">'+v.toFixed(1)+'</text>'; }
+    s += '<text x="'+((L+W-R)/2)+'" y="'+(H-6)+'" text-anchor="middle">FHE latency per request (log scale)</text>';
+    s += '<text transform="translate(14 '+((T+H-B)/2)+') rotate(-90)" text-anchor="middle">Validation PR-AUC</text>';
+    // frontier staircase over T3-passing configs, in the committed order
+    var fp = passF.map(by).filter(function(r){ return r && r.latency_mean_s != null; }).sort(function(a,b){ return a.latency_mean_s - b.latency_mean_s; });
+    var d = '';
+    fp.forEach(function(r,i){ var px = X(r.latency_mean_s), py = Y(r.val_pr_auc); if(i === 0) d += 'M'+px+' '+py; else { d += ' H'+px+' V'+py; } });
+    s += '<path d="'+d+'" fill="none" stroke="'+YEL+'" stroke-width="2.5" stroke-dasharray="7 5"/>';
+    var pts = rows.filter(function(r){ return r.latency_mean_s != null; });
+    pts.forEach(function(r){
+      var px = X(r.latency_mean_s), py = Y(r.val_pr_auc), c = COL[r.model], pass = st(r) === 'pass', fill = pass ? c : 'var(--card-2)', sw = 2.4;
+      var g = '<g class="pt" tabindex="0" data-l="'+r.label+'" aria-label="'+r.label+'">';
+      if(r.latency_std_s){ var a = X(Math.max(1e-3, r.latency_mean_s - r.latency_std_s)), b = X(r.latency_mean_s + r.latency_std_s); g += '<line x1="'+a+'" x2="'+b+'" y1="'+py+'" y2="'+py+'" stroke="'+c+'" stroke-opacity=".55" stroke-width="1.5"/>'; }
+      g += '<g transform="translate('+px+' '+py+') scale('+k+') translate('+(-px)+' '+(-py)+')">';
+      if(allF.indexOf(r.label) !== -1) g += '<circle cx="'+px+'" cy="'+py+'" r="13" fill="none" stroke="'+YEL+'" stroke-width="1.6"/>';
+      if(r.model === 'lr') g += '<circle cx="'+px+'" cy="'+py+'" r="7" fill="'+fill+'" stroke="'+c+'" stroke-width="'+sw+'"/>';
+      else if(r.model === 'xgboost') g += '<rect x="'+(px-7)+'" y="'+(py-7)+'" width="14" height="14" rx="2" fill="'+fill+'" stroke="'+c+'" stroke-width="'+sw+'"/>';
+      else g += '<path d="M'+px+' '+(py-8.5)+' L'+(px+8)+' '+(py+6)+' L'+(px-8)+' '+(py+6)+'Z" fill="'+fill+'" stroke="'+c+'" stroke-width="'+sw+'" stroke-linejoin="round"/>';
+      g += '<circle cx="'+px+'" cy="'+py+'" r="16" fill="transparent"/>';
+      g += '</g>';
+      var lx = px + 14*k, ly = py - 10*k, anc = 'start';
+      if(r.model === 'xgboost' && r.n_bits === 14 && r.tier === 50){ lx = px - 16; ly = py + 4; anc = 'end'; }
+      if(r.model === 'xgboost' && r.n_bits === 14 && r.tier === 20){ ly = py + 18; }
+      g += '<text class="lbl" x="'+lx+'" y="'+ly+'" text-anchor="'+anc+'">'+r.tier+'</text></g>';
+      s += g;
+    });
+    s += '</svg>';
+    $('scatter').innerHTML = s;
+    bindTips($('scatter').firstChild, tipHtml);
+    var miss = rows.filter(function(r){ return r.latency_mean_s == null; }).map(function(r){ return r.label; });
+    $('sc-legend').innerHTML =
+      '<span><svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" fill="'+COL.lr+'"/></svg>LR</span>' +
+      '<span><svg viewBox="0 0 14 14"><rect x="2" y="2" width="10" height="10" rx="1.5" fill="'+COL.xgboost+'"/></svg>XGBoost</span>' +
+      '<span><svg viewBox="0 0 14 14"><path d="M7 1.5 13 12H1Z" fill="'+COL.mlp+'"/></svg>MLP</span>' +
+      '<span><svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" fill="none" stroke="#A3A3A3" stroke-width="2"/></svg>Hollow = fails gate</span>' +
+      '<span><svg viewBox="0 0 14 14"><path d="M0 7h14" stroke="'+YEL+'" stroke-width="2.5" stroke-dasharray="4 3"/></svg>Frontier (gate-passing)</span>' +
+      '<span><svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="'+YEL+'" stroke-width="1.6"/></svg>On frontier (all)</span>' +
+      '<span>Labels = feature count. Not plotted (no latency): ' + miss.join(', ') + '</span>';
+  }
+
+  /* ---------- dumbbell: validation vs test ---------- */
+  function drawDumbbell(){
+    var cw = $('dumbbell').clientWidth || 560, rh = 25, T = 22, L = 120, R = 16, W = Math.max(300, Math.round(cw)), H = T + rows.length * rh + 34, max = 0.6;
+    function X(v){ return L + (W-L-R) * v / max; }
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Validation versus test PR-AUC for all 18 configurations">';
+    [0,0.1,0.2,0.3,0.4,0.5,0.6].forEach(function(t){ s += '<line x1="'+X(t)+'" x2="'+X(t)+'" y1="'+(T-8)+'" y2="'+(H-28)+'" stroke="var(--line)"/><text x="'+X(t)+'" y="'+(H-10)+'" text-anchor="middle">'+t.toFixed(1)+'</text>'; });
+    var prev = null;
+    rows.forEach(function(r,i){
+      var y = T + i * rh + rh/2;
+      if(prev && prev !== r.model) s += '<line x1="8" x2="'+(W-R)+'" y1="'+(y - rh/2)+'" y2="'+(y - rh/2)+'" stroke="var(--line)" stroke-dasharray="2 4"/>';
+      prev = r.model;
+      s += '<g class="pt" tabindex="0" data-l="'+r.label+'" aria-label="'+r.label+'">';
+      s += '<rect x="0" y="'+(y - rh/2)+'" width="'+W+'" height="'+rh+'" fill="transparent"/>';
+      s += '<text class="lbl" x="'+(L-12)+'" y="'+(y+4)+'" text-anchor="end">'+MODEL[r.model]+' '+r.tier+' · '+r.n_bits+'b</text>';
+      s += '<line x1="'+X(r.test_pr_auc_ci[0])+'" x2="'+X(r.test_pr_auc_ci[1])+'" y1="'+y+'" y2="'+y+'" stroke="#F3F000" stroke-opacity=".3" stroke-width="8" stroke-linecap="round"/>';
+      s += '<line x1="'+X(r.test_pr_auc)+'" x2="'+X(r.val_pr_auc)+'" y1="'+y+'" y2="'+y+'" stroke="#A3A3A3" stroke-width="1.5"/>';
+      s += '<circle cx="'+X(r.val_pr_auc)+'" cy="'+y+'" r="5.5" fill="#858585"/>';
+      s += '<circle cx="'+X(r.test_pr_auc)+'" cy="'+y+'" r="5.5" fill="#F3F000" stroke="#0B0B0B" stroke-width="1"/></g>';
+    });
+    s += '<text x="'+L+'" y="11">PR-AUC</text></svg>';
+    $('dumbbell').innerHTML = s;
+    bindTips($('dumbbell').firstChild, tipHtml);
+  }
+  drawScatter(); drawDumbbell();
+  var lastW = window.innerWidth, rt = null;
+  window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ if(window.innerWidth !== lastW){ lastW = window.innerWidth; drawScatter(); drawDumbbell(); } }, 150); });
+
+  /* ---------- hashes + copy ---------- */
+  $('hashes').innerHTML = Object.keys(D.hashes).map(function(k){
+    return '<div class="hash"><span>' + k + '</span><code title="' + D.hashes[k] + '">' + D.hashes[k] + '</code><button class="copy" type="button" data-text="' + D.hashes[k] + '">Copy</button></div>';
+  }).join('');
+  document.addEventListener('click', function(e){
+    var b = e.target.closest('.copy'); if(!b) return;
+    var text = b.hasAttribute('data-text') ? b.getAttribute('data-text') : $(b.getAttribute('data-copy')).innerText;
+    var done = function(){ var o = b.textContent; b.textContent = 'Copied'; setTimeout(function(){ b.textContent = o; }, 1200); };
+    try { navigator.clipboard.writeText(text).then(done, function(){}); } catch(err) {}
+  });
+
+  /* ---------- nav: active section ---------- */
+  var links = document.querySelectorAll('.pills a[data-s]');
+  var activeId = null, sub = document.querySelector('.subnav');
+  function activate(id){
+    if(id === activeId) return; activeId = id;
+    Array.prototype.forEach.call(links, function(a){ a.classList.toggle('on', a.getAttribute('data-s') === id); });
+    var a = sub.querySelector('a[data-s="' + id + '"]');
+    if(a && sub.scrollWidth > sub.clientWidth) sub.scrollTo({left: Math.max(0, a.offsetLeft - 16), behavior: 'auto'});
+  }
+  var ids = ['demo','how','results','security','verify'];
+  function onScroll(){
+    var y = window.scrollY + window.innerHeight * 0.3, cur = 'demo';
+    ids.forEach(function(id){ var el = $(id); if(el && el.getBoundingClientRect().top + window.scrollY <= y) cur = id; });
+    if(window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = 'verify';
+    activate(cur);
+  }
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+  /* ---------- theme ---------- */
+  var root = document.documentElement, tb = $('theme');
+  function applyTheme(t){ if(t === 'light') root.setAttribute('data-theme','light'); else root.removeAttribute('data-theme');
+    tb.innerHTML = '<svg aria-hidden="true"><use href="#' + (t === 'light' ? 'i-moon' : 'i-sun') + '"/></svg>';
+    tb.setAttribute('aria-label', t === 'light' ? 'Switch to dark theme' : 'Switch to light theme'); drawScatter(); }
+  var saved = null; try { saved = localStorage.getItem('ciphraud-theme'); } catch(e) {}
+  applyTheme(saved === 'light' ? 'light' : 'dark');
+  tb.addEventListener('click', function(){ var t = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(t); try { localStorage.setItem('ciphraud-theme', t); } catch(e) {} });
 })();
 </script>
 </body>
