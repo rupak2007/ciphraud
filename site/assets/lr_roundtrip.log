@@ -1,0 +1,42 @@
+Ciphraud - encrypted fraud scoring, logistic regression (20 features, 16-bit), one transaction
+Client and server are two separate processes talking over loopback HTTP.
+
+== 1. Start the inference server (holds the compiled model, never a secret key)
+server pid 460 listening on http://127.0.0.1:58429; model lr_top20_bits16 loaded
+
+== 2. Client side: load client artifact, generate keys
+client artifact sha256 matches the served circuit: True
+secret + evaluation keys generated on the CLIENT in 0.00 s (secret key stays in client memory)
+evaluation (public) keys: 64 bytes, sha256 c69012816d87dcda...
+uploaded evaluation keys only; server key_id c69012816d87dcda... (server never receives the secret key)
+
+== 3. Client side: preprocess, quantize, encrypt one transaction
+plaintext transaction: validation row 32148, 20 raw features (stays on the client)
+quantized input integers (client-only): [-31641, -31668, -31632, -31702, -31650, -31654, -31119, -32175, -31636, -31720, -31294, -31372, -31536, -31677, -31650, -31908, -31680, -31630, -31139, -31948]
+encrypted in 5.1 ms -> ciphertext 744 bytes, sha256 b2aa02d908b612f7...
+
+== 4. Send ciphertext; the server computes on it without decrypting
+request body 744 bytes (ciphertext only), response 17,920 bytes (still encrypted)
+server FHE evaluation: 79.5 ms (this is the first, cold request on this server)
+
+== 5. Client side: decrypt and decide
+decrypted integer(s): [-214667949]
+fraud probability 0.206024, threshold 0.708641 -> decision: not fraud
+
+== 6. Check against the plaintext-quantized model and the recorded Phase 10 reference
+reference integers (clear quantized model): [-214667949]
+equals clear-quantized model:      True
+equals Concrete simulation:        True
+equals recorded source-phase value: True
+EXACT INTEGER AGREEMENT: True
+
+== 7. What crossed the wire (client-side audit of every request body)
+POST   /v1/keys                               64 bytes  evaluation_keys
+POST   /v1/infer                             744 bytes  input_ciphertext
+every body is evaluation keys or an input ciphertext: True
+
+== 8. Cleanup
+server keys deleted; key still resident on server: False
+
+One request, one fixed validation row, loopback. A functional demonstration, not a benchmark.
+server stopped (exit code -15)

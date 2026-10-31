@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ciphraud Results</title>
+<meta name="description" content="Latency-bounded privacy-preserving fraud detection under FHE: a recorded encrypted round trip and the full measured results.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.css">
+<style>
+:root{--bg:#fafaf9;--fg:#1c1c1a;--mut:#5e5e58;--line:#dcdcd6;--card:#fff;--acc:#1f5fbf;--ok:#1b7a43;--bad:#b3261e;--warn:#8a5a00;--code:#f1f1ee}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#141413;--fg:#ecece8;--mut:#a3a39b;--line:#34342f;--card:#1c1c1a;--acc:#7aa7f0;--ok:#5cc88a;--bad:#f08a82;--warn:#e0b050;--code:#242422}}
+:root[data-theme=dark]{--bg:#141413;--fg:#ecece8;--mut:#a3a39b;--line:#34342f;--card:#1c1c1a;--acc:#7aa7f0;--ok:#5cc88a;--bad:#f08a82;--warn:#e0b050;--code:#242422}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1040px;margin:0 auto;padding:0 16px 64px}
+header{padding:40px 0 8px}
+h1{font-size:2rem;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:1.35rem;margin:48px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+h3{font-size:1.05rem;margin:24px 0 6px}
+p{margin:8px 0}
+.lede{color:var(--mut);max-width:70ch}
+.mut{color:var(--mut)}
+a{color:var(--acc)}
+code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em}
+code{background:var(--code);padding:1px 5px;border-radius:4px}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow-x:auto;border:1px solid var(--line)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:20px 0}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.tile b{display:block;font-size:1.5rem;line-height:1.2}
+.tile span{color:var(--mut);font-size:.88rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0}
+.callout{border-left:4px solid var(--warn);background:var(--card);padding:10px 14px;border-radius:0 8px 8px 0;margin:14px 0}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card)}
+th{font-weight:600;cursor:pointer;user-select:none;background:var(--card)}
+tr:last-child td{border-bottom:0}
+.pass{color:var(--ok);font-weight:600}.fail{color:var(--bad);font-weight:600}.infeasible{color:var(--warn);font-weight:600}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;color:var(--mut);margin:8px 0}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:baseline}
+#player{margin:12px 0;border-radius:8px;overflow:hidden}
+figure{margin:16px 0}figcaption{color:var(--mut);font-size:.88rem}
+img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--line);background:#fcfbf8}
+svg text{fill:var(--fg);font-size:11px}
+ul{padding-left:20px}li{margin:4px 0}
+footer{margin-top:56px;padding-top:12px;border-top:1px solid var(--line);color:var(--mut);font-size:.85rem}
+@media (max-width:600px){h1{font-size:1.6rem}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Ciphraud</h1>
+  <p class="lede">Fraud scoring on encrypted transactions. A client encrypts the features, a server evaluates the model on the ciphertext without the secret key, and the client decrypts the result. This page shows a recording of the real system running, then every measured result, including the ones that failed.</p>
+  <p class="mut">Research project on the IEEE-CIS fraud dataset using Concrete-ML. Not a product and not production-ready.</p>
+</header>
+
+<h2 id="demo">1. It runs: a recorded encrypted round trip</h2>
+<p>This is one real run of the existing logistic-regression client and server (20 features, 16-bit quantization), captured with its real timing. The client and the server are separate processes talking over loopback HTTP. Nothing in the recording was edited, generated or re-timed.</p>
+<div id="player"></div>
+<noscript><p>The player needs JavaScript. The full output is in <a href="assets/lr_roundtrip.log">lr_roundtrip.log</a>.</p></noscript>
+<p class="mut">Plain-text output of the same run: <a href="assets/lr_roundtrip.log">lr_roundtrip.log</a> &middot; recording file: <a href="assets/lr_roundtrip.cast">lr_roundtrip.cast</a>.</p>
+<div class="card">
+  <h3 style="margin-top:0">What the recording shows</h3>
+  <ul>
+    <li>The client generates the keys. The secret key stays in client memory; only the evaluation (public) keys are uploaded.</li>
+    <li>One transaction is quantized and encrypted on the client. The server only ever receives the ciphertext.</li>
+    <li>The server evaluates the model on the ciphertext and returns an encrypted result.</li>
+    <li>The client decrypts and gets the integer <code>-214667949</code>, which equals the plaintext-quantized model, the Concrete simulation and the value recorded in the earlier validation phase.</li>
+    <li>A client-side audit of every request body confirms each one was evaluation keys or an input ciphertext.</li>
+  </ul>
+  <p class="mut">Scope of this evidence: one request on one fixed validation row, over loopback, run from the committed deployment artifacts. It is a functional demonstration, not a benchmark and not a statement about a network deployment. The committed Phase 10 record contains further round trips: LR 7 of 7 and MLP 7 of 7 exact, and XGBoost one request, exact.</p>
+</div>
+
+<h2 id="all-results">2. Results for all 18 configurations</h2>
+<div class="tiles" id="tiles"></div>
+<p>Three model families, three feature tiers (top 20, 50 and 100 features ranked by XGBoost total gain), two bit-widths each. PR-AUC is the headline metric because only 3.4% of transactions are fraud. Latency is the mean of 5 repeated executions of one input on a single machine; it is not a throughput figure. Click a column header to sort.</p>
+<div class="legend">
+  <span><b class="pass">pass</b> passes the plaintext-agreement gate (T3)</span>
+  <span><b class="fail">fail</b> fails the gate</span>
+  <span><b class="infeasible">infeasible</b> encrypted key material exceeded the memory limit; no latency was measured</span>
+</div>
+<div class="tablewrap"><table id="results"></table></div>
+<p class="mut" id="tablenote"></p>
+
+<h3>Validation versus held-out test</h3>
+<p>The models, tiers and thresholds were chosen on validation data. The test partition was then scored once, after everything was frozen. Every configuration scored lower on test. For XGBoost the three feature tiers are statistically indistinguishable on test, so the validation advantage of more features did not hold up.</p>
+<div id="dumbbell"></div>
+<div class="callout"><b>Reading these numbers.</b> Part of the validation-to-test drop is the expected cost of selecting on validation and part reflects drift in fraud patterns over time. The intervals are 95% time-block bootstrap intervals. The MLP configurations all failed the plaintext-agreement gate, so the MLP is shown as a pipeline demonstration and not as a validated fraud model.</div>
+
+<h3>Accuracy versus latency</h3>
+<figure>
+  <img src="assets/pareto_accuracy_vs_latency.png" alt="Scatter plot of validation PR-AUC against FHE latency on a log scale for LR, XGBoost and MLP configurations, with the Pareto frontier drawn as a staircase">
+  <figcaption>Committed figure from <code>results/phase9_mlp/pareto/</code> (validation PR-AUC, copied unchanged). Hollow markers fail the plaintext-agreement gate. LR costs milliseconds; XGBoost reaches higher PR-AUC for roughly 10<sup>5</sup> times the latency.</figcaption>
+</figure>
+
+<h2 id="threat">3. What is and is not claimed</h2>
+<div class="card">
+  <p><b>The one security claim.</b> An honest, hardware-untrusted inference server cannot recover the plaintext transaction features or the plaintext fraud decision from the protected inference data it receives.</p>
+  <p class="mut">Source: <code>docs/architecture.md</code>. Nothing on this page claims more than that.</p>
+</div>
+<h3>The server knows</h3>
+<ul><li>The ciphertexts, the plaintext model parameters, and request timing, size and frequency.</li></ul>
+<h3>Out of scope</h3>
+<ul>
+  <li>Model confidentiality, and timing, volume or ciphertext-size side channels.</li>
+  <li>A malicious server tampering with results (no verifiable computation).</li>
+  <li>Side channels on the client machine, poisoning of the training data, multi-party collaboration, and any regulatory compliance.</li>
+  <li>TLS and authentication: the demo server has neither and is meant for loopback only.</li>
+</ul>
+<h3>Alternatives</h3>
+<p>If the hardware can be trusted, a trusted execution environment is far faster than FHE. If several institutions must compute together, multi-party computation is the better fit. FHE is not automatically the right choice for every threat model.</p>
+
+<h2 id="limits">4. Limitations</h2>
+<ul>
+  <li><b>XGBoost is slow.</b> 931 to 4,099 s per encrypted request here, and the one client/server XGBoost run needed the WSL memory limit raised to 5 GB after two attempts stopped on the memory guard. A published figure of about 6 ms for encrypted XGBoost was not reproduced; the reason is unknown.</li>
+  <li><b>8-bit quantization failed</b> the accuracy gate for every LR and XGBoost configuration. XGBoost at 15 and 16 bits does not compile.</li>
+  <li><b>Three MLP configurations were infeasible</b> because their key material (3.2 to 4.8 GB) exceeded the memory limit.</li>
+  <li><b>Single machine, loopback only.</b> No WAN measurements, no concurrency, no TLS or authentication, and no production claim.</li>
+  <li><b>Label access.</b> An unexplained access-time change on the sealed test-label file was later explained as most plausibly my own metadata inspection. That explanation is strong but not certain, because no OS audit log exists to confirm it. See <code>docs/test_evaluation_protocol.md</code>, section 11.</li>
+  <li><b>Docker</b> was validated for LR and MLP only; XGBoost was not containerized.</li>
+</ul>
+
+<h2 id="verify">5. Verify it yourself</h2>
+<p>Every number above is read from a committed file; none is recomputed here. The frozen test evaluation was run once, and its outputs are hash-pinned:</p>
+<div class="tablewrap"><table id="hashes"></table></div>
+<p>The code, configs, per-configuration provenance and the full write-up are in the repository: <code>report.md</code>, <code>docs/research.md</code>, <code>docs/client_server.md</code>. The README has a short Docker reproduction path for the LR server.</p>
+
+<footer>Static page generated from committed results by <code>site/build_data.py</code>. It is separate from the research implementation and runs no model, holds no keys and serves no inference.</footer>
+</main>
+
+<script src="data/results.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.min.js"></script>
+<script>
+(function(){
+  var D = window.CIPHRAUD_DATA, rows = D.rows;
+  function el(t, a, h){ var e=document.createElement(t); if(a) for(var k in a) e.setAttribute(k,a[k]); if(h!=null) e.innerHTML=h; return e; }
+  function fmtT(s){ if(s==null) return '–'; if(s<1) return (s*1000).toFixed(s<0.01?2:1)+' ms'; if(s<100) return s.toFixed(1)+' s'; return Math.round(s).toLocaleString()+' s'; }
+  function fmtB(b){ if(b==null) return '–'; if(b>=1e9) return (b/1e9).toFixed(2)+' GB'; if(b>=1e6) return (b/1e6).toFixed(2)+' MB'; if(b>=1e3) return (b/1e3).toFixed(1)+' kB'; return b+' B'; }
+  function status(r){ return r.status==='passed' ? ['pass','pass'] : r.status==='infeasible_key_memory' ? ['infeasible','infeasible'] : ['fail','fail']; }
+
+  // tiles
+  var passed = rows.filter(function(r){return r.status==='passed';}).length;
+  var infeas = rows.filter(function(r){return r.status==='infeasible_key_memory';}).length;
+  var best = rows.reduce(function(a,b){return b.test_pr_auc>a.test_pr_auc?b:a;});
+  var fastest = rows.filter(function(r){return r.status==='passed' && r.latency_mean_s!=null;}).reduce(function(a,b){return b.latency_mean_s<a.latency_mean_s?b:a;});
+  document.getElementById('tiles').innerHTML =
+    '<div class="tile"><b>'+rows.length+'</b><span>configurations, none dropped</span></div>'+
+    '<div class="tile"><b>'+passed+' / '+rows.length+'</b><span>pass the plaintext-agreement gate; '+infeas+' infeasible</span></div>'+
+    '<div class="tile"><b>'+best.test_pr_auc.toFixed(3)+'</b><span>best test PR-AUC ('+best.label.replace(/_/g,' ')+')</span></div>'+
+    '<div class="tile"><b>'+fmtT(fastest.latency_mean_s)+'</b><span>fastest passing encrypted evaluation ('+fastest.label.replace(/_/g,' ')+')</span></div>';
+
+  // results table
+  var cols = [
+    ['label','Config',function(r){return r.label;},function(r){return r.label;}],
+    ['status','Gate',function(r){var s=status(r);return '<span class="'+s[1]+'">'+s[0]+'</span>';},function(r){return status(r)[0];}],
+    ['val','Val PR-AUC',function(r){return r.val_pr_auc.toFixed(3);},function(r){return r.val_pr_auc;}],
+    ['test','Test PR-AUC [95% CI]',function(r){return r.test_pr_auc.toFixed(3)+' ['+r.test_pr_auc_ci[0].toFixed(3)+', '+r.test_pr_auc_ci[1].toFixed(3)+']';},function(r){return r.test_pr_auc;}],
+    ['roc','Test ROC-AUC',function(r){return r.test_roc_auc.toFixed(3);},function(r){return r.test_roc_auc;}],
+    ['lat','FHE latency',function(r){return r.latency_mean_s==null?'not run':fmtT(r.latency_mean_s)+' ± '+fmtT(r.latency_std_s);},function(r){return r.latency_mean_s==null?Infinity:r.latency_mean_s;}],
+    ['comp','Compile',function(r){return fmtT(r.compile_s);},function(r){return r.compile_s==null?Infinity:r.compile_s;}],
+    ['rss','Peak RSS',function(r){return r.peak_rss_mb==null?'–':Math.round(r.peak_rss_mb).toLocaleString()+' MB';},function(r){return r.peak_rss_mb==null?Infinity:r.peak_rss_mb;}],
+    ['ct','Ciphertext in+out',function(r){return fmtB(r.ciphertext_total_bytes);},function(r){return r.ciphertext_total_bytes==null?Infinity:r.ciphertext_total_bytes;}]
+  ];
+  var sortKey=null, asc=true, table=document.getElementById('results');
+  function render(){
+    var data=rows.slice();
+    if(sortKey){ var c=cols.filter(function(c){return c[0]===sortKey;})[0]; data.sort(function(a,b){var x=c[3](a),y=c[3](b); return (x<y?-1:x>y?1:0)*(asc?1:-1);}); }
+    var h='<thead><tr>'+cols.map(function(c){return '<th data-k="'+c[0]+'">'+c[1]+(sortKey===c[0]?(asc?' ▲':' ▼'):'')+'</th>';}).join('')+'</tr></thead><tbody>';
+    data.forEach(function(r){ h+='<tr>'+cols.map(function(c){return '<td>'+c[2](r)+'</td>';}).join('')+'</tr>'; });
+    table.innerHTML=h+'</tbody>';
+    Array.prototype.forEach.call(table.querySelectorAll('th'),function(th){th.onclick=function(){var k=th.getAttribute('data-k'); if(sortKey===k) asc=!asc; else {sortKey=k;asc=true;} render();};});
+  }
+  render();
+  document.getElementById('tablenote').textContent =
+    'Validation and latency figures are from the committed Phase 8 and Phase 9 results; test figures are from the single frozen Phase 12 run ('+D.test_set.rows.toLocaleString()+' rows, '+D.test_set.positives.toLocaleString()+' fraud, '+(D.test_set.positive_rate*100).toFixed(2)+'%). Infeasible rows have no latency because the encrypted key material did not fit.';
+
+  // dumbbell chart: validation vs test PR-AUC
+  var W=1000, rowH=24, padL=190, padR=20, top=28, H=top+rows.length*rowH+30, max=0.6;
+  function x(v){ return padL+(W-padL-padR)*v/max; }
+  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Validation versus test PR-AUC for each configuration">';
+  [0,0.1,0.2,0.3,0.4,0.5,0.6].forEach(function(t){ s+='<line x1="'+x(t)+'" x2="'+x(t)+'" y1="'+(top-6)+'" y2="'+(H-24)+'" stroke="var(--line)"/><text x="'+x(t)+'" y="'+(H-8)+'" text-anchor="middle">'+t.toFixed(1)+'</text>'; });
+  rows.forEach(function(r,i){
+    var y=top+i*rowH+rowH/2;
+    s+='<text x="'+(padL-10)+'" y="'+(y+4)+'" text-anchor="end">'+r.label+'</text>';
+    s+='<line x1="'+x(r.test_pr_auc)+'" x2="'+x(r.val_pr_auc)+'" y1="'+y+'" y2="'+y+'" stroke="var(--mut)" stroke-width="2"/>';
+    s+='<line x1="'+x(r.test_pr_auc_ci[0])+'" x2="'+x(r.test_pr_auc_ci[1])+'" y1="'+y+'" y2="'+y+'" stroke="var(--acc)" stroke-width="5" stroke-opacity=".28" stroke-linecap="round"/>';
+    s+='<circle cx="'+x(r.val_pr_auc)+'" cy="'+y+'" r="5" fill="var(--mut)"><title>'+r.label+' validation '+r.val_pr_auc.toFixed(3)+'</title></circle>';
+    s+='<circle cx="'+x(r.test_pr_auc)+'" cy="'+y+'" r="5" fill="var(--acc)"><title>'+r.label+' test '+r.test_pr_auc.toFixed(3)+'</title></circle>';
+  });
+  s+='<text x="'+padL+'" y="12">PR-AUC</text><circle cx="'+(W-250)+'" cy="9" r="5" fill="var(--mut)"/><text x="'+(W-240)+'" y="13">validation</text><circle cx="'+(W-160)+'" cy="9" r="5" fill="var(--acc)"/><text x="'+(W-150)+'" y="13">test (95% CI band)</text></svg>';
+  document.getElementById('dumbbell').innerHTML=s;
+
+  // hashes
+  var ht='<thead><tr><th>File (results/phase12_test_eval/)</th><th>sha256</th></tr></thead><tbody>';
+  Object.keys(D.hashes).forEach(function(k){ ht+='<tr><td>'+k+'</td><td style="text-align:left"><code>'+D.hashes[k]+'</code></td></tr>'; });
+  document.getElementById('hashes').innerHTML=ht+'</tbody>';
+
+  // player (falls back to a link if the CDN script is unavailable)
+  if(window.AsciinemaPlayer){
+    AsciinemaPlayer.create('assets/lr_roundtrip.cast', document.getElementById('player'), {cols:110, rows:36, idleTimeLimit:2, fit:'width', theme:'asciinema', poster:'npt:0:14'});
+  } else {
+    document.getElementById('player').innerHTML='<p class="callout">The recording player could not be loaded. Read the same output in <a href="assets/lr_roundtrip.log">lr_roundtrip.log</a>.</p>';
+  }
+})();
+</script>
+</body>
+</html>

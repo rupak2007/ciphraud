@@ -107,6 +107,40 @@ A server-only, CPU-only image builds (3.33 GB, `torch 2.3.1+cpu`, non-root). In 
 the documented error responses and a container restart were also tested (12/12 Docker tests passed). The MLP is a pipeline demonstration, not a validated fraud model. XGBoost container inference was not tested and is hardware-blocked on the 8 GB development PC (it needs about 5 GB of the shared WSL VM; the VM limit was deliberately left unchanged), so no XGBoost container support is claimed; the MLP evidence is two requests on a model that failed the Phase 9 quantization-accuracy gate; and there is no TLS or authentication (loopback demo only).
 Details, caveats and what had to be fixed: [`docs/docker.md`](docs/docker.md).
 
+### Reproduce the LR encrypted round trip with Docker
+
+This is the workflow validated in `docs/docker.md` (LR only, loopback only, no TLS or authentication). The container is the **server**; the client runs outside it from the WSL FHE venv, because the secret key must stay on the client side. The image does not contain model artifacts, so build them first (needs `requirements-fhe.txt` and the Phase 6/8/9 handoff files under `data/fhe_handoff/`, which are gitignored):
+
+```bash
+# 1. Deploy the validated LR circuit (writes data/phase10/deploy/lr_top20_bits16/{server,client}); WSL FHE venv
+python -m src.fhe.deploy --config configs/phase10/client_server.yaml --model lr_top20_bits16 --force
+
+# 2. Build the CPU-only server image
+docker build -t ciphraud-server:phase11 .
+
+# 3a. Automated check (recommended): the test starts its own container, performs a real encrypted request, checks that the
+#     decrypted integer equals the recorded clear value, deletes the keys and checks the container logs hold no key material.
+#     Run it inside the WSL FHE venv with Docker running.
+CIPHRAUD_DOCKER_TEST=1 python -m pytest tests/test_phase11_docker.py -q
+
+# 3b. Or run the server yourself on loopback only (only server/ is mounted, never client/), then point the unchanged client
+#     at http://127.0.0.1:8710. Do not run 3a at the same time (same port).
+docker run --rm --read-only --tmpfs /tmp:rw,exec,nosuid,size=512m --memory 3g -p 127.0.0.1:8710:8710 \
+  -v "$PWD/data/phase10/deploy/lr_top20_bits16/server:/app/data/phase10/deploy/lr_top20_bits16/server:ro" \
+  -v "$PWD/results/phase10_client_server/deploy/lr_top20_bits16:/app/results/phase10_client_server/deploy/lr_top20_bits16:ro" \
+  ciphraud-server:phase11 --models lr_top20_bits16
+```
+
+Do not publish the port on a public interface. XGBoost was not containerized. Per `docs/docker.md`, the original container test passed on a single request, so treat it as a functional check, not a benchmark.
+
+### Recorded demo and results page
+
+[`site/index.html`](site/index.html) is a static page (no server, keys or inference) with a recording of one real LR round trip and every committed result. The recording was produced by [`demo/lr_roundtrip_demo.py`](demo/lr_roundtrip_demo.py), which drives the unchanged client and server code, and [`demo/record_cast.py`](demo/record_cast.py), which stores the real output with its real timing. The page's numbers come from `site/build_data.py`, which only reads committed result files. To open it locally:
+
+```bash
+python -m http.server 8000 --directory site    # then browse to http://127.0.0.1:8000
+```
+
 ## Limitations and honest findings
 
 - The headline table is validation-only and therefore optimistic; the post-hoc test evaluation shows lower PR-AUC for every configuration (see above). One machine, one library version, five repeats of one input.
