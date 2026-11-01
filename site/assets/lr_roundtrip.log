@@ -1,8 +1,9 @@
 Ciphraud - encrypted fraud scoring, logistic regression (20 features, 16-bit), one transaction
 Client and server are two separate processes talking over loopback HTTP.
+Paced for viewing: 1.5 s pauses are added between sections, outside every timed operation.
 
 == 1. Start the inference server (holds the compiled model, never a secret key)
-server pid 460 listening on http://127.0.0.1:58429; model lr_top20_bits16 loaded
+server pid 424 listening on http://127.0.0.1:42971; model lr_top20_bits16 loaded
 
 == 2. Client side: load client artifact, generate keys
 client artifact sha256 matches the served circuit: True
@@ -13,11 +14,11 @@ uploaded evaluation keys only; server key_id c69012816d87dcda... (server never r
 == 3. Client side: preprocess, quantize, encrypt one transaction
 plaintext transaction: validation row 32148, 20 raw features (stays on the client)
 quantized input integers (client-only): [-31641, -31668, -31632, -31702, -31650, -31654, -31119, -32175, -31636, -31720, -31294, -31372, -31536, -31677, -31650, -31908, -31680, -31630, -31139, -31948]
-encrypted in 5.1 ms -> ciphertext 744 bytes, sha256 b2aa02d908b612f7...
+encrypted in 9.1 ms -> ciphertext 744 bytes, sha256 b0577cd8b4bdfd62...
 
 == 4. Send ciphertext; the server computes on it without decrypting
 request body 744 bytes (ciphertext only), response 17,920 bytes (still encrypted)
-server FHE evaluation: 79.5 ms (this is the first, cold request on this server)
+server FHE evaluation: 137.7 ms (this is the first, cold request on this server)
 
 == 5. Client side: decrypt and decide
 decrypted integer(s): [-214667949]

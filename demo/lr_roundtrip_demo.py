@@ -5,8 +5,12 @@ Drives the EXISTING implementation unchanged: `src.client.client.CiphraudClient`
 `lr_top20_bits16` artifacts and the recorded Phase 10 reference integers. Everything printed is measured from this run.
 Nothing is written under results/ or src/; the server log goes to the directory given by --scratch.
 
+--pace SECONDS inserts a pause before each section header and between the "sent" and "server evaluation" lines, so a
+viewer can follow each step (the encrypted steps otherwise finish within ~0.1 s and print together). The pauses sit
+outside every timed operation, so the timings printed are unaffected; the run says so in its first lines.
+
 Run (WSL, FHE venv, repository root):
-    python -m demo.lr_roundtrip_demo --scratch /tmp/ciphraud_demo
+    python -m demo.lr_roundtrip_demo --scratch /tmp/ciphraud_demo [--pace 1.5]
 """
 
 from __future__ import annotations
@@ -27,13 +31,20 @@ from src.fhe.deploy import paths_for, sha256_bytes
 
 CONFIG = "configs/phase10/client_server.yaml"
 MODEL = "lr_top20_bits16"
+PACE = 0.0  # seconds; set from --pace
 
 
 def say(msg: str = "") -> None:
     print(msg, flush=True)
 
 
+def pause() -> None:
+    if PACE > 0:
+        time.sleep(PACE)
+
+
 def step(title: str) -> None:
+    pause()
     say()
     say(f"== {title}")
 
@@ -41,7 +52,10 @@ def step(title: str) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--scratch", required=True, help="directory for the server log (outside the repository results)")
+    parser.add_argument("--pace", type=float, default=0.0, help="presentation pause in seconds between sections (default 0: none)")
     args = parser.parse_args()
+    global PACE
+    PACE = max(0.0, args.pace)
     scratch = Path(args.scratch)
     scratch.mkdir(parents=True, exist_ok=True)
 
@@ -56,6 +70,8 @@ def main() -> int:
 
     say("Ciphraud - encrypted fraud scoring, logistic regression (20 features, 16-bit), one transaction")
     say("Client and server are two separate processes talking over loopback HTTP.")
+    if PACE > 0:
+        say(f"Paced for viewing: {PACE:g} s pauses are added between sections, outside every timed operation.")
 
     step("1. Start the inference server (holds the compiled model, never a secret key)")
     port = free_port()
@@ -89,6 +105,7 @@ def main() -> int:
         sent = api.infer(MODEL, uploaded["json"]["key_id"], prepared["ciphertext"])
         st = sent["server_timing"]
         say(f"request body {sent['request_bytes']:,} bytes (ciphertext only), response {sent['response_bytes']:,} bytes (still encrypted)")
+        pause()
         say(f"server FHE evaluation: {st['fhe_run_s'] * 1000:.1f} ms (this is the first, cold request on this server)")
 
         step("5. Client side: decrypt and decide")

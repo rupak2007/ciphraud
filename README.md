@@ -135,7 +135,7 @@ Do not publish the port on a public interface. XGBoost was not containerized. Pe
 
 ### Recorded demo and results page
 
-[`site/index.html`](site/index.html) is a static page (no server, keys or inference) with a recording of one real LR round trip and every committed result. The recording was produced by [`demo/lr_roundtrip_demo.py`](demo/lr_roundtrip_demo.py), which drives the unchanged client and server code, and [`demo/record_cast.py`](demo/record_cast.py), which stores the real output with its real timing. The page's numbers come from `site/build_data.py`, which only reads committed result files. To open it locally:
+[`site/index.html`](site/index.html) is a static page (no server, keys or inference) with a recording of one real LR round trip and every committed result. The recording was produced by [`demo/lr_roundtrip_demo.py`](demo/lr_roundtrip_demo.py), which drives the unchanged client and server code, and [`demo/record_cast.py`](demo/record_cast.py), which stores the real output with its real timing. The run used `--pace 1.5`, which adds 1.5 s pauses between sections (outside every timed operation) so each step can be followed; the player also shortens idle gaps longer than 2 s, such as server start-up. The page's numbers, the recording and its log are embedded into `site/index.html` by `site/build_data.py`, which only reads committed files, so the page also works when opened directly from disk. To open it locally:
 
 ```bash
 python -m http.server 8000 --directory site    # then browse to http://127.0.0.1:8000
